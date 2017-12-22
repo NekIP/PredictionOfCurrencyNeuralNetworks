@@ -13,6 +13,7 @@
     "webpack": "^3.10.0",
     "uglifyjs-webpack-plugin": "*",
     "vue-loader": "*",
+    "vue-template-compiler": "*",
     "babel-core": "*",
     "babel-loader": "*",
     "babel-plugin-transform-runtime": "*",
