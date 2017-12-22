@@ -1,5 +1,5 @@
 ﻿const path = require('path');
-let UglifyJSPlugin = require('uglifyjs-webpack-plugin'); // плагин минимизации
+let UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 let ExtractTextPlugin = require('extract-text-webpack-plugin');
 let Webpack = require("webpack");
 
@@ -21,8 +21,6 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                //loader: ExtractTextPlugin.extract('style-loader', 'css-loader!resolve-url-loader!sass-loader?sourceMap')
-                //loaders: ['style-loader', 'css-loader', 'resolve-url-loader', 'sass-loader?sourceMap'],
                 use: [
                     {
                         loader: "style-loader"
@@ -53,19 +51,15 @@ module.exports = {
         ]
     },
     plugins: [
-        //new UglifyJSPlugin(), // скрипты будут минимизироваться, но с sass не работает 
+        //new UglifyJSPlugin(), // not worked with sass
         new ExtractTextPlugin('styles.css', {
             allChunks: true
         }),
         new Webpack.ProvidePlugin({
-            //Vue: "vue/dist/vue.min.js",   // минимизированая версия для prodaction сборки
-            Vue: "vue/dist/vue.js",
-            // jquery
-            /*
+            Vue: "vue/dist/vue.min.js",
             $: "jquery/dist/jquery.min.js",
             jQuery: "jquery/dist/jquery.min.js",
-            "window.jQuery": "jquery/dist/jquery.min.js"
-            */
+            "window.jQuery": "jquery/dist/jquery.min.js"  
         })
     ]
 };
