@@ -3,5 +3,6 @@
   "name": "prediction_of_currency_neural_networks",
   "private": true,
   "devDependencies": {
+    "webpack": "^3.10.0"
   }
 }
