@@ -5,7 +5,7 @@
 MongoCollections/
 
 # Build file
-wwwroot/dist/
+dist/
 
 # User-specific files
 *.suo
