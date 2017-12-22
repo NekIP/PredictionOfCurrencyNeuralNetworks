@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "webpack": "^3.10.0",
+    "uglifyjs-webpack-plugin": "*",
     "vue-loader": "*",
     "babel-core": "*",
     "babel-loader": "*",
