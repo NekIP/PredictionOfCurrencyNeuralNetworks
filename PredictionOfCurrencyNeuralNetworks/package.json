@@ -6,8 +6,18 @@
     "build": "webpack",
     "watch": "webpack --watch"
   },
-  "devDependencies": {},
   "dependencies": {
-    "webpack": "^3.10.0"
+    "vue": "^2.5.13"
+  },
+  "devDependencies": {
+    "webpack": "^3.10.0",
+    "vue-loader": "*",
+    "babel-core": "*",
+    "babel-loader": "*",
+    "babel-plugin-transform-runtime": "*",
+    "babel-preset-es2015": "*",
+    "css-loader": "*",
+    "vue-html-loader": "*",
+    "vue-style-loader": "*"
   }
 }
