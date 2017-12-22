@@ -12,14 +12,20 @@
   "devDependencies": {
     "webpack": "^3.10.0",
     "uglifyjs-webpack-plugin": "*",
+    "file-loader": "*",
+    "style-loader": "*",
+    "css-loader": "*",
+    "sass-loader": "*",
+    "node-sass": "*",
+    "extract-text-webpack-plugin": "*",
+    "resolve-url-loader": "*",
     "vue-loader": "*",
     "vue-template-compiler": "*",
+    "vue-html-loader": "*",
+    "vue-style-loader": "*",
     "babel-core": "*",
     "babel-loader": "*",
     "babel-plugin-transform-runtime": "*",
-    "babel-preset-es2015": "*",
-    "css-loader": "*",
-    "vue-html-loader": "*",
-    "vue-style-loader": "*"
+    "babel-preset-es2015": "*"
   }
 }
