@@ -1,5 +1,6 @@
 ﻿const path = require('path');
 let UglifyJSPlugin = require('uglifyjs-webpack-plugin'); // плагин минимизации
+let ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
     entry: './wwwroot/app.js',
@@ -19,15 +20,41 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                loaders: ['style-loader', 'css-loader', 'resolve-url-loader', 'sass-loader?sourceMap']
+                //loader: ExtractTextPlugin.extract('style-loader', 'css-loader!resolve-url-loader!sass-loader?sourceMap')
+                //loaders: ['style-loader', 'css-loader', 'resolve-url-loader', 'sass-loader?sourceMap'],
+                use: [
+                    {
+                        loader: "style-loader"
+                    },
+                    {
+                        loader: "css-loader"
+                    },
+                    {
+                        loader: "resolve-url-loader"
+                    },
+                    {
+                        loader: "sass-loader?sourceMap",
+                        options: {
+                            includePaths: [path.resolve(__dirname, 'wwwroot/images'), path.resolve(__dirname, 'wwwroot/dist')]
+                        }
+                    }
+                ]
             },
             {
                 test: /\.woff2?$|\.ttf$|\.otf$|\.eot$|\.svg$|\.png|\.jpe?g|\.gif$/,
-                loader: 'file-loader'
+                use: {
+                    loader: "url-loader",
+                    options: {
+                        name: "[name].[hash].[ext]",
+                    },
+                },
             }
         ]
     },
     plugins: [
         // new UglifyJSPlugin(), // скрипты будут минимизироваться
+        new ExtractTextPlugin('styles.css', {
+            allChunks: true
+        }),
     ]
 };

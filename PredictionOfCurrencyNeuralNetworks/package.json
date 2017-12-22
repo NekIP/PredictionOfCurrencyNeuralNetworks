@@ -12,6 +12,7 @@
   "devDependencies": {
     "webpack": "^3.10.0",
     "uglifyjs-webpack-plugin": "*",
+    "url-loader": "*",
     "file-loader": "*",
     "style-loader": "*",
     "css-loader": "*",
