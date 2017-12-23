@@ -51,7 +51,7 @@ module.exports = {
         ]
     },
     plugins: [
-        //new UglifyJSPlugin(), // not worked with sass
+        new UglifyJSPlugin(), // not worked with sass
         new ExtractTextPlugin('styles.css', {
             allChunks: true
         }),

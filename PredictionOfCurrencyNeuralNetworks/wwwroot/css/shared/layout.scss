@@ -1,17 +1,62 @@
-﻿.header {
+﻿$lazureTextColor: #00a47f;
+$orangeTextColor: #fea62b;
+$headerLogoTextSize: 20px;
+
+.header {
     background: linear-gradient(180deg, #f0f0f0, #fff);
-    height: 60px;
+    height: 45px;
     width: 100%;
     margin: 0px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 
     .logo {
-        font-size: 30px;
-        color: #00a47f;
+        margin: 3px;
+        padding: 2px 5px;
+        color: $lazureTextColor;
+        font-size: $headerLogoTextSize;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
 
         img {
-            height: 50px;
-            margin: 5px 0px 5px;
+            height: 35px;
+            margin: -2px 0px 0px 0px;
+        }
+    }
+
+    .logo:hover {
+    }
+
+    .menu {
+        margin: 6px 3px 3px 3px;
+        color: $lazureTextColor;
+        font-size: $headerLogoTextSize;
+    }
+
+    .header-info {
+        float: right;
+        color: $lazureTextColor;
+        line-height: 0.9em;
+
+        .block {
+            float: left;
+
+            .info {
+                margin: 5px 0px;
+
+                .title {
+                    font-weight: 500;
+                    font-size: 14px;
+                    color: $orangeTextColor;
+                }
+
+                .price {
+                    font-size: 12px;
+                }
+
+                .prediction {
+                    font-size: 12px;
+                }
+            }
         }
     }
 }

@@ -9,7 +9,60 @@
     <body>  
         <header class="header">
             <nav class="nav nav-inline">
-                <a class="nav-link logo" href="#"><img src="~/images/Logo.png">obotic_brain</a>
+                <a class="menu col-md-1" href="#" role="button"><i class="fa fa-bars" aria-hidden="true"></i></a>
+                <a class="nav-link logo col-md-3" href="#">
+                    <img src="~/images/Logo.png">obotic_brain
+                </a>
+                <div class="header-info col-md-6">
+                    <div class="block col-md-6">
+                        <div class="info">
+                            <text class="title">
+                                BTC/USD:
+                            </text>
+                            <text class="price">
+                                14567.345678
+                            </text>
+                            <text class="prediction">
+                                <i class="fa fa-arrow-right" aria-hidden="true"></i> 15678.567365
+                            </text>
+                        </div>
+                        <div class="info">
+                            <text class="title">
+                                DOGE/USD:
+                            </text>
+                            <text class="price">
+                                0.000567
+                            </text>
+                            <text class="prediction">
+                                <i class="fa fa-arrow-right" aria-hidden="true"></i> 0.000654
+                            </text>
+                        </div>
+                    </div>
+                    <div class="block col-md-6">
+                        <div class="info">
+                            <text class="title">
+                                USD/RUB:
+                            </text>
+                            <text class="price">
+                                60.898657
+                            </text>
+                            <text class="prediction">
+                                <i class="fa fa-arrow-right" aria-hidden="true"></i> 59.785665
+                            </text>
+                        </div>
+                        <div class="info">
+                            <text class="title">
+                                ARG/TUM:
+                            </text>
+                            <text class="price">
+                                0.005456
+                            </text>
+                            <text class="prediction">
+                                <i class="fa fa-arrow-right" aria-hidden="true"></i> 1.674534
+                            </text>
+                        </div>
+                    </div>
+                </div>
             </nav>
         </header>
         @RenderBody()
