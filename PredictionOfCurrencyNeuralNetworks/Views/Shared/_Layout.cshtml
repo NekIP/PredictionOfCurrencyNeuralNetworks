@@ -4,11 +4,14 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>@ViewData["Title"] - PredictionOfCurrencyNeuralNetworks</title>
-    </head>
-    <body>
-        <div class="container body-content">
-            @RenderBody()
-        </div>
         <script src="~/dist/build.js" asp-append-version="true"></script>
+    </head>
+    <body>  
+        <header class="header">
+            <nav class="nav nav-inline">
+                <a class="nav-link logo" href="#"><img src="~/images/Logo.png">obotic_brain</a>
+            </nav>
+        </header>
+        @RenderBody()
     </body>
 </html>
