@@ -34,14 +34,16 @@ $headerLogoTextSize: 20px;
 
     .header-info {
         float: right;
+        padding: 0px 5px 0px 5px;
         color: $lazureTextColor;
         line-height: 0.9em;
 
         .block {
-            float: left;
+            float: right;
 
             .info {
-                margin: 5px 0px;
+                margin: 5px 10px;
+                //text-align: right;
 
                 .title {
                     font-weight: 500;
