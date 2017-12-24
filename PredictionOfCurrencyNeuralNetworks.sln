@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PredictionOfCurrencyNeuralN
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Experiment", "Experiment\Experiment.csproj", "{CE1E9F3C-F4F3-4C21-88D9-C094A2C10B89}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeuralNetwork", "NeuralNetwork\NeuralNetwork.csproj", "{534DD050-F6E7-4DB4-89F1-F2BBCAEC50C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{CE1E9F3C-F4F3-4C21-88D9-C094A2C10B89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE1E9F3C-F4F3-4C21-88D9-C094A2C10B89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE1E9F3C-F4F3-4C21-88D9-C094A2C10B89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{534DD050-F6E7-4DB4-89F1-F2BBCAEC50C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{534DD050-F6E7-4DB4-89F1-F2BBCAEC50C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{534DD050-F6E7-4DB4-89F1-F2BBCAEC50C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{534DD050-F6E7-4DB4-89F1-F2BBCAEC50C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
