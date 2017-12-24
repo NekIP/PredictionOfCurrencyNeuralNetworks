@@ -6,6 +6,13 @@ namespace NeuralNetwork
 {
     public class SimpleNeuralNetwork : NeuralNetwork
     {
+        public SimpleNeuralNetwork(SimpleNeuralNetworkParameters parameters, 
+            Activation activation, 
+            params int[] lengthOfEachLayer)
+        {
+
+        }
+
         public override double[] Run(double[] input)
         {
             throw new NotImplementedException();
@@ -15,5 +22,10 @@ namespace NeuralNetwork
         {
             throw new NotImplementedException();
         }
+    }
+
+    public class SimpleNeuralNetworkParameters
+    {
+
     }
 }
