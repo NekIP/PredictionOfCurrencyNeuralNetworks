@@ -12,6 +12,7 @@ namespace Experiment
         {
             //new ConvertInputAndOutputDataExperimental(),
             new UnsafeReferenceMatrix(),
+            new NeuralNetworkMatrixTest(),
         };
 
         public static void Main(string[] args)
