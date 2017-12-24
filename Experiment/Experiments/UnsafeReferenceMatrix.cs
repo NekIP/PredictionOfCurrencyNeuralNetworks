@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Experiment.Experiments
+namespace Experiment
 {
-    public class UnsafeReferenceMatrix : Experiment
+    public unsafe class UnsafeReferenceMatrix : Experiment
     {
         public override void Run()
         {
