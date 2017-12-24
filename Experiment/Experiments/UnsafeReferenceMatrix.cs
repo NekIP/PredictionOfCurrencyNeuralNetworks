@@ -8,9 +8,24 @@ namespace Experiment
 {
     public unsafe class UnsafeReferenceMatrix : Experiment
     {
-        public override void Run()
+        public class Ref<T>
         {
-            
+            public T V;
+
+            public Ref(T value)
+            {
+                V = value;
+            }
+
+            public override string ToString()
+            {
+                return V.ToString();
+            }
+        }
+
+        public unsafe override void Run()
+        {
+
         }
     }
 }
