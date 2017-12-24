@@ -8,5 +8,7 @@
         public abstract double[] Run(double[] input);
 
         public abstract NeuralNetworkLearnResult Learn(double[] input, double[] ideal);
+
+        public Activation Activation { get; protected set; }
     }
 }
