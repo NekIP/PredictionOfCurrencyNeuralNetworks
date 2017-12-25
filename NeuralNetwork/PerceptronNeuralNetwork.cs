@@ -10,6 +10,9 @@ namespace NeuralNetwork
     {
         public double[][] Neurons { get; private set; }
         public Weight[][][] Weights { get; private set; }
+        public Weight[][][] WeightsTranspose { get; private set; }
+
+        private readonly MathHelper mathHelper = new MathHelper();
 
         public PerceptronNeuralNetwork(SimpleNeuralNetworkParameters parameters, 
             Activation activation, 
@@ -49,6 +52,7 @@ namespace NeuralNetwork
             var rnd = new Random();
             var countWeigthLayer = lengthsOfEachLayer.Length - 1;
             Weights = new Weight[countWeigthLayer][][];
+            WeightsTranspose = new Weight[countWeigthLayer][][];
             for (var i = 0; i < countWeigthLayer; i++)
             {
                 Weights[i] = new Weight[lengthsOfEachLayer[i]][];
@@ -61,6 +65,7 @@ namespace NeuralNetwork
                         Weights[i][j][k].D = 0;
                     }
                 }
+                WeightsTranspose[i] = mathHelper.Transpose(Weights[i]);
             }
         }
     }
