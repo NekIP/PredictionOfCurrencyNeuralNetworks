@@ -10,5 +10,7 @@
         public abstract NeuralNetworkLearnResult Learn(double[] input, double[] ideal);
 
         public Activation Activation { get; protected set; }
+        
+        public double ActivationCoefficient { get; protected set; }
     }
 }
