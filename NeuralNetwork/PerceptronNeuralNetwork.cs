@@ -47,6 +47,22 @@ namespace NeuralNetwork
             }
         }
 
+        private void SetInputNeurons(double[] input)
+        {
+            if (input.Length != Neurons[0].Length)
+            {
+                throw new ArithmeticException("Lengths of input vector and length of first row in Neurons must be equals");
+            }
+            Neurons[0] = input;
+            for (var i = 1; i < Neurons.Length; i++)
+            {
+                for (var j = 0; j < Neurons[i].Length; j++)
+                {
+                    Neurons[i][j] = 0;
+                }
+            }
+        }
+
         private void InitializeWeigths(int[] lengthsOfEachLayer)
         {
             var rnd = new Random();
