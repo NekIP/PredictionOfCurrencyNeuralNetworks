@@ -13,7 +13,7 @@ namespace NeuralNetwork {
 		/// </summary>
 		public double[][][] Weights { get; private set; }
 
-		//public double[][][] Delts { get; private set; }
+		public int Epoch { get; private set; }
 
 		private readonly MathHelper mathHelper = new MathHelper();
 
