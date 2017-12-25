@@ -3,8 +3,8 @@
 namespace NeuralNetwork {
 	public class SigmoidActivation : Activation {
 		public SigmoidActivation() {
-			Convert = SigmoidActivationFunction;
-			InverseConvert = InverseSigmoidActivationFunction;
+			Func = SigmoidActivationFunction;
+			InverseFunc = InverseSigmoidActivationFunction;
 		}
 
 		private double SigmoidActivationFunction(double input, double coefficient = 1) =>

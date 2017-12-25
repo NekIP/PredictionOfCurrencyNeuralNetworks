@@ -3,8 +3,8 @@
 namespace NeuralNetwork {
 	public class HyperbolicActivation : Activation {
 		public HyperbolicActivation() {
-			Convert = HyperbolicActivationFunction;
-			InverseConvert = InverseHyperbolicActivationFunction;
+			Func = HyperbolicActivationFunction;
+			InverseFunc = InverseHyperbolicActivationFunction;
 		}
 
 		private double HyperbolicActivationFunction(double input, double coefficient = 1) {

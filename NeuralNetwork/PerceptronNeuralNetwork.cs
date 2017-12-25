@@ -39,7 +39,7 @@ namespace NeuralNetwork {
 			var result = new NeuralNetworkLearnResult {
 				Value = Run(input)
 			};
-
+			
 			return result;
 		}
 
@@ -49,7 +49,7 @@ namespace NeuralNetwork {
 				for (int j = 0; j < vector.Length; j++) {
 					result[i] += weightsMatrix[i][j].W * vector[j];
 				}
-				result[i] = Activation.Convert(result[i], ActivationCoefficient);
+				result[i] = Activation.Func(result[i], ActivationCoefficient);
 			}
 			return result;
 		}
