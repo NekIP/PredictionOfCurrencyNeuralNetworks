@@ -11,12 +11,12 @@ namespace NeuralNetwork {
 		/// <summary>
 		/// Weigths for i(layer), for link from j(neuron in i layer) to k(neuronin (i + 1) layer)
 		/// </summary>
-		public Weight[][][] Weights { get; private set; }
+		public double[][][] Weights { get; private set; }
 
 		/// <summary>
 		/// Weigths for i(layer), for link from j(neuron in (i + 1) layer) to k(neuronin i layer)
 		/// </summary>
-		public Weight[][][] WeightsTranspose { get; private set; }
+		public double[][][] WeightsTranspose { get; private set; }
 
 		private readonly MathHelper mathHelper = new MathHelper();
 
@@ -30,7 +30,7 @@ namespace NeuralNetwork {
 		public override double[] Run(double[] input) {
 			SetInputNeuronsAndClear(input);
 			for (var i = 0; i < Neurons.Length - 1; i++) {
-				Neurons[i + 1] = Mull(WeightsTranspose[i], Neurons[i]);
+				Neurons[i + 1] = mathHelper.Mull(WeightsTranspose[i], Neurons[i], Activation);
 			}
 			return Neurons.Last();
 		}
@@ -49,7 +49,7 @@ namespace NeuralNetwork {
 				for (int j = 0; j < vector.Length; j++) {
 					result[i] += weightsMatrix[i][j].W * vector[j];
 				}
-				result[i] = Activation.Func(result[i], ActivationCoefficient);
+				result[i] = Activation.Func(result[i]);
 			}
 			return result;
 		}
@@ -77,14 +77,14 @@ namespace NeuralNetwork {
 		private void InitializeWeigths(int[] lengthsOfEachLayer) {
 			var rnd = new Random();
 			var countWeigthLayer = lengthsOfEachLayer.Length - 1;
-			Weights = new Weight[countWeigthLayer][][];
-			WeightsTranspose = new Weight[countWeigthLayer][][];
+			Weights = new double[countWeigthLayer][][];
+			WeightsTranspose = new double[countWeigthLayer][][];
 			for (var i = 0; i < countWeigthLayer; i++) {
-				Weights[i] = new Weight[lengthsOfEachLayer[i]][];
+				Weights[i] = new double[lengthsOfEachLayer[i]][];
 				for (var j = 0; j < Weights[i].Length; j++) {
-					Weights[i][j] = new Weight[lengthsOfEachLayer[i + 1]];
+					Weights[i][j] = new double[lengthsOfEachLayer[i + 1]];
 					for (var k = 0; k < Weights[i][j].Length; k++) {
-						Weights[i][j][k] = new Weight(rnd.NextDouble(), 0);
+						Weights[i][j][k] = rnd.NextDouble();
 					}
 				}
 				WeightsTranspose[i] = mathHelper.Transpose(Weights[i]);
@@ -93,6 +93,6 @@ namespace NeuralNetwork {
 	}
 
 	public class PeceptronNeuralNetworkParameters {
-		public double ActivationCoefficient { get; set; } = 1;
+
 	}
 }

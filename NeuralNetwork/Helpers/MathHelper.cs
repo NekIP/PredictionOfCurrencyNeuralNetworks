@@ -14,5 +14,16 @@ namespace NeuralNetwork.Helper {
 			}
 			return result;
 		}
+
+		public double[] Mull(double[][] matrix, double[] vector, Activation activation) {
+			var result = new double[matrix.Length];
+			for (int i = 0; i < matrix.Length; i++) {
+				for (int j = 0; j < vector.Length; j++) {
+					result[i] += matrix[i][j] * vector[j];
+				}
+				result[i] = activation.Func(result[i]);
+			}
+			return result;
+		}
 	}
 }
