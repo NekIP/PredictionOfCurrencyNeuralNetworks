@@ -7,8 +7,8 @@ namespace NeuralNetwork
         public UserActivation(Func<double, double, double> activationFunction,
             Func<double, double, double> inverseActivationFunction)
         {
-            ActivationFunction = activationFunction;
-            InverseActivationFunction = inverseActivationFunction;
+            Convert = activationFunction;
+            InverseConvert = inverseActivationFunction;
         }
     }
 }

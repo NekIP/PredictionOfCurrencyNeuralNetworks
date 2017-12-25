@@ -6,8 +6,8 @@ namespace NeuralNetwork
     {
         public HyperbolicActivation()
         {
-            ActivationFunction = HyperbolicActivationFunction;
-            InverseActivationFunction = InverseHyperbolicActivationFunction;
+            Convert = HyperbolicActivationFunction;
+            InverseConvert = InverseHyperbolicActivationFunction;
         }
 
         private double HyperbolicActivationFunction(double input, double coefficient = 1)
