@@ -25,5 +25,28 @@ namespace NeuralNetwork.Helper {
 			}
 			return result;
 		}
+
+		public double[] MullWithTransposeMatrix(double[][] matrix, double[] vector, Activation activation) {
+			var result = new double[matrix.Length];
+			for (int j = 0; j < matrix.Length; j++) {
+				for (int i = 0; i < vector.Length; i++) {
+					result[i] += matrix[i][j] * vector[j];
+				}
+				result[j] = activation.Func(result[j]);
+			}
+			return result;
+		}
+
+		public double[][] CreateMatrix(int countRow, int countColumn, bool isRandom) {
+			var rnd = new Random();
+			var result = new double[countRow][];
+			for (var i = 0; i < countRow; i++) {
+				result[i] = new double[countColumn];
+				for (var j = 0; j < countColumn; j++) {
+					result[i][j] = isRandom ? rnd.NextDouble() : 0;
+				}
+			}
+			return result;
+		}
 	}
 }

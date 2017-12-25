@@ -13,10 +13,7 @@ namespace NeuralNetwork {
 		/// </summary>
 		public double[][][] Weights { get; private set; }
 
-		/// <summary>
-		/// Weigths for i(layer), for link from j(neuron in (i + 1) layer) to k(neuronin i layer)
-		/// </summary>
-		public double[][][] WeightsTranspose { get; private set; }
+		public double[][][] Delts { get; private set; }
 
 		private readonly MathHelper mathHelper = new MathHelper();
 
@@ -24,13 +21,13 @@ namespace NeuralNetwork {
 			Activation activation,
 			params int[] lengthsOfEachLayer) {
 			InitializeNeurons(lengthsOfEachLayer);
-			InitializeWeigths(lengthsOfEachLayer);
+			InitializeWeigthsAndDelta(lengthsOfEachLayer);
 		}
 
 		public override double[] Run(double[] input) {
 			SetInputNeuronsAndClear(input);
 			for (var i = 0; i < Neurons.Length - 1; i++) {
-				Neurons[i + 1] = mathHelper.Mull(WeightsTranspose[i], Neurons[i], Activation);
+				Neurons[i + 1] = mathHelper.MullWithTransposeMatrix(Weights[i], Neurons[i], Activation);
 			}
 			return Neurons.Last();
 		}
@@ -40,17 +37,6 @@ namespace NeuralNetwork {
 				Value = Run(input)
 			};
 			
-			return result;
-		}
-
-		private double[] Mull(Weight[][] weightsMatrix, double[] vector) {
-			var result = new double[weightsMatrix.Length];
-			for (int i = 0; i < weightsMatrix.Length; i++) {
-				for (int j = 0; j < vector.Length; j++) {
-					result[i] += weightsMatrix[i][j].W * vector[j];
-				}
-				result[i] = Activation.Func(result[i]);
-			}
 			return result;
 		}
 
@@ -66,28 +52,21 @@ namespace NeuralNetwork {
 			if (input.Length != Neurons[0].Length) {
 				throw new ArithmeticException("Lengths of input vector and length of first row in Neurons must be equals");
 			}
-			Neurons[0] = input;
 			for (var i = 1; i < Neurons.Length; i++) {
 				for (var j = 0; j < Neurons[i].Length; j++) {
 					Neurons[i][j] = 0;
 				}
 			}
+			Neurons[0] = input;
 		}
 
-		private void InitializeWeigths(int[] lengthsOfEachLayer) {
-			var rnd = new Random();
-			var countWeigthLayer = lengthsOfEachLayer.Length - 1;
-			Weights = new double[countWeigthLayer][][];
-			WeightsTranspose = new double[countWeigthLayer][][];
-			for (var i = 0; i < countWeigthLayer; i++) {
-				Weights[i] = new double[lengthsOfEachLayer[i]][];
-				for (var j = 0; j < Weights[i].Length; j++) {
-					Weights[i][j] = new double[lengthsOfEachLayer[i + 1]];
-					for (var k = 0; k < Weights[i][j].Length; k++) {
-						Weights[i][j][k] = rnd.NextDouble();
-					}
-				}
-				WeightsTranspose[i] = mathHelper.Transpose(Weights[i]);
+		private void InitializeWeigthsAndDelta(int[] lengthsOfEachLayer) {
+			var countLayer = lengthsOfEachLayer.Length - 1;
+			Weights = new double[countLayer][][];
+			Delts = new double[countLayer][][];
+			for (var i = 0; i < countLayer; i++) {
+				Weights[i] = mathHelper.CreateMatrix(lengthsOfEachLayer[i], lengthsOfEachLayer[i + 1], true);
+				Delts[i] = mathHelper.CreateMatrix(lengthsOfEachLayer[i], lengthsOfEachLayer[i + 1], false);
 			}
 		}
 	}
