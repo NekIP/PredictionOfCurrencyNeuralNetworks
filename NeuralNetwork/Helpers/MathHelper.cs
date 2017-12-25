@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace NeuralNetwork.Helper {
 	public class MathHelper {
@@ -15,24 +13,13 @@ namespace NeuralNetwork.Helper {
 			return result;
 		}
 
-		public double[] Mull(double[][] matrix, double[] vector, Activation activation) {
+		public double[] MullMatrixOnVector(double[][] matrix, double[] vector, Activation activation) {
 			var result = new double[matrix.Length];
 			for (int i = 0; i < matrix.Length; i++) {
 				for (int j = 0; j < vector.Length; j++) {
 					result[i] += matrix[i][j] * vector[j];
 				}
 				result[i] = activation.Func(result[i]);
-			}
-			return result;
-		}
-
-		public double[] MullWithTransposeMatrix(double[][] matrix, double[] vector, Activation activation) {
-			var result = new double[matrix.Length];
-			for (int j = 0; j < matrix.Length; j++) {
-				for (int i = 0; i < vector.Length; i++) {
-					result[i] += matrix[i][j] * vector[j];
-				}
-				result[j] = activation.Func(result[j]);
 			}
 			return result;
 		}
