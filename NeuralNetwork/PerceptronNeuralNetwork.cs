@@ -9,6 +9,7 @@ namespace NeuralNetwork
     public class PerceptronNeuralNetwork : NeuralNetwork
     {
         public double[][] Neurons { get; private set; }
+
         /// <summary>
         /// Weigths for i(layer), for link from j(neuron in i layer) to k(neuronin (i + 1) layer)
         /// </summary>
@@ -49,7 +50,7 @@ namespace NeuralNetwork
             }
         }
 
-        private void SetInputNeurons(double[] input)
+        private void SetInputNeuronsAndClear(double[] input)
         {
             if (input.Length != Neurons[0].Length)
             {
