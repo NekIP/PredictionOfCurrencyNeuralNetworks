@@ -30,6 +30,7 @@ namespace NeuralNetwork {
 			InitializeNeurons(lengthsOfEachLayer);
 			InitializeWeigthsAndDelta(lengthsOfEachLayer);
 			LearningSpeed = parameters.LearningSpeed;
+			Activation = activation;
 			Moment = parameters.Moment;
 		}
 

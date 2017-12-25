@@ -15,37 +15,9 @@ namespace Experiment
                 new PeceptronNeuralNetworkParameters(),
                 new SigmoidActivation(),
                 2, 3, 2);
-            PrintMatrix(nt.Neurons);
+            Helper.PrintMatrix(nt.Neurons);
             Console.WriteLine("Weights: ");
-            PrintMatrix(nt.Weights);
-        }
-
-        private void PrintMatrix(double[][] matrix)
-        {
-            for (var i = 0; i < matrix.Length; i++)
-            {
-                for (var j = 0; j < matrix[i].Length; j++)
-                {
-                    Console.Write(matrix[i][j] + "\t");
-                }
-                Console.WriteLine();
-            }
-        }
-
-        private void PrintMatrix(double[][][] matrix)
-        {
-            for (var i = 0; i < matrix.Length; i++)
-            {
-                Console.WriteLine("Layer " + i);
-                for (var j = 0; j < matrix[i].Length; j++)
-                {
-                    for (var k = 0; k < matrix[i][j].Length; k++)
-                    {
-                        Console.Write(matrix[i][j][k] + "\t");
-                    }
-                    Console.WriteLine();
-                }
-            }
+			Helper.PrintMatrix(nt.Weights);
         }
     }
 }
