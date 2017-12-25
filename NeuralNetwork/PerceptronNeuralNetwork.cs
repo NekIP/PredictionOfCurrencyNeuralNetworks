@@ -42,7 +42,12 @@ namespace NeuralNetwork
 
         public override NeuralNetworkLearnResult Learn(double[] input, double[] ideal)
         {
-            throw new NotImplementedException();
+            var result = new NeuralNetworkLearnResult
+            {
+                Value = Run(input)
+            };
+
+            return result;
         }
 
         private double[] Mull(Weight[][] weightsMatrix, double[] vector)
