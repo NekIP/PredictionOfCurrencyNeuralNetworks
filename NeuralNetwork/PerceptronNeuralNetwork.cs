@@ -9,7 +9,14 @@ namespace NeuralNetwork
     public class PerceptronNeuralNetwork : NeuralNetwork
     {
         public double[][] Neurons { get; private set; }
+        /// <summary>
+        /// Weigths for i(layer), for link from j(neuron in i layer) to k(neuronin (i + 1) layer)
+        /// </summary>
         public Weight[][][] Weights { get; private set; }
+
+        /// <summary>
+        /// Weigths for i(layer), for link from j(neuron in (i + 1) layer) to k(neuronin i layer)
+        /// </summary>
         public Weight[][][] WeightsTranspose { get; private set; }
 
         private readonly MathHelper mathHelper = new MathHelper();
