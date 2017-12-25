@@ -72,8 +72,7 @@ namespace NeuralNetwork
                     Weights[i][j] = new Weight[lengthsOfEachLayer[i + 1]];
                     for (var k = 0; k < Weights[i][j].Length; k++)
                     {
-                        Weights[i][j][k].W = rnd.NextDouble();
-                        Weights[i][j][k].D = 0;
+                        Weights[i][j][k] = new Weight(rnd.NextDouble(), 0);
                     }
                 }
                 WeightsTranspose[i] = mathHelper.Transpose(Weights[i]);

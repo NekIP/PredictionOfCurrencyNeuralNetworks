@@ -8,11 +8,11 @@ namespace NeuralNetwork.Helper
     {
         public T[][] Transpose<T>(T[][] matrix)
         {
-            var result = new T[matrix.GetLength(1)][];
-            for (var i = 0; i < matrix.GetLength(1); i++)
+            var result = new T[matrix[0].Length][];
+            for (var i = 0; i < matrix[0].Length; i++)
             {
-                result[i] = new T[matrix.GetLength(0)];
-                for (var j = 0; j < matrix.GetLength(0); j++)
+                result[i] = new T[matrix.Length];
+                for (var j = 0; j < matrix.Length; j++)
                 {
                     result[i][j] = matrix[j][i];
                 }
