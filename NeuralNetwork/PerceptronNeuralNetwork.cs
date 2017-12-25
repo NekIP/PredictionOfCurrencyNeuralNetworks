@@ -4,18 +4,19 @@ using System.Text;
 
 namespace NeuralNetwork
 {
-    public class SimpleNeuralNetwork : NeuralNetwork
+    public class PerceptronNeuralNetwork : NeuralNetwork
     {
         public double[][] Neurons { get; private set; }
 
         public Weight[][][] WeightsLayerBack { get; private set; }
         public Weight[][][] WeightsLayerFront { get; private set; }
 
-        public SimpleNeuralNetwork(SimpleNeuralNetworkParameters parameters, 
+        public PerceptronNeuralNetwork(SimpleNeuralNetworkParameters parameters, 
             Activation activation, 
             params int[] lengthsOfEachLayer)
         {
-
+            InitializeMatrixes(lengthsOfEachLayer);
+            var t = 0;
         }
 
         public override double[] Run(double[] input)
