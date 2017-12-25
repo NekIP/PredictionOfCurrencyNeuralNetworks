@@ -9,13 +9,13 @@ namespace NeuralNetwork {
 			ActivationCoefficient = activationCoefficient;
 		}
 
-		private double SigmoidActivationFunction(double input, double coefficient = 1) =>
-			1 / (1 + Math.Exp(-coefficient * input));
+		private double SigmoidActivationFunction(double input) =>
+			1 / (1 + Math.Exp(-ActivationCoefficient * input));
 
 		private double DeriveSigmoidActivationFunction(double input) =>
 			(1 - input) * input;
 
-		private double InverseSigmoidActivationFunction(double input, double coefficient = 1) =>
-			-Math.Log(1 / input - 1) / coefficient;
+		private double InverseSigmoidActivationFunction(double input) =>
+			-Math.Log(1 / input - 1) / ActivationCoefficient;
 	}
 }
