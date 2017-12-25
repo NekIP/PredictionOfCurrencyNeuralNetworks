@@ -1,16 +1,14 @@
-﻿namespace NeuralNetwork
-{
-    public abstract class NeuralNetwork
-    {
-        /// <summary>
-        /// Run a neural network for input values
-        /// </summary>
-        public abstract double[] Run(double[] input);
+﻿namespace NeuralNetwork {
+	public abstract class NeuralNetwork {
+		/// <summary>
+		/// Run a neural network for input values
+		/// </summary>
+		public abstract double[] Run(double[] input);
 
-        public abstract NeuralNetworkLearnResult Learn(double[] input, double[] ideal);
+		public abstract NeuralNetworkLearnResult Learn(double[] input, double[] ideal);
 
-        public Activation Activation { get; protected set; }
-        
-        public double ActivationCoefficient { get; protected set; }
-    }
+		public Activation Activation { get; protected set; }
+
+		public double ActivationCoefficient { get; protected set; }
+	}
 }
