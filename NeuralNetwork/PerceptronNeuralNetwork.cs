@@ -32,12 +32,31 @@ namespace NeuralNetwork
 
         public override double[] Run(double[] input)
         {
-            throw new NotImplementedException();
+            SetInputNeuronsAndClear(input);
+            for (var i = 0; i < Neurons.Length - 1; i++)
+            {
+                Neurons[i + 1] = Mull(WeightsTranspose[i], Neurons[i]);
+            }
+            return Neurons.Last();
         }
 
         public override NeuralNetworkLearnResult Learn(double[] input, double[] ideal)
         {
             throw new NotImplementedException();
+        }
+
+        private double[] Mull(Weight[][] weightsMatrix, double[] vector)
+        {
+            var result = new double[weightsMatrix.Length];
+            for (int i = 0; i < weightsMatrix.Length; i++)
+            {
+                for (int j = 0; j < vector.Length; j++)
+                {
+                    result[i] += weightsMatrix[i][j].W * vector[j];
+                }
+                result[i] = Activation.Convert(result[i], ActivationCoefficient);
+            }
+            return result;
         }
 
         private void InitializeNeurons(int[] lengthsOfEachLayer)
@@ -90,6 +109,6 @@ namespace NeuralNetwork
 
     public class PeceptronNeuralNetworkParameters
     {
-
+        public double ActivationCoefficient { get; set; } = 1;
     }
 }
