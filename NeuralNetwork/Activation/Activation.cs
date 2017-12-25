@@ -18,5 +18,7 @@ namespace NeuralNetwork {
 		/// Converts input values from [0, 1] (sigmoid) or [-1, 1] (hyperbolic), in to initial values
 		/// </summary>
 		public Func<double, double, double> InverseFunc { get; set; }
+
+		public double ActivationCoefficient { get; set; }
 	}
 }

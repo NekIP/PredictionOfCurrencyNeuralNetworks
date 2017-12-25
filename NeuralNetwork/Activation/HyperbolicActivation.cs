@@ -2,10 +2,11 @@
 
 namespace NeuralNetwork {
 	public class HyperbolicActivation : Activation {
-		public HyperbolicActivation() {
+		public HyperbolicActivation(double activationCoefficient = 1) {
 			Func = HyperbolicActivationFunction;
 			InverseFunc = InverseHyperbolicActivationFunction;
 			DeriveFunc = DeriveHyperbolicActivationFunction;
+			ActivationCoefficient = activationCoefficient;
 		}
 
 		private double HyperbolicActivationFunction(double input, double coefficient = 1) {
