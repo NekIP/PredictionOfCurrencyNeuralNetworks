@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NeuralNetwork.Math
+namespace NeuralNetwork.Helper
 {
     public class MathHelper
     {

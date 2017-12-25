@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace NeuralNetwork.Math
+namespace NeuralNetwork.Helper
 {
     public class Vector
     {

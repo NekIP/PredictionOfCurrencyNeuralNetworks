@@ -1,4 +1,4 @@
-﻿using NeuralNetwork.Math;
+﻿using NeuralNetwork.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +14,12 @@ namespace NeuralNetwork
 
         private readonly MathHelper mathHelper = new MathHelper();
 
-        public PerceptronNeuralNetwork(SimpleNeuralNetworkParameters parameters, 
+        public PerceptronNeuralNetwork(PeceptronNeuralNetworkParameters parameters, 
             Activation activation, 
             params int[] lengthsOfEachLayer)
         {
-            InitializeMatrixes(lengthsOfEachLayer);
-            var t = 0;
+            InitializeNeurons(lengthsOfEachLayer);
+            InitializeWeigths(lengthsOfEachLayer);
         }
 
         public override double[] Run(double[] input)
@@ -30,11 +30,6 @@ namespace NeuralNetwork
         public override NeuralNetworkLearnResult Learn(double[] input, double[] ideal)
         {
             throw new NotImplementedException();
-        }
-
-        private void InitializeMatrixes(int[] lengthsOfEachLayer)
-        {
-            
         }
 
         private void InitializeNeurons(int[] lengthsOfEachLayer)
@@ -86,7 +81,7 @@ namespace NeuralNetwork
         }
     }
 
-    public class SimpleNeuralNetworkParameters
+    public class PeceptronNeuralNetworkParameters
     {
 
     }
