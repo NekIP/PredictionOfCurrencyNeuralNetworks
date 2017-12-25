@@ -12,6 +12,12 @@
         /// </summary>
         public double D { get; set; }
 
+        public Weight(double w, double d)
+        {
+            W = w;
+            D = d;
+        }
+
         public override string ToString()
         {
             return W.ToString();
