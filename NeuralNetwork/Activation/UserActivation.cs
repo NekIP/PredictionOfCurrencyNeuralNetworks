@@ -3,9 +3,11 @@
 namespace NeuralNetwork {
 	public class UserActivation : Activation {
 		public UserActivation(Func<double, double, double> activationFunction,
-			Func<double, double, double> inverseActivationFunction) {
+			Func<double, double, double> inverseActivationFunction,
+			Func<double, double> deriveActivationFunction) {
 			Func = activationFunction;
 			InverseFunc = inverseActivationFunction;
+			DeriveFunc = deriveActivationFunction;
 		}
 	}
 }
