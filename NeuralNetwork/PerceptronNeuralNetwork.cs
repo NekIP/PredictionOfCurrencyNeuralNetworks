@@ -1,5 +1,7 @@
-﻿using System;
+﻿using NeuralNetwork.Math;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace NeuralNetwork
@@ -7,9 +9,7 @@ namespace NeuralNetwork
     public class PerceptronNeuralNetwork : NeuralNetwork
     {
         public double[][] Neurons { get; private set; }
-
-        public Weight[][][] WeightsLayerBack { get; private set; }
-        public Weight[][][] WeightsLayerFront { get; private set; }
+        public Weight[][][] Weights { get; private set; }
 
         public PerceptronNeuralNetwork(SimpleNeuralNetworkParameters parameters, 
             Activation activation, 
@@ -31,54 +31,34 @@ namespace NeuralNetwork
 
         private void InitializeMatrixes(int[] lengthsOfEachLayer)
         {
-            var rnd = new Random();
-            var countLayer = lengthsOfEachLayer.Length;
-            Neurons = new double[countLayer][];
-            WeightsLayerBack = new Weight[countLayer][][];
-            WeightsLayerFront = new Weight[countLayer][][];
-            for (var layer = 0; layer < countLayer; layer++)
-            {
-                var lengthOfCurrentLayer = lengthsOfEachLayer[layer];
-                var nextLayerIsOutOfRange = layer == countLayer - 1 ? true : false;
-                Neurons[layer] = new double[lengthOfCurrentLayer];
-                if (!nextLayerIsOutOfRange)
-                {
-                    WeightsLayerFront[layer] = new Weight[lengthOfCurrentLayer][];
-                }
-                for (var numNeuronInCurrentLayer = 0; numNeuronInCurrentLayer < lengthOfCurrentLayer; numNeuronInCurrentLayer++)
-                {
-                    Neurons[layer][numNeuronInCurrentLayer] = 0;
-                    if (!nextLayerIsOutOfRange)
-                    {
-                        var lengthOfNextLayer = lengthsOfEachLayer[layer + 1];
-                        WeightsLayerFront[layer][numNeuronInCurrentLayer] = new Weight[lengthOfCurrentLayer];
-                        for (var numNeuronInNextLayer = 0; numNeuronInNextLayer < lengthOfNextLayer; numNeuronInNextLayer++)
-                        {
-                            WeightsLayerFront[layer][numNeuronInCurrentLayer][numNeuronInNextLayer].W = rnd.NextDouble();
-                            WeightsLayerFront[layer][numNeuronInCurrentLayer][numNeuronInNextLayer].D = 0;
-                        }
-                    }
-                }
-            }
-            InitializeWeightsLayerBack(lengthsOfEachLayer);
+            
         }
 
-        private void InitializeWeightsLayerBack(int[] lengthsOfEachLayer)
+        private void InitializeNeurons(int[] lengthsOfEachLayer)
         {
-            var countLayer = lengthsOfEachLayer.Length;
-            WeightsLayerBack = new Weight[countLayer][][];
-            for (var layer = 1; layer < countLayer; layer++)
+            var countNeuronLayer = lengthsOfEachLayer.Length;
+            Neurons = new double[countNeuronLayer][];
+            for (var i = 0; i < countNeuronLayer; i++)
             {
-                var lengthOfPreviusLayer = lengthsOfEachLayer[layer - 1];
-                WeightsLayerBack[layer] = new Weight[lengthOfPreviusLayer][];
-                for (var numNeuronInPreviusLayer = 0; numNeuronInPreviusLayer < lengthOfPreviusLayer; numNeuronInPreviusLayer++)
+                Neurons[i] = new double[lengthsOfEachLayer[i]];
+            }
+        }
+
+        private void InitializeWeigths(int[] lengthsOfEachLayer)
+        {
+            var rnd = new Random();
+            var countWeigthLayer = lengthsOfEachLayer.Length - 1;
+            Weights = new Weight[countWeigthLayer][][];
+            for (var i = 0; i < countWeigthLayer; i++)
+            {
+                Weights[i] = new Weight[lengthsOfEachLayer[i]][];
+                for (var j = 0; j < Weights[i].Length; j++)
                 {
-                    var lengthOfCurrentLayer = lengthsOfEachLayer[layer];
-                    WeightsLayerFront[layer][numNeuronInPreviusLayer] = new Weight[lengthOfCurrentLayer];
-                    for (var numNeuronInCurrentLayer = 0; numNeuronInCurrentLayer < lengthOfCurrentLayer; numNeuronInCurrentLayer++)
+                    Weights[i][j] = new Weight[lengthsOfEachLayer[i + 1]];
+                    for (var k = 0; k < Weights[i][j].Length; k++)
                     {
-                        WeightsLayerBack[layer][numNeuronInPreviusLayer][numNeuronInCurrentLayer] =
-                            WeightsLayerFront[layer - 1][numNeuronInPreviusLayer][numNeuronInCurrentLayer];
+                        Weights[i][j][k].W = rnd.NextDouble();
+                        Weights[i][j][k].D = 0;
                     }
                 }
             }
