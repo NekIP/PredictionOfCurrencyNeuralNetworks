@@ -18,20 +18,6 @@ namespace Experiment
             PrintMatrix(nt.Neurons);
             Console.WriteLine("Weights: ");
             PrintMatrix(nt.Weights);
-            Console.WriteLine("Weights Transpose: ");
-            PrintMatrix(nt.WeightsTranspose);
-
-            nt.Weights[0][0][0].W = -1;
-            Console.WriteLine("Weights: ");
-            PrintMatrix(nt.Weights);
-            Console.WriteLine("Weights Transpose: ");
-            PrintMatrix(nt.WeightsTranspose);
-
-            nt.WeightsTranspose[0][0][1].W = -2;
-            Console.WriteLine("Weights: ");
-            PrintMatrix(nt.Weights);
-            Console.WriteLine("Weights Transpose: ");
-            PrintMatrix(nt.WeightsTranspose);
         }
 
         private void PrintMatrix(double[][] matrix)
@@ -46,7 +32,7 @@ namespace Experiment
             }
         }
 
-        private void PrintMatrix(Weight[][][] matrix)
+        private void PrintMatrix(double[][][] matrix)
         {
             for (var i = 0; i < matrix.Length; i++)
             {

@@ -13,7 +13,14 @@ namespace NeuralNetwork {
 		/// </summary>
 		public double[][][] Weights { get; private set; }
 
-		public int Epoch { get; private set; }
+		/// <summary>
+		/// Weigths for i(layer), for link from j(neuron in i layer) to k(neuronin (i + 1) layer)
+		/// </summary>
+		public double[][][] DeltaWeights { get; private set; }
+
+		public int Epoch { get; private set; } = 1;
+		public double LearningSpeed { get; set; }
+		public double Moment { get; set; }
 
 		private readonly MathHelper mathHelper = new MathHelper();
 
@@ -22,6 +29,8 @@ namespace NeuralNetwork {
 			params int[] lengthsOfEachLayer) {
 			InitializeNeurons(lengthsOfEachLayer);
 			InitializeWeigthsAndDelta(lengthsOfEachLayer);
+			LearningSpeed = parameters.LearningSpeed;
+			Moment = parameters.Moment;
 		}
 
 		public override double[] Run(double[] input) {
@@ -33,11 +42,60 @@ namespace NeuralNetwork {
 		}
 
 		public override NeuralNetworkLearnResult Learn(double[] input, double[] ideal) {
+			var actual = Run(input);
 			var result = new NeuralNetworkLearnResult {
-				Value = Run(input)
+				Value = actual,
+				Error = GetError(actual, ideal)
 			};
-			var previousDelta = 
+			var delts = GetDelta0(actual, ideal);
+			for (var i = Neurons.Length - 2; i >= 0; i--) {
+				var newDelts = new double[Neurons[i - 1].Length];
+				for (var j = 0; j < Neurons[i + 1].Length; j++) {
+					for (var k = 0; k < Neurons[i].Length; k++) {
+						newDelts[k] += Weights[i][j][k] * delts[j] * Activation.DeriveFunc(Neurons[i][k]);
+						DeltaWeights[i][j][k] = GetDeffWeight(DeltaWeights[i][j][k], delts[j] * Neurons[i][k]);
+						Weights[i][j][k] += DeltaWeights[i][j][k];
+					}
+				}
+				delts = newDelts;
+			}
+			Epoch++;
 			return result;
+		}
+
+		public double[] GetDelta0(double[] actual, double[] ideal) {
+			var result = new double[actual.Length];
+			for (var i = 0; i < actual.Length; i++) {
+				result[i] = (ideal[i] - actual[i]) * Activation.DeriveFunc(actual[i]);
+			}
+			return result;
+		}
+
+		public double[] GetError(double[] actual, double[] ideal) {
+			var result = new double[actual.Length];
+			for (var i = 0; i < actual.Length; i++) {
+				result[i] = Math.Pow(ideal[i] - actual[i], 2);
+			}
+			return result;
+		}
+
+		public double[] GetDeltaHForLayer(double[] neurons, double[][] weigth, double[] previousDelta) {
+			var result = mathHelper.MullMatrixOnVector(weigth, previousDelta);
+			for (var i = 0; i < result.Length; i++) {
+				result[i] = result[i] * Activation.DeriveFunc(neurons[i]);
+			}
+			return result;
+		}
+
+		private double GetDeffWeight(double previousDeltaWeight, double gradient) =>
+			LearningSpeed * gradient + Moment * previousDeltaWeight;
+
+		private void SetInputNeuronsAndClear(double[] input) {
+			if (input.Length != Neurons[0].Length) {
+				throw new ArithmeticException("Lengths of input vector and length of first row in Neurons must be equals");
+			}
+			SetNeuronsInZeroWithoutFirstRow();
+			Neurons[0] = input;
 		}
 
 		private void InitializeNeurons(int[] lengthsOfEachLayer) {
@@ -46,14 +104,6 @@ namespace NeuralNetwork {
 			for (var i = 0; i < countNeuronLayer; i++) {
 				Neurons[i] = new double[lengthsOfEachLayer[i]];
 			}
-		}
-
-		private void SetInputNeuronsAndClear(double[] input) {
-			if (input.Length != Neurons[0].Length) {
-				throw new ArithmeticException("Lengths of input vector and length of first row in Neurons must be equals");
-			}
-			SetNeuronsInZeroWithoutFirstRow();
-			Neurons[0] = input;
 		}
 
 		private void SetNeuronsInZeroWithoutFirstRow() {
@@ -67,13 +117,16 @@ namespace NeuralNetwork {
 		private void InitializeWeigthsAndDelta(int[] lengthsOfEachLayer) {
 			var countLayer = lengthsOfEachLayer.Length - 1;
 			Weights = new double[countLayer][][];
+			DeltaWeights = new double[countLayer][][];
 			for (var i = 0; i < countLayer; i++) {
 				Weights[i] = mathHelper.CreateMatrix(lengthsOfEachLayer[i + 1], lengthsOfEachLayer[i], true);
+				DeltaWeights[i] = mathHelper.CreateMatrix(lengthsOfEachLayer[i + 1], lengthsOfEachLayer[i], false);
 			}
 		}
 	}
 
 	public class PeceptronNeuralNetworkParameters {
-
+		public double LearningSpeed { get; set; }
+		public double Moment { get; set; }
 	}
 }
