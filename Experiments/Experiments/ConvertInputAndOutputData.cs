@@ -10,9 +10,10 @@ namespace Experiment
     {
         public override void Run()
         {
-            //TestSigmoid(0.005); // оптимальный коэффициент для типа double при функции активации simoid охват [-10000, 7025]
-            TestHyperbolicTangens(0.005);
-        }
+			//TestSigmoid(0.005); // оптимальный коэффициент для типа double при функции активации simoid охват [-10000, 7025]
+			//TestHyperbolicTangens(0.005);
+			TestSigmoid(4);
+		}
 
         private void TestSigmoid(double k)
         {
@@ -49,7 +50,7 @@ namespace Experiment
             Func<double, double, double> activation,
             Func<double, double, double> activationReverse)
         {
-            for (var i = -100; i < 100; i++)
+            for (var i = -1d; i < 1; i+=0.01)
             {
                 var activationResult = activation(i, k);
                 var activationReverseResult = activationReverse(activationResult, k);

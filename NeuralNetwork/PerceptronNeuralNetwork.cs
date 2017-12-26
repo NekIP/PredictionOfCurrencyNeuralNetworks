@@ -11,14 +11,14 @@ namespace NeuralNetwork {
 		/// <summary>
 		/// Weigths for i(layer), for link from j(neuron in i layer) to k(neuronin (i + 1) layer)
 		/// </summary>
-		public double[][][] Weights { get; private set; }
+		public double[][][] Weights { get; set; }
 
 		/// <summary>
 		/// Weigths for i(layer), for link from j(neuron in i layer) to k(neuronin (i + 1) layer)
 		/// </summary>
-		public double[][][] DeltaWeights { get; private set; }
+		public double[][][] DeltaWeights { get; set; }
 
-		public int Epoch { get; private set; } = 1;
+		public int Epoch { get; private set; }
 		public double LearningSpeed { get; set; }
 		public double Moment { get; set; }
 
@@ -39,18 +39,23 @@ namespace NeuralNetwork {
 			for (var i = 0; i < Neurons.Length - 1; i++) {
 				Neurons[i + 1] = mathHelper.MullMatrixOnVector(Weights[i], Neurons[i], Activation);
 			}
-			return Neurons.Last();
+			var result = Neurons.Last();
+			return result;
 		}
 
 		public override NeuralNetworkLearnResult Learn(double[] input, double[] ideal) {
 			var actual = Run(input);
+			var idealConverted = new double[ideal.Length];
+			for (var i = 0; i < idealConverted.Length; i++) {
+				idealConverted[i] = Activation.Func(ideal[i]);
+			}
 			var result = new NeuralNetworkLearnResult {
 				Value = actual,
-				Error = GetError(actual, ideal)
+				Error = GetError(actual, idealConverted)
 			};
-			var delts = GetDelta0(actual, ideal);
+			var delts = GetDelta0(actual, idealConverted);
 			for (var i = Neurons.Length - 2; i >= 0; i--) {
-				var newDelts = new double[Neurons[i - 1].Length];
+				var newDelts = new double[Neurons[i].Length];
 				for (var j = 0; j < Neurons[i + 1].Length; j++) {
 					for (var k = 0; k < Neurons[i].Length; k++) {
 						newDelts[k] += Weights[i][j][k] * delts[j] * Activation.DeriveFunc(Neurons[i][k]);
