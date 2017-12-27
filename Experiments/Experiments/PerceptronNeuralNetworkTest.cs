@@ -7,20 +7,20 @@ namespace Experiment {
 			var nt = new PerceptronNeuralNetwork(
 				new PeceptronNeuralNetworkParameters { LearningSpeed = 0.7, Moment = 0.3 },
 				new SigmoidActivation(4),
-				2, 3, 2);
-			Helper.PrintMatrix(nt.Neurons);
-			nt.Weights = new double[2][][];
+				2, 10, 10, 1);
+			//Helper.PrintMatrix(nt.Neurons);
+			/*nt.Weights = new double[2][][];
 			nt.Weights[0] = new double[3][] {
 				new double[] { 0.1, 0.2 },
 				new double[] { 0.3, 0.4 },
 				new double[] { 0.5, 0.6 },
 			};
-			nt.Weights[1] = new double[2][] {
+			nt.Weights[1] = new double[1][] {
 				new double[] { 0.7, 0.9, 0.11 },
-				new double[] { 0.8, 0.14, 0.12 }
-			};
+				//new double[] { 0.8, 0.14, 0.12 }
+			};*/
 			Console.WriteLine("Weights: ");
-			Helper.PrintMatrix(nt.Weights);
+			//Helper.PrintMatrix(nt.Weights);
 			var learn = new double[12][] {
 				new [] { 0.018088, 0.01591 },
 				new [] { 0.0248, -0.00912 },
@@ -35,8 +35,32 @@ namespace Experiment {
 				new [] { 0.206694, -0.209201 },
 				new [] { 0.168238, -0.211099 }
 			};
+			var middleError = 0.0;
+			for (var k = 1; k < 10000000; k++) {
+				NeuralNetworkLearnResult result = null;
+				for (var j = 0; j < 1000; j++) {
+					for (var i = 0; i < learn.Length - 1; i++) {
+						result = nt.Learn(learn[i], new double[] { learn[i + 1][0] });
+						middleError += result.Error[0];
+						//Console.WriteLine(result.Error[0] + "_");
+					}
+				}
+				Console.Clear();
+				Console.WriteLine(middleError / (k * 11 * 1000));
+				Print(nt, result);
+				for (var i = 0; i < learn.Length - 1; i++) {
+					var result1 = nt.Run(learn[i]);
+					Console.WriteLine(result1[0] + "\t" + nt.Activation.InverseFunc(result1[0]) + "\t" + learn[i + 1][0]);
+				}
+			}
 
-			nt.Learn(learn[0], learn[1]);
+			middleError = middleError / (10000 * 11);
+			Console.WriteLine(middleError + "_");
+		}
+
+		public void Print(PerceptronNeuralNetwork nt, NeuralNetworkLearnResult result) {
+			Console.WriteLine(result.Error[0]);
+			//Helper.PrintMatrix(nt.Weights);
 		}
 	}
 }

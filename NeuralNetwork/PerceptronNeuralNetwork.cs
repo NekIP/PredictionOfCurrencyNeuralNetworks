@@ -100,8 +100,7 @@ namespace NeuralNetwork {
 			if (input.Length != Neurons[0].Length) {
 				throw new ArithmeticException("Lengths of input vector and length of first row in Neurons must be equals");
 			}
-			SetNeuronsInZeroWithoutFirstRow();
-			Neurons[0] = input;
+			SetNeuronsInZeroAndSetInput(input);
 		}
 
 		private void InitializeNeurons(int[] lengthsOfEachLayer) {
@@ -112,10 +111,10 @@ namespace NeuralNetwork {
 			}
 		}
 
-		private void SetNeuronsInZeroWithoutFirstRow() {
-			for (var i = 1; i < Neurons.Length; i++) {
+		private void SetNeuronsInZeroAndSetInput(double[] input) {
+			for (var i = 0; i < Neurons.Length; i++) {
 				for (var j = 0; j < Neurons[i].Length; j++) {
-					Neurons[i][j] = 0;
+					Neurons[i][j] = i == 0 ? input[j] : 0;
 				}
 			}
 		}
