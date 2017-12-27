@@ -22,7 +22,7 @@ namespace NeuralNetwork {
 		}
 
 		protected void CheckConditionOnException(bool conditionFunc, string message) {
-			if (!conditionFunc) {
+			if (conditionFunc) {
 				throw new NeuralNetworkException(message);
 			}
 		}

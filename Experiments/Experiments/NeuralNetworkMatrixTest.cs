@@ -11,8 +11,8 @@ namespace Experiment
     {
         public override void Run()
         {
-            var nt = new PerceptronNeuralNetwork(
-                new PeceptronNeuralNetworkParameters(),
+            var nt = new MultilayerPerceptron(
+                new MultilayerPerceptronParameters(),
                 new SigmoidActivation(),
                 2, 3, 2);
             Helper.PrintMatrix(nt.Neurons);
