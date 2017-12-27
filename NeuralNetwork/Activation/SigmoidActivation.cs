@@ -2,20 +2,19 @@
 
 namespace NeuralNetwork {
 	public class SigmoidActivation : Activation {
+		public double ActivationCoefficient { get; set; }
+
 		public SigmoidActivation(double activationCoefficient = 1) {
-			Func = SigmoidActivationFunction;
-			InverseFunc = InverseSigmoidActivationFunction;
-			DeriveFunc = DeriveSigmoidActivationFunction;
 			ActivationCoefficient = activationCoefficient;
 		}
 
-		private double SigmoidActivationFunction(double input) =>
+		public double Func(double input) =>
 			1 / (1 + Math.Exp(-ActivationCoefficient * input));
 
-		private double DeriveSigmoidActivationFunction(double input) =>
+		public double DeriveFunc(double input) =>
 			(1 - input) * input;
 
-		private double InverseSigmoidActivationFunction(double input) =>
+		public double InverseFunc(double input) =>
 			-Math.Log(1 / input - 1) / ActivationCoefficient;
 	}
 }

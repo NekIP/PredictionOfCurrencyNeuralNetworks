@@ -4,10 +4,10 @@ using System;
 namespace Experiment {
 	public class PerceptronNeuralNetworkTest : Experiment {
 		public override void Run() {
-			var nt = new PerceptronNeuralNetwork(
-				new PeceptronNeuralNetworkParameters { LearningSpeed = 0.7, Moment = 0.3 },
+			var nt = new MultilayerPerceptron(
+				new MultilayerPerceptronParameters { LearningSpeed = 0.7, Moment = 0.3 },
 				new SigmoidActivation(4),
-				2, 10, 10, 1);
+				2, 3, 3, 1);
 			//Helper.PrintMatrix(nt.Neurons);
 			/*nt.Weights = new double[2][][];
 			nt.Weights[0] = new double[3][] {
@@ -50,7 +50,7 @@ namespace Experiment {
 				Print(nt, result);
 				for (var i = 0; i < learn.Length - 1; i++) {
 					var result1 = nt.Run(learn[i]);
-					Console.WriteLine(result1[0] + "\t" + nt.Activation.InverseFunc(result1[0]) + "\t" + learn[i + 1][0]);
+					Console.WriteLine(result1[0] + "\t" + learn[i + 1][0]);
 				}
 			}
 
@@ -58,7 +58,7 @@ namespace Experiment {
 			Console.WriteLine(middleError + "_");
 		}
 
-		public void Print(PerceptronNeuralNetwork nt, NeuralNetworkLearnResult result) {
+		public void Print(MultilayerPerceptron nt, NeuralNetworkLearnResult result) {
 			Console.WriteLine(result.Error[0]);
 			//Helper.PrintMatrix(nt.Weights);
 		}
