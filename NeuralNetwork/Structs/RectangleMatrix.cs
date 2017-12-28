@@ -4,7 +4,6 @@ using System.Linq;
 namespace NeuralNetwork {
 	public class RectangleMatrix {
 		public Vector[] Vectors { get; private set; }
-
 		public int RowCount => Vectors.Length;
 		public int ColumnCount => Vectors.First().Length;
 

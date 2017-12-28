@@ -5,8 +5,7 @@ using System.Text;
 namespace NeuralNetwork {
 	public class Vector {
 		public int Length => Values.Length;
-
-		private double[] Values { get; set; }
+		public double[] Values { get; private set; }
 
 		public Vector(double[] values) {
 			Values = values;
@@ -60,6 +59,10 @@ namespace NeuralNetwork {
 
 		public static implicit operator Vector(double[] vector) {
 			return new Vector(vector);
+		}
+
+		public static implicit operator double[](Vector vector) {
+			return vector.Values;
 		}
 	}
 }
