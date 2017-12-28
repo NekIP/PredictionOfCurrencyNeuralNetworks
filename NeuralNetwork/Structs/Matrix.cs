@@ -62,9 +62,9 @@ namespace NeuralNetwork {
 			if (matrix.ColumnCount != vector.Length) {
 				throw new ArithmeticException("Count column of matrix1 and count row of matrix2 must be equals");
 			}
-			var result = new Vector(vector.Length);
-			for (int i = 0; i < matrix.ColumnCount; i++) {
-				for (int j = 0; j < vector.Length; j++) {
+			var result = new Vector(matrix.RowCount);
+			for (int i = 0; i < matrix.RowCount; i++) {
+				for (int j = 0; j < matrix.ColumnCount; j++) {
 					result[i] += matrix[i, j] * vector[j];
 				}
 			}
