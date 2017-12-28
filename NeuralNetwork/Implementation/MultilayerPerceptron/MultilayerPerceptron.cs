@@ -34,15 +34,19 @@ namespace NeuralNetwork {
 		}
 
 		/// <summary>
-		/// Calculates the output vector of the neural network and converts it using the inverse activation function
+		/// Calculates the output vector of the neural network
 		/// </summary>
 		public override double[] Run(double[] input) {
-			CalculateNeurons(input);
-			var result = Neurons.Last();
-			for (var i = 0; i < result.Length; i++) {
-				result[i] = Activation.InverseFunc(result[i]);
+			InitializeNeuronsWithInput(input);
+			for (var i = 0; i < Neurons.Length - 1; i++) {
+				for (int j = 0; j < Neurons[i + 1].Length; j++) {
+					for (int k = 0; k < Neurons[i].Length; k++) {
+						Neurons[i + 1][j] += Weights[i][j][k] * Neurons[i][k];
+					}
+					Neurons[i + 1][j] = Activation.Func(Neurons[i + 1][j]);
+				}
 			}
-			return result;
+			return Neurons.Last();
 		}
 
 		/// <summary>
@@ -52,8 +56,7 @@ namespace NeuralNetwork {
 		public override NeuralNetworkLearnResult Learn(double[] input, double[] ideal) {
 			CheckConditionOnException(Neurons.Last().Length != ideal.Length,
 				"The length of the verification vector and the number of neurons in the output layer must be equals");
-			CalculateNeurons(input);
-			var actual = Neurons.Last();
+			var actual = Run(input);
 			var error = new double[actual.Length];
 			for (var i = 0; i < ideal.Length; i++) {
 				ideal[i] = Activation.Func(ideal[i]);
@@ -101,19 +104,7 @@ namespace NeuralNetwork {
 				"The length of the input vector and the number of neurons in the first layer must be equal");
 			for (var i = 0; i < Neurons.Length; i++) {
 				for (var j = 0; j < Neurons[i].Length; j++) {
-					Neurons[i][j] = i == 0 ? input[j] : 0;
-				}
-			}
-		}
-
-		private void CalculateNeurons(double[] input) {
-			InitializeNeuronsWithInput(input);
-			for (var i = 0; i < Neurons.Length - 1; i++) {
-				for (int j = 0; j < Neurons[i + 1].Length; j++) {
-					for (int k = 0; k < Neurons[i].Length; k++) {
-						Neurons[i + 1][j] += Weights[i][j][k] * Neurons[i][k];
-					}
-					Neurons[i + 1][j] = Activation.Func(Neurons[i + 1][j]);
+					Neurons[i][j] = i == 0 ? Activation.Func(input[j]) : 0;
 				}
 			}
 		}

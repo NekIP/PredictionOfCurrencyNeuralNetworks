@@ -46,10 +46,10 @@ namespace Experiment {
 					}
 				}
 				Console.Clear();
-				Console.WriteLine(middleError / (k * 11 * 1000));
+				Console.WriteLine(middleError / nt.Epoch);
 				Print(nt, result);
 				for (var i = 0; i < learn.Length - 1; i++) {
-					var result1 = nt.Run(learn[i]);
+					var result1 = nt.ConvertOutput(nt.Run(learn[i]));
 					Console.WriteLine(result1[0] + "\t" + learn[i + 1][0]);
 				}
 			}
