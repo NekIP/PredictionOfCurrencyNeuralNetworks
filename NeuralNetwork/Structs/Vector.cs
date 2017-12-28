@@ -57,5 +57,9 @@ namespace NeuralNetwork {
 			}
 			return result;
 		}
+
+		public static implicit operator Vector(double[] vector) {
+			return new Vector(vector);
+		}
 	}
 }

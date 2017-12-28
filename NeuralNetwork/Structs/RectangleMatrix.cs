@@ -101,5 +101,9 @@ namespace NeuralNetwork {
 			}
 			return result;
 		}
+
+		public static implicit operator RectangleMatrix(double[][] matrix) {
+			return new RectangleMatrix(matrix);
+		}
 	}
 }
