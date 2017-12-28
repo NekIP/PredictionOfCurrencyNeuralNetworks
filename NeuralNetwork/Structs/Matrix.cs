@@ -2,12 +2,12 @@
 using System.Linq;
 
 namespace NeuralNetwork {
-	public class RectangleMatrix {
+	public class Matrix {
 		public Vector[] Vectors { get; private set; }
 		public int RowCount => Vectors.Length;
 		public int ColumnCount => Vectors.First().Length;
 
-		public RectangleMatrix(double[][] values) {
+		public Matrix(double[][] values) {
 			var сountElementsInFirstVectors = values.First().Length;
 			Vectors = new Vector[values.GetLength(0)];
 			for (var i = 0; i < Vectors.Length; i++) {
@@ -18,7 +18,7 @@ namespace NeuralNetwork {
 			}
 		}
 
-		public RectangleMatrix(int countRow, int countColumn) {
+		public Matrix(int countRow, int countColumn) {
 			Vectors = new Vector[countRow];
 			for (var i = 0; i < Vectors.Length; i++) {
 				Vectors[i] = new Vector(countColumn);
@@ -43,11 +43,11 @@ namespace NeuralNetwork {
 			}
 		}
 
-		public static RectangleMatrix operator *(RectangleMatrix matrix1, RectangleMatrix matrix2) {
+		public static Matrix operator *(Matrix matrix1, Matrix matrix2) {
 			if (matrix1.ColumnCount != matrix2.RowCount) {
 				throw new ArithmeticException("Count column of matrix1 and count row of matrix2 must be equals");
 			}
-			var result = new RectangleMatrix(matrix1.RowCount, matrix1.ColumnCount);
+			var result = new Matrix(matrix1.RowCount, matrix1.ColumnCount);
 			for (int i = 0; i < matrix1.RowCount; i++) {
 				for (int j = 0; j < matrix2.ColumnCount; j++) {
 					for (int k = 0; k < matrix2.RowCount; k++) {
@@ -58,7 +58,7 @@ namespace NeuralNetwork {
 			return result;
 		}
 
-		public static Vector operator *(RectangleMatrix matrix, Vector vector) {
+		public static Vector operator *(Matrix matrix, Vector vector) {
 			if (matrix.ColumnCount != vector.Length) {
 				throw new ArithmeticException("Count column of matrix1 and count row of matrix2 must be equals");
 			}
@@ -71,38 +71,38 @@ namespace NeuralNetwork {
 			return result;
 		}
 
-		public static RectangleMatrix operator -(RectangleMatrix matrix) => Convert(matrix, x => -x);
+		public static Matrix operator -(Matrix matrix) => Convert(matrix, x => -x);
 
 
-		public static RectangleMatrix operator +(RectangleMatrix matrix1, RectangleMatrix matrix2) =>
+		public static Matrix operator +(Matrix matrix1, Matrix matrix2) =>
 			Combine(matrix1, matrix2, (x1, x2) => x1 + x2);
 
-		public static RectangleMatrix operator -(RectangleMatrix matrix1, RectangleMatrix matrix2) =>
+		public static Matrix operator -(Matrix matrix1, Matrix matrix2) =>
 			Combine(matrix1, matrix2, (x1, x2) => x1 - x2);
 
-		public static RectangleMatrix Combine(RectangleMatrix matrix1, RectangleMatrix matrix2,
+		public static Matrix Combine(Matrix matrix1, Matrix matrix2,
 			Func<double, double, double> converter) {
 			if (matrix1.RowCount != matrix2.RowCount || matrix1.ColumnCount != matrix2.ColumnCount) {
 				throw new ArithmeticException("Count row and column of matrix must be equals");
 			}
-			var result = new RectangleMatrix(matrix1.RowCount, matrix1.ColumnCount);
+			var result = new Matrix(matrix1.RowCount, matrix1.ColumnCount);
 			for (var i = 0; i < matrix1.RowCount; i++) {
 				result[i] = Vector.Combine(matrix1[i], matrix2[i], converter);
 			}
 			return result;
 		}
 
-		public static RectangleMatrix Convert(RectangleMatrix matrix,
+		public static Matrix Convert(Matrix matrix,
 			Func<double, double> converter) {
-			var result = new RectangleMatrix(matrix.RowCount, matrix.ColumnCount);
+			var result = new Matrix(matrix.RowCount, matrix.ColumnCount);
 			for (var i = 0; i < matrix.RowCount; i++) {
 				result[i] = Vector.Convert(matrix[i], converter);
 			}
 			return result;
 		}
 
-		public static implicit operator RectangleMatrix(double[][] matrix) {
-			return new RectangleMatrix(matrix);
+		public static implicit operator Matrix(double[][] matrix) {
+			return new Matrix(matrix);
 		}
 	}
 }
