@@ -7,23 +7,18 @@ namespace NeuralNetwork {
 		/// <summary>
 		/// Calculates the output vector of the neural network
 		/// </summary>
-		public abstract double[] Run(double[] input);
+		public abstract Vector Run(Vector input);
 
 		/// <summary>
 		/// Neural network is train
 		/// </summary>
-		public abstract NeuralNetworkLearnResult Learn(double[] input, double[] ideal);
+		public abstract NeuralNetworkLearnResult Learn(Vector input, Vector ideal);
 
 		/// <summary>
 		/// Converts the output values of a neural network using the inverse activation function
 		/// </summary>
-		public virtual double[] ConvertOutput(double[] output) {
-			var result = new double[output.Length];
-			for (var i = 0; i < output.Length; i++) {
-				result[i] = Activation.InverseFunc(output[i]);
-			}
-			return result;
-		}
+		public virtual Vector ConvertOutput(Vector output) => Vector.Convert(output, Activation.InverseFunc);
+
 
 		protected void CheckConditionOnException<TException>(bool conditionFunc, string message) 
 			where TException: Exception, new() {

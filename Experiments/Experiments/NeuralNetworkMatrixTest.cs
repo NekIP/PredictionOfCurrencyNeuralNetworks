@@ -15,9 +15,9 @@ namespace Experiment
                 new MultilayerPerceptronParameters(),
                 new SigmoidActivation(),
                 2, 3, 2);
-            Helper.PrintMatrix(nt.Neurons);
+            //Helper.PrintMatrix((double[][])nt.Neurons);
             Console.WriteLine("Weights: ");
-			Helper.PrintMatrix(nt.Weights);
+			//Helper.PrintMatrix(nt.Weights);
         }
     }
 }

@@ -3,17 +3,17 @@ using System.Linq;
 
 namespace NeuralNetwork {
 	public class MultilayerPerceptron : NeuralNetwork {
-		public double[][] Neurons { get; private set; }
+		public Vector[] Neurons { get; private set; }
 
 		/// <summary>
 		/// Weigths for i(layer), for link from j(neuron in (i + 1) layer) to k(neuronin i layer)
 		/// </summary>
-		public double[][][] Weights { get; set; }
+		public Matrix[] Weights { get; set; }
 
 		/// <summary>
 		/// Defference weigths for i(layer), for link from j(neuron in (i + 1) layer) to k(neuronin i layer)
 		/// </summary>
-		public double[][][] DefferenceWeights { get; set; }
+		public Matrix[] DefferenceWeights { get; set; }
 
 		/// <summary>
 		/// Number of iterations of neural network training
@@ -36,7 +36,7 @@ namespace NeuralNetwork {
 		/// <summary>
 		/// Calculates the output vector of the neural network
 		/// </summary>
-		public override double[] Run(double[] input) {
+		public override Vector Run(Vector input) {
 			InitializeNeuronsWithInput(input);
 			for (var i = 0; i < Neurons.Length - 1; i++) {
 				for (int j = 0; j < Neurons[i + 1].Length; j++) {
@@ -53,11 +53,11 @@ namespace NeuralNetwork {
 		/// Perceptron is trained with the help of a teacher using the method of back propagation of an error using deltas
 		/// </summary>
 		/// <param name="ideal">The correct output value</param>
-		public override NeuralNetworkLearnResult Learn(double[] input, double[] ideal) {
+		public override NeuralNetworkLearnResult Learn(Vector input, Vector ideal) {
 			CheckConditionOnException(Neurons.Last().Length != ideal.Length,
 				"The length of the verification vector and the number of neurons in the output layer must be equals");
 			var actual = Run(input);
-			var error = new double[actual.Length];
+			var error = new Vector(actual.Length);
 			for (var i = 0; i < ideal.Length; i++) {
 				ideal[i] = Activation.Func(ideal[i]);
 				error[i] = GetError(actual[i], ideal[i]);
@@ -72,34 +72,27 @@ namespace NeuralNetwork {
 
 		private void InitializeNeurons(int[] lengthsOfEachLayerNeurons) {
 			var countLayersOfNeurons = lengthsOfEachLayerNeurons.Length;
-			Neurons = new double[countLayersOfNeurons][];
+			Neurons = new Vector[countLayersOfNeurons];
 			for (var i = 0; i < countLayersOfNeurons; i++) {
-				Neurons[i] = new double[lengthsOfEachLayerNeurons[i]];
+				Neurons[i] = new Vector(lengthsOfEachLayerNeurons[i]);
 			}
 		}
 
 		private void InitializeWeigthsAndDefference(int[] lengthsOfEachLayer) {
 			var random = new Random();
 			var layerCountOfWeights = lengthsOfEachLayer.Length - 1;
-			Weights = new double[layerCountOfWeights][][];
-			DefferenceWeights = new double[layerCountOfWeights][][];
+			Weights = new Matrix[layerCountOfWeights];
+			DefferenceWeights = new Matrix[layerCountOfWeights];
 			for (var i = 0; i < layerCountOfWeights; i++) {
 				var neuronsCountInNextLayer = lengthsOfEachLayer[i + 1];
-				Weights[i] = new double[neuronsCountInNextLayer][];
-				DefferenceWeights[i] = new double[neuronsCountInNextLayer][];
-				for (var j = 0; j < neuronsCountInNextLayer; j++) {
-					var neuronsCountInCurrentLayer = lengthsOfEachLayer[i];
-					Weights[i][j] = new double[neuronsCountInCurrentLayer];
-					DefferenceWeights[i][j] = new double[neuronsCountInCurrentLayer];
-					for (var k = 0; k < neuronsCountInCurrentLayer; k++) {
-						Weights[i][j][k] = random.NextDouble();
-						DefferenceWeights[i][j][k] = 0;
-					}
-				}
+				var neuronsCountInCurrentLayer = lengthsOfEachLayer[i];
+				Weights[i] = new Matrix(neuronsCountInNextLayer, neuronsCountInCurrentLayer, 
+					() => random.NextDouble());
+				DefferenceWeights[i] = new Matrix(neuronsCountInNextLayer, neuronsCountInCurrentLayer);
 			}
 		}
 
-		private void InitializeNeuronsWithInput(double[] input) {
+		private void InitializeNeuronsWithInput(Vector input) {
 			CheckConditionOnException(input.Length != Neurons.First().Length,
 				"The length of the input vector and the number of neurons in the first layer must be equal");
 			for (var i = 0; i < Neurons.Length; i++) {
@@ -109,10 +102,10 @@ namespace NeuralNetwork {
 			}
 		}
 
-		private void LearnWithBackPropagationError(double[] actual, double[] ideal) {
+		private void LearnWithBackPropagationError(Vector actual, Vector ideal) {
 			var deltasOnPreviouseLayer = GetDelta0(actual, ideal);
 			for (var i = Neurons.Length - 2; i >= 0; i--) {
-				var deltasOnCurrentLayer = new double[Neurons[i].Length];
+				var deltasOnCurrentLayer = new Vector(Neurons[i].Length);
 				for (var j = 0; j < Neurons[i + 1].Length; j++) {
 					for (var k = 0; k < Neurons[i].Length; k++) {
 						var gradientForCurrentWeight = GetGradient(deltasOnPreviouseLayer[j], Neurons[i][k]);
@@ -125,13 +118,8 @@ namespace NeuralNetwork {
 			}
 		}
 
-		private double[] GetDelta0(double[] actual, double[] ideal) {
-			var result = new double[actual.Length];
-			for (var i = 0; i < actual.Length; i++) {
-				result[i] = (ideal[i] - actual[i]) * Activation.DeriveFunc(actual[i]);
-			}
-			return result;
-		}
+		private Vector GetDelta0(Vector actual, Vector ideal) =>
+			Vector.Combine(actual, ideal, (actualItem, idealItem) => (idealItem - actualItem) * Activation.DeriveFunc(actualItem));
 
 		private double GetChunkOfDeltaH(double weightSynapse, double neuronInBeginSynapse, double deltaInEndSynapse) =>
 			weightSynapse * deltaInEndSynapse * Activation.DeriveFunc(neuronInBeginSynapse);
