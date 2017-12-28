@@ -60,12 +60,8 @@ namespace NeuralNetwork {
 			return result;
 		}
 
-		public static implicit operator Vector(double[] vector) {
-			return new Vector(vector);
-		}
+		public static implicit operator Vector(double[] vector) => new Vector(vector);
 
-		public static implicit operator double[](Vector vector) {
-			return vector.Values;
-		}
+		public static implicit operator double[](Vector vector) => vector.Values;
 	}
 }

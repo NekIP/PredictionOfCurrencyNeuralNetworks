@@ -101,8 +101,8 @@ namespace NeuralNetwork {
 			return result;
 		}
 
-		public static implicit operator Matrix(double[][] matrix) {
-			return new Matrix(matrix);
-		}
+		public static implicit operator Matrix(double[][] matrix) => new Matrix(matrix);
+
+		public static implicit operator Vector[](Matrix matrix) => matrix.Vectors;
 	}
 }
