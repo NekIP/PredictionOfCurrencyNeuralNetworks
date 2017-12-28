@@ -27,6 +27,7 @@ namespace NeuralNetwork {
 			params int[] lengthsOfEachLayer) {
 			CheckConditionOnException(parameters is null, "Neural network parameters is null");
 			CheckConditionOnException(activation is null, "Activation function is null");
+			CheckConditionOnException(lengthsOfEachLayer.Length < 2, "The number of elements of lengths of vectors of neurons should be more than 1");
 			InitializeNeurons(lengthsOfEachLayer);
 			InitializeWeigthsAndDefference(lengthsOfEachLayer);
 			Parameters = parameters;
