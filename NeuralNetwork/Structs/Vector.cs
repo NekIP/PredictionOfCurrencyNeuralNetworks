@@ -9,8 +9,13 @@ namespace NeuralNetwork {
 			Values = values;
 		}
 
-		public Vector(int length) {
+		public Vector(int length, Func<double> initializer = null) {
 			Values = new double[length];
+			if (!(initializer is null)) {
+				for (var i = 0; i < Values.Length; i++) {
+					Values[i] = initializer();
+				}
+			}
 		}
 
 		public double this[int index] {

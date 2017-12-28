@@ -18,10 +18,10 @@ namespace NeuralNetwork {
 			}
 		}
 
-		public Matrix(int countRow, int countColumn) {
+		public Matrix(int countRow, int countColumn, Func<double> initializer = null) {
 			Vectors = new Vector[countRow];
 			for (var i = 0; i < Vectors.Length; i++) {
-				Vectors[i] = new Vector(countColumn);
+				Vectors[i] = new Vector(countColumn, initializer);
 			}
 		}
 
