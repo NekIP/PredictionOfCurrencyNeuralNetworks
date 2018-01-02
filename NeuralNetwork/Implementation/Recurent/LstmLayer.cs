@@ -15,6 +15,12 @@ namespace NeuralNetwork {
 			InitMatrixes(lengthOfInput, lengthOfOutput);
 		}
 
+		public Vector Run(Vector input) {
+			Input = Vector.Convert(input, Activation.Func);
+			Output = Vector.Convert(Weights * Input + Bias, Activation.Func);
+			return Output;
+		}
+
 		private void InitVectors(int lengthOfInput, int lengthOfOutput) {
 			Input = new Vector(lengthOfInput);
 			Output = new Vector(lengthOfOutput);
