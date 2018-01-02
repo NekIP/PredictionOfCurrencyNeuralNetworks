@@ -28,6 +28,14 @@ namespace NeuralNetwork {
 			}
 		}
 
+		public override string ToString() {
+			var result = "[";
+			for (var i = 0; i < Values.Length - 1; i++) {
+				result += Values[i] + ", ";
+			}
+			return result + Values.Last() + "]";
+		}
+
 		public static Vector operator +(Vector vector1, Vector vector2) =>
 			Combine(vector1, vector2, (x1, x2) => x1 + x2);
 
