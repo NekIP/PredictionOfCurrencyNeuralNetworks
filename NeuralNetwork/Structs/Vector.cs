@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace NeuralNetwork {
 	public class Vector {
@@ -38,6 +39,17 @@ namespace NeuralNetwork {
 
 		public static Vector operator -(Vector item) => 
 			Convert(item, x => -x);
+
+		public static Vector Union(Vector vector1, Vector vector2) {
+			var resultLength = vector1.Length + vector2.Length;
+			var result = new Vector(resultLength);
+			for (var i = 0; i < resultLength; i++) {
+				result[i] = i < vector1.Length 
+					? vector1[i] 
+					: vector2[i - vector1.Length];
+			}
+			return result;
+		}
 
 		public static Vector Combine(Vector vector1, Vector vector2, 
 			Func<double, double, double> converter) {
