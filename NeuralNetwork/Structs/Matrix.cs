@@ -43,6 +43,14 @@ namespace NeuralNetwork {
 			}
 		}
 
+		public override string ToString() {
+			var result = "[";
+			for (var i = 0; i < Vectors.Length - 1; i++) {
+				result += Vectors[i] + ", ";
+			}
+			return result + Vectors.Last() + "]";
+		}
+
 		public static Matrix operator *(Matrix matrix1, Matrix matrix2) {
 			if (matrix1.ColumnCount != matrix2.RowCount) {
 				throw new ArithmeticException("Count column of matrix1 and count row of matrix2 must be equals");
@@ -72,7 +80,6 @@ namespace NeuralNetwork {
 		}
 
 		public static Matrix operator -(Matrix matrix) => Convert(matrix, x => -x);
-
 
 		public static Matrix operator +(Matrix matrix1, Matrix matrix2) =>
 			Combine(matrix1, matrix2, (x1, x2) => x1 + x2);
