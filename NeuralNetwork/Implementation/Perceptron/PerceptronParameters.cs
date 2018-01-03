@@ -1,5 +1,5 @@
 ﻿namespace NeuralNetwork {
-	public class MultilayerPerceptronParameters {
+	public class PerceptronParameters {
 		public double LearningSpeed { get; set; }
 		public double Moment { get; set; }
 	}

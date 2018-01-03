@@ -2,7 +2,7 @@
 using System.Linq;
 
 namespace NeuralNetwork {
-	public class MultilayerPerceptron : NeuralNetwork {
+	public class MultilayerPerceptron : Perceptron {
 		public Vector[] Neurons { get; private set; }
 
 		/// <summary>
@@ -15,19 +15,10 @@ namespace NeuralNetwork {
 		/// </summary>
 		public Matrix[] DefferenceWeights { get; set; }
 
-		/// <summary>
-		/// Number of iterations of neural network training
-		/// </summary>
-		public int Epoch { get; private set; }
-
-		public MultilayerPerceptronParameters Parameters { get; set; }
-
-		public MultilayerPerceptron(MultilayerPerceptronParameters parameters,
+		public MultilayerPerceptron(PerceptronParameters parameters,
 			Activation activation,
 			params int[] lengthsOfEachLayer) {
-			CheckConditionOnException(parameters is null, "Neural network parameters is null");
-			CheckConditionOnException(activation is null, "Activation function is null");
-			CheckConditionOnException(lengthsOfEachLayer.Length < 2, "The number of elements of lengths of vectors of neurons should be more than 1");
+			CheckInitializationParameters(parameters, activation, lengthsOfEachLayer);
 			InitializeNeurons(lengthsOfEachLayer);
 			InitializeWeigthsAndDefference(lengthsOfEachLayer);
 			Parameters = parameters;
@@ -55,8 +46,7 @@ namespace NeuralNetwork {
 		/// </summary>
 		/// <param name="ideal">The correct output value</param>
 		public override NeuralNetworkLearnResult Learn(Vector input, Vector ideal) {
-			CheckConditionOnException(Neurons.Last().Length != ideal.Length,
-				"The length of the verification vector and the number of neurons in the output layer must be equals");
+			CheckIdealVector(ideal, Neurons.Last());
 			var actual = Run(input);
 			var error = new Vector(actual.Length);
 			for (var i = 0; i < ideal.Length; i++) {
@@ -94,8 +84,7 @@ namespace NeuralNetwork {
 		}
 
 		private void InitializeNeuronsWithInput(Vector input) {
-			CheckConditionOnException(input.Length != Neurons.First().Length,
-				"The length of the input vector and the number of neurons in the first layer must be equal");
+			CheckInputVector(input, Neurons.First());
 			for (var i = 0; i < Neurons.Length; i++) {
 				for (var j = 0; j < Neurons[i].Length; j++) {
 					Neurons[i][j] = i == 0 ? Activation.Func(input[j]) : 0;
@@ -118,21 +107,5 @@ namespace NeuralNetwork {
 				deltasOnPreviouseLayer = deltasOnCurrentLayer;
 			}
 		}
-
-		private Vector GetDelta0(Vector actual, Vector ideal) =>
-			Vector.Combine(actual, ideal, (actualItem, idealItem) => (idealItem - actualItem) * Activation.DeriveFunc(actualItem));
-
-		private double GetChunkOfDeltaH(double weightSynapse, double neuronInBeginSynapse, double deltaInEndSynapse) =>
-			weightSynapse * deltaInEndSynapse * Activation.DeriveFunc(neuronInBeginSynapse);
-
-		private double GetError(double actual, double ideal) => Math.Pow(ideal - actual, 2);
-
-		private double GetDefferenceWeight(double previousDeltaWeight, double gradient) =>
-			Parameters.LearningSpeed * gradient + Parameters.Moment * previousDeltaWeight;
-
-		private double GetGradient(double neuronInBeginSynapse, double deltaInEndSynapse) =>
-			neuronInBeginSynapse * deltaInEndSynapse;
-
-		private void SetNextEpoch() => Epoch++;
 	}
 }

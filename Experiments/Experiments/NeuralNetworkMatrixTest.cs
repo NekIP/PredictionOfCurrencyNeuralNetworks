@@ -12,7 +12,7 @@ namespace Experiment
         public override void Run()
         {
             var nt = new MultilayerPerceptron(
-                new MultilayerPerceptronParameters(),
+                new PerceptronParameters(),
                 new SigmoidActivation(),
                 2, 3, 2);
             //Helper.PrintMatrix((double[][])nt.Neurons);

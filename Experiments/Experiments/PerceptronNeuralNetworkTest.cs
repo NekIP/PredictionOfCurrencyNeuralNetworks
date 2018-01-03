@@ -1,13 +1,14 @@
 ﻿using NeuralNetwork;
 using System;
+using System.Diagnostics;
 
 namespace Experiment {
 	public class PerceptronNeuralNetworkTest : Experiment {
 		public override void Run() {
 			var nt = new MultilayerPerceptron(
-				new MultilayerPerceptronParameters { LearningSpeed = 0.7, Moment = 0.3 },
+				new PerceptronParameters { LearningSpeed = 0.7, Moment = 0.3 },
 				new SigmoidActivation(4),
-				2, 3, 3, 1);
+				2, 2, 1);
 			//Helper.PrintMatrix(nt.Neurons);
 			/*nt.Weights = new double[2][][];
 			nt.Weights[0] = new double[3][] {
@@ -38,6 +39,8 @@ namespace Experiment {
 			var middleError = 0.0;
 			for (var k = 1; k < 10000000; k++) {
 				NeuralNetworkLearnResult result = null;
+				var st = new Stopwatch();
+				st.Start();
 				for (var j = 0; j < 1000; j++) {
 					for (var i = 0; i < learn.Length - 1; i++) {
 						result = nt.Learn(learn[i], new double[] { learn[i + 1][0] });
@@ -45,11 +48,14 @@ namespace Experiment {
 						//Console.WriteLine(result.Error[0] + "_");
 					}
 				}
+				st.Stop();
 				Console.Clear();
+				Console.WriteLine(st.Elapsed);
 				Console.WriteLine(middleError / nt.Epoch);
 				Print(nt, result);
 				for (var i = 0; i < learn.Length - 1; i++) {
-					var result1 = nt.ConvertOutput(nt.Run(learn[i]));
+					var res = nt.Run(learn[i]);
+					var result1 = nt.ConvertOutput(res);
 					Console.WriteLine(result1[0] + "\t" + learn[i + 1][0]);
 				}
 			}

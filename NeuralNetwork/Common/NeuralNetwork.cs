@@ -2,6 +2,11 @@
 
 namespace NeuralNetwork {
 	public abstract class NeuralNetwork {
+		/// <summary>
+		/// Number of iterations of neural network training
+		/// </summary>
+		public int Epoch { get; private set; }
+
 		public Activation Activation { get; protected set; }
 
 		/// <summary>
@@ -19,6 +24,7 @@ namespace NeuralNetwork {
 		/// </summary>
 		public virtual Vector ConvertOutput(Vector output) => Vector.Convert(output, Activation.InverseFunc);
 
+		protected void SetNextEpoch() => Epoch++;
 
 		protected void CheckConditionOnException<TException>(bool conditionFunc, string message) 
 			where TException: Exception, new() {
