@@ -5,8 +5,8 @@ namespace NeuralNetwork {
 		public Matrix Weights { get; set; }
 		public Matrix DefferenceWeights { get; set; }
 		public Vector Bias { get; set; }
-		public Vector Input { get; set; }
-		public Vector Output { get; set; }
+		public Vector InputNeurons { get; set; }
+		public Vector OutputNeurons { get; set; }
 
 		public SinglelayerPerceptron(PerceptronParameters parameters,
 			Activation activation,
@@ -18,14 +18,14 @@ namespace NeuralNetwork {
 		}
 
 		public override Vector Run(Vector input) {
-			CheckInputVector(input, Input);
-			Input = Vector.Convert(input, Activation.Func);
-			Output = Vector.Convert(Weights * Input + Bias, Activation.Func);
-			return Output;
+			CheckInputVector(input, InputNeurons);
+			InputNeurons = Vector.Convert(input, Activation.Func);
+			OutputNeurons = Vector.Convert(Weights * InputNeurons + Bias, Activation.Func);
+			return OutputNeurons;
 		}
 
 		public override NeuralNetworkLearnResult Learn(Vector input, Vector ideal) {
-			CheckIdealVector(ideal, Output);
+			CheckIdealVector(ideal, OutputNeurons);
 			var actual = Run(input);
 			var error = new Vector(actual.Length);
 			for (var i = 0; i < ideal.Length; i++) {
@@ -41,8 +41,8 @@ namespace NeuralNetwork {
 		}
 
 		private void InitVectors(int lengthOfInput, int lengthOfOutput) {
-			Input = new Vector(lengthOfInput);
-			Output = new Vector(lengthOfOutput);
+			InputNeurons = new Vector(lengthOfInput);
+			OutputNeurons = new Vector(lengthOfOutput);
 			Bias = new Vector(lengthOfOutput);
 		}
 
@@ -54,9 +54,9 @@ namespace NeuralNetwork {
 
 		private void LearnWithBackPropagationError(Vector actual, Vector ideal) {
 			var deltasOnPreviouseLayer = GetDelta0(actual, ideal);
-			for (var j = 0; j < Output.Length; j++) {
-				for (var k = 0; k < Input.Length; k++) {
-					var gradientForCurrentWeight = GetGradient(deltasOnPreviouseLayer[j], Input[k]);
+			for (var j = 0; j < OutputNeurons.Length; j++) {
+				for (var k = 0; k < InputNeurons.Length; k++) {
+					var gradientForCurrentWeight = GetGradient(deltasOnPreviouseLayer[j], InputNeurons[k]);
 					DefferenceWeights[j][k] = GetDefferenceWeight(DefferenceWeights[j][k], gradientForCurrentWeight);
 					Weights[j][k] += DefferenceWeights[j][k];
 				}
