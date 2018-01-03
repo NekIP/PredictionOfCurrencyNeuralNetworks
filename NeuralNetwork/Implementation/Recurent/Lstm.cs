@@ -1,9 +1,6 @@
 ﻿namespace NeuralNetwork {
 	public class Lstm : NeuralNetwork {
-		public SinglelayerPerceptron ForgetGateLayer { get; set; }
-		public SinglelayerPerceptron InputLayerGate { get; set; }
-		public SinglelayerPerceptron TanhLayer { get; set; }
-		public SinglelayerPerceptron OutputLayer { get; set; }
+		
 
 		public Lstm(int lengthOfInputLayer, int LengthOutputLayer) {
 
