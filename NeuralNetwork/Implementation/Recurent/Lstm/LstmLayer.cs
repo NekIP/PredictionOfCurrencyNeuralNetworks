@@ -5,31 +5,31 @@
 		public SinglelayerPerceptron TanhLayer { get; set; }
 		public SinglelayerPerceptron OutputLayer { get; set; }
 
-		public LstmLayer(PerceptronParameters perceptronParameters, 
+		public LstmLayer(RecurentParameters parameters, 
 			int lengthOfInput, int lengthOfOutput) {
-			InitializeNeuralNetworkLayers(perceptronParameters, lengthOfInput, lengthOfOutput);
+			InitializeNeuralNetworkLayers(parameters, lengthOfInput, lengthOfOutput);
 		}
 
-		private void InitializeNeuralNetworkLayers(PerceptronParameters perceptronParameters,
+		private void InitializeNeuralNetworkLayers(RecurentParameters parameters,
 			int lengthOfInput, int lengthOfOutput) {
 			ForgetGateLayer = new SinglelayerPerceptron(
-				perceptronParameters,
-				new SigmoidActivation(),
+				parameters.PerceptronsParameters,
+				new SigmoidActivation(parameters.ActivationCoefficient),
 				lengthOfInput + lengthOfOutput,
 				lengthOfOutput);
 			InputLayerGate = new SinglelayerPerceptron(
-				perceptronParameters,
-				new SigmoidActivation(),
+				parameters.PerceptronsParameters,
+				new SigmoidActivation(parameters.ActivationCoefficient),
 				lengthOfInput + lengthOfOutput,
 				lengthOfOutput);
 			TanhLayer = new SinglelayerPerceptron(
-				perceptronParameters,
-				new HyperbolicActivation(),
+				parameters.PerceptronsParameters,
+				new HyperbolicActivation(parameters.ActivationCoefficient),
 				lengthOfInput + lengthOfOutput,
 				lengthOfOutput);
 			OutputLayer = new SinglelayerPerceptron(
-				perceptronParameters,
-				new SigmoidActivation(),
+				parameters.PerceptronsParameters,
+				new SigmoidActivation(parameters.ActivationCoefficient),
 				lengthOfInput + lengthOfOutput,
 				lengthOfOutput);
 		}
