@@ -45,7 +45,7 @@ namespace NeuralNetwork {
 		/// Perceptron is trained with the help of a teacher using the method of back propagation of an error using deltas
 		/// </summary>
 		/// <param name="ideal">The correct output value</param>
-		public override NeuralNetworkLearnResult Learn(Vector input, Vector ideal) {
+		public override (Vector outputValue, Vector error) Learn(Vector input, Vector ideal) {
 			CheckIdealVector(ideal, Neurons.Last());
 			var actual = Run(input);
 			var error = new Vector(actual.Length);
@@ -55,10 +55,7 @@ namespace NeuralNetwork {
 			}
 			LearnWithBackPropagationError(actual, ideal);
 			SetNextEpoch();
-			return new NeuralNetworkLearnResult {
-				Value = actual,
-				Error = error
-			};
+			return (actual, error);
 		}
 
 		private void InitializeNeurons(int[] lengthsOfEachLayerNeurons) {
@@ -87,7 +84,7 @@ namespace NeuralNetwork {
 			CheckInputVector(input, Neurons.First());
 			for (var i = 0; i < Neurons.Length; i++) {
 				for (var j = 0; j < Neurons[i].Length; j++) {
-					Neurons[i][j] = i == 0 ? Activation.Func(input[j]) : 0;
+					Neurons[i][j] = i == 0 ? input[j] : 0;
 				}
 			}
 		}

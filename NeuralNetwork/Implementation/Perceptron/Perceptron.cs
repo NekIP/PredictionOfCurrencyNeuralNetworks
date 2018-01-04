@@ -1,8 +1,12 @@
 ﻿using System;
 
 namespace NeuralNetwork {
-	public abstract class Perceptron : NeuralNetwork{
+	public abstract class Perceptron : NeuralNetwork, OneToOneWithTeacher {
 		public PerceptronParameters Parameters { get; set; }
+
+		public abstract Vector Run(Vector input);
+
+		public abstract (Vector outputValue, Vector error) Learn(Vector input, Vector ideal);
 
 		protected void CheckInitializationParameters(PerceptronParameters parameters, 
 			Activation activation,

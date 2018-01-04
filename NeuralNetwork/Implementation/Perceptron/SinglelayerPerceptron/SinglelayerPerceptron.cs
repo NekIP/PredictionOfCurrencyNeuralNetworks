@@ -24,7 +24,7 @@ namespace NeuralNetwork {
 			return OutputNeurons;
 		}
 
-		public override NeuralNetworkLearnResult Learn(Vector input, Vector ideal) {
+		public override (Vector outputValue, Vector error) Learn(Vector input, Vector ideal) {
 			CheckIdealVector(ideal, OutputNeurons);
 			var actual = Run(input);
 			var error = new Vector(actual.Length);
@@ -34,10 +34,7 @@ namespace NeuralNetwork {
 			}
 			LearnWithBackPropagationError(actual, ideal);
 			SetNextEpoch();
-			return new NeuralNetworkLearnResult {
-				Value = actual,
-				Error = error
-			};
+			return (actual, error);
 		}
 
 		private void InitVectors(int lengthOfInput, int lengthOfOutput) {

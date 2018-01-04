@@ -12,12 +12,22 @@ namespace NeuralNetwork {
 		/// <summary>
 		/// Calculates the output vector of the neural network
 		/// </summary>
-		public abstract Vector Run(Vector input);
+		//public abstract Vector Run(Vector input);
 
 		/// <summary>
-		/// Neural network is train
+		/// Calculates the output vector of the neural network oriented on a sequence
 		/// </summary>
-		public abstract NeuralNetworkLearnResult Learn(Vector input, Vector ideal);
+		//public abstract Vector Run(Vector[] input);
+
+		/// <summary>
+		/// Train a neural network
+		/// </summary>
+		//public abstract NeuralNetworkLearnResult Learn(Vector input, Vector ideal);
+
+		/// <summary>
+		/// Neural network is train oriented on a sequence
+		/// </summary>
+		//public abstract NeuralNetworkLearnResult Learn(Vector[] input, Vector ideal);
 
 		/// <summary>
 		/// Converts the output values of a neural network using the inverse activation function

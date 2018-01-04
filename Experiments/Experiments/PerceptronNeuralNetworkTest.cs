@@ -38,13 +38,15 @@ namespace Experiment {
 			};
 			var middleError = 0.0;
 			for (var k = 1; k < 10000000; k++) {
-				NeuralNetworkLearnResult result = null;
+				Vector result = null;
+				Vector error = null;
 				var st = new Stopwatch();
 				st.Start();
 				for (var j = 0; j < 1000; j++) {
 					for (var i = 0; i < learn.Length - 1; i++) {
-						result = nt.Learn(learn[i], new double[] { learn[i + 1][0] });
-						middleError += result.Error[0];
+						
+						(result, error) = nt.Learn(learn[i], new double[] { learn[i + 1][0] });
+						middleError += error[0];
 						//Console.WriteLine(result.Error[0] + "_");
 					}
 				}
@@ -52,7 +54,7 @@ namespace Experiment {
 				Console.Clear();
 				Console.WriteLine(st.Elapsed);
 				Console.WriteLine(middleError / nt.Epoch);
-				Print(nt, result);
+				Console.WriteLine(error[0]);
 				for (var i = 0; i < learn.Length - 1; i++) {
 					var res = nt.Run(learn[i]);
 					var result1 = nt.ConvertOutput(res);
@@ -62,11 +64,6 @@ namespace Experiment {
 
 			middleError = middleError / (10000 * 11);
 			Console.WriteLine(middleError + "_");
-		}
-
-		public void Print(MultilayerPerceptron nt, NeuralNetworkLearnResult result) {
-			Console.WriteLine(result.Error[0]);
-			//Helper.PrintMatrix(nt.Weights);
 		}
 	}
 }
