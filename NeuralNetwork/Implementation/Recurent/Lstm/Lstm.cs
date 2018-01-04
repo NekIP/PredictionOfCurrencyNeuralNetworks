@@ -1,6 +1,9 @@
 ﻿namespace NeuralNetwork {
 	public class Lstm : Recurent {
-		public Lstm(int lengthOfInputLayer, int LengthOutputLayer) {
+		public LstmLayer[] Layers { get; set; }
+
+		public Lstm(int lengthOfInputSequence, int lengthOfInputVectorInEachLayer, 
+			int lengthOfOutputSequence, int lengthOfOutputVectorInEachLayer) {
 
 		}
 
