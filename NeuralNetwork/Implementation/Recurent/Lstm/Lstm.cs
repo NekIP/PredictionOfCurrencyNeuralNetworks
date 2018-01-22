@@ -44,7 +44,6 @@ namespace NeuralNetwork {
 				var layer = SequenceLayersLstm[ind];
 				errors[ind] = (ideals[ind] - actuals[ind]) ^ 2;*/
 
-				var actual = actuals[i];
 				//var ind = SequenceLayersLstm.Count - i - 1;
 				var layer = SequenceLayersLstm[i];
 				errors[i] = (ideals[i] - actuals[i]) ^ 2;
@@ -77,7 +76,7 @@ namespace NeuralNetwork {
 				diffInputConcataneted += GatesForLayers.OutputLayer.GetTransposed() * diffOutputGateInput;
 				diffInputConcataneted += GatesForLayers.TanhLayer.GetTransposed() * diffTanhLayerInput;
 
-				diffOutputFromNext = diffInputConcataneted.Section(-Parameters.LengthOfOutput);
+				diffOutputFromNext = diffInputConcataneted.Section(Parameters.LengthOfInput);
 				diffForgetFromNext = diffOutput * layer.Forget;
 			}
 
@@ -112,7 +111,7 @@ namespace NeuralNetwork {
 				layer.OutputLayerGateResultO = Sigmoid.Func(gates.OutputLayer * layer.InputConcatenated + gates.BiasOutputLayer);
 				layer.Forget = layer.ForgetFromPreviousLayer * layer.ForgetGateResultF +
 					layer.TanhLayerGateResultG * layer.InputLayerGateResultI;
-				layer.Output = Tanh.Func(layer.Forget) *  layer.OutputFromPreviousLayer;
+				layer.Output = Tanh.Func(layer.Forget) *  layer.OutputLayerGateResultO;
 				if (i < inputs.Length - 1) {
 					SequenceLayersLstm.Add(layer.CopyOnNext());
 				}
@@ -120,9 +119,9 @@ namespace NeuralNetwork {
 			// под вопросом нужно ли тянуть все эти запоминающие вектора и далее
 			BaseLayerLstm = SequenceLayersLstm.Last().Copy();
 			var result = new Vector[Parameters.LengthOfOutputSequence];
-			for (var i = SequenceLayersLstm.Count - 1; 
-				i >= SequenceLayersLstm.Count - Parameters.LengthOfOutputSequence; i--) {
-				result[SequenceLayersLstm.Count - i - 1] = SequenceLayersLstm[i].Output;
+			var length = SequenceLayersLstm.Count - Parameters.LengthOfOutputSequence;
+			for (var i = SequenceLayersLstm.Count - 1; i >= length; i--) {
+				result[i - length] = SequenceLayersLstm[i].Output;
 			}
 			return result;
 		}
