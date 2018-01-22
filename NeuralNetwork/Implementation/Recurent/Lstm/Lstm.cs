@@ -1,35 +1,134 @@
-﻿namespace NeuralNetwork {
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace NeuralNetwork {
 	public class Lstm : Recurent {
-		public int LengthOfOutputSequence {
-			get {
-				return PLengthOfOutputSequence;
-			}
-			set {
-				CheckConditionOnException(value > Layers.Length, 
-					"The length of the output sequence can not exceed the length of the input");
-				PLengthOfOutputSequence = value;
-			}
+		public RecurentParameters Parameters { get; set; }
+		public List<LstmLayer> SequenceLayersLstm { get; set; }
+		public LstmGates GatesForLayers { get; set; }
+		public LstmLayer BaseLayerLstm { get; set; }
+
+		private Activation Sigmoid;
+		private Activation Tanh;
+
+		/// <summary>
+		/// Initialize a lstm recurent neural network
+		/// </summary>
+		/// <param name="lengthOfOutputSequence"></param>
+		/// <param name="lengthsOfEachLayer">
+		///		The lengths of the vectors on each of the layers. 
+		///		The first number is the length of the input vector, and the last number is the length of the output vector
+		/// </param>
+		public Lstm(RecurentParameters parameters) {
+			CheckConditionOnException(parameters.LengthOfOutputSequence < 1, "Length of output sequence must be greater than 0");
+			/*CheckConditionOnException(lengthsOfEachLayer.Length < 2, 
+				"lengthsOfEachLayer.Length should be greater than 2. " +
+				"Because the first number is the length of the input vector, " +
+				"and the last number is the length of the output vector");*/
+			Parameters = parameters;
+			InitializeElementOfLstmAndGates(parameters.LengthOfInput, parameters.LengthOfOutput);
+			Sigmoid = new SigmoidActivation(parameters.ActivationCoefficient);
+			Tanh = new HyperbolicActivation(parameters.ActivationCoefficient);
 		}
 
-		public LstmLayer[] Layers { get; set; }
+		// пока количество выходов и количество входов должно совпадать
+		public override (Vector[] outputValues, Vector[] errors) Learn(Vector[] inputs, Vector[] ideals) {
+			var actuals = Run(inputs);
+			var errors = new Vector[actuals.Length];
+			//var diffOutputFromNext = 2 * (actuals.Last() - ideals.Last());
+			var diffOutputFromNext = new Vector(Parameters.LengthOfOutput);
+			var diffForgetFromNext = new Vector(Parameters.LengthOfOutput);
+			for (var i = SequenceLayersLstm.Count - 1; i >= SequenceLayersLstm.Count - actuals.Length/*типа 0*/; i--) {
+				/*var actual = actuals[i];
+				var ind = SequenceLayersLstm.Count - i - 1;
+				var layer = SequenceLayersLstm[ind];
+				errors[ind] = (ideals[ind] - actuals[ind]) ^ 2;*/
 
-		private int PLengthOfOutputSequence = 1;
+				var actual = actuals[i];
+				//var ind = SequenceLayersLstm.Count - i - 1;
+				var layer = SequenceLayersLstm[i];
+				errors[i] = (ideals[i] - actuals[i]) ^ 2;
+				diffOutputFromNext += 2 * (actuals[i] - ideals[i]);
 
-		public Lstm(RecurentParameters parameters, int lengthOfInputSequence, int lengthOfInputVectorInEachLayer, 
-			int lengthOfOutputSequence, int lengthOfOutputVectorInEachLayer) {
-			Layers = new LstmLayer[lengthOfInputSequence];
-			for (var i = 0; i < Layers.Length; i++) {
-				Layers[i] = new LstmLayer(parameters, lengthOfInputVectorInEachLayer, lengthOfOutputVectorInEachLayer);
+				var diffOutput = layer.OutputLayerGateResultO * diffOutputFromNext + diffForgetFromNext;
+
+				var diffOutputGate = layer.Forget * diffOutputFromNext;
+				var diffInputGate = layer.TanhLayerGateResultG * diffOutput;
+				var diffTanhLayer = layer.InputLayerGateResultI * diffOutput;
+				var diffForgetLayer = layer.ForgetFromPreviousLayer * diffOutput;
+
+				var diffInputGateInput = Sigmoid.DeriveFunc(layer.InputLayerGateResultI) * diffInputGate;
+				var diffForgetGateInput = Sigmoid.DeriveFunc(layer.ForgetGateResultF) * diffForgetLayer;
+				var diffOutputGateInput = Sigmoid.DeriveFunc(layer.OutputLayerGateResultO) * diffOutputGate;
+				var diffTanhLayerInput = Tanh.DeriveFunc(layer.TanhLayerGateResultG) * diffTanhLayer;
+				
+				GatesForLayers.InputLayerDiff += Matrix.Outer(diffInputGateInput, layer.InputConcatenated);
+				GatesForLayers.ForgetLayerDiff += Matrix.Outer(diffForgetGateInput, layer.InputConcatenated);
+				GatesForLayers.OutputLayerDiff += Matrix.Outer(diffOutputGateInput, layer.InputConcatenated);
+				GatesForLayers.TanhLayerDiff += Matrix.Outer(diffTanhLayerInput, layer.InputConcatenated);
+				GatesForLayers.BiasInputLayerDiff += diffInputGateInput;
+				GatesForLayers.BiasForgetLayerDiff += diffForgetGateInput;
+				GatesForLayers.BiasOutputLayerDiff += diffOutputGateInput;
+				GatesForLayers.BiasTanhLayerDiff += diffTanhLayerInput;
+
+				var diffInputConcataneted = Vector.CreateLikeA(layer.InputConcatenated);
+				diffInputConcataneted += GatesForLayers.InputLayer.GetTransposed() * diffInputGateInput;
+				diffInputConcataneted += GatesForLayers.ForgetLayer.GetTransposed() * diffForgetGateInput;
+				diffInputConcataneted += GatesForLayers.OutputLayer.GetTransposed() * diffOutputGateInput;
+				diffInputConcataneted += GatesForLayers.TanhLayer.GetTransposed() * diffTanhLayerInput;
+
+				diffOutputFromNext = diffInputConcataneted.Section(-Parameters.LengthOfOutput);
+				diffForgetFromNext = diffOutput * layer.Forget;
 			}
-			LengthOfOutputSequence = lengthOfOutputSequence;
+
+			// предпологается что Xt есть верное значение для Yt-1, если верное значение для слоя t-1 не задано
+			GatesForLayers.InputLayer += GatesForLayers.InputLayerDiff;
+			GatesForLayers.ForgetLayer += GatesForLayers.ForgetLayerDiff;
+			GatesForLayers.OutputLayer += GatesForLayers.OutputLayerDiff;
+			GatesForLayers.TanhLayer += GatesForLayers.TanhLayerDiff;
+
+			GatesForLayers.BiasInputLayer += GatesForLayers.BiasInputLayerDiff;
+			GatesForLayers.BiasForgetLayer += GatesForLayers.BiasForgetLayerDiff;
+			GatesForLayers.BiasOutputLayer += GatesForLayers.BiasOutputLayerDiff;
+			GatesForLayers.BiasTanhLayer += GatesForLayers.BiasTanhLayerDiff;
+
+			GatesForLayers.InitDiffs(Parameters.LengthOfInput, Parameters.LengthOfOutput);
+
+			return (actuals, errors);
 		}
 
-		public override (Vector[] outputValue, Vector[] error) Learn(Vector[] input, Vector[] ideal) {
-			throw new System.NotImplementedException();
+		public override Vector[] Run(Vector[] inputs) {
+			CheckConditionOnException(inputs.Length < Parameters.LengthOfOutputSequence,
+				"Length of output sequance and length of input must be equals");
+			SequenceLayersLstm = new List<LstmLayer>() { BaseLayerLstm.Copy() };
+			for (var i = 0; i < inputs.Length; i++) {
+				var layer = SequenceLayersLstm[i];
+				var gates = GatesForLayers;
+				layer.Input = inputs[i];
+				layer.InputConcatenated = Vector.Union(layer.Input, layer.OutputFromPreviousLayer);
+				layer.ForgetGateResultF = Sigmoid.Func(gates.ForgetLayer * layer.InputConcatenated + gates.BiasForgetLayer);
+				layer.InputLayerGateResultI = Sigmoid.Func(gates.InputLayer * layer.InputConcatenated + gates.BiasInputLayer);
+				layer.TanhLayerGateResultG = Tanh.Func(gates.TanhLayer * layer.InputConcatenated + gates.BiasTanhLayer);
+				layer.OutputLayerGateResultO = Sigmoid.Func(gates.OutputLayer * layer.InputConcatenated + gates.BiasOutputLayer);
+				layer.Forget = layer.ForgetFromPreviousLayer * layer.ForgetGateResultF +
+					layer.TanhLayerGateResultG * layer.InputLayerGateResultI;
+				layer.Output = Tanh.Func(layer.Forget) *  layer.OutputFromPreviousLayer;
+				if (i < inputs.Length - 1) {
+					SequenceLayersLstm.Add(layer.CopyOnNext());
+				}
+			}
+			BaseLayerLstm = SequenceLayersLstm.Last().Copy();
+			var result = new Vector[Parameters.LengthOfOutputSequence];
+			for (var i = SequenceLayersLstm.Count - 1; 
+				i >= SequenceLayersLstm.Count - Parameters.LengthOfOutputSequence; i--) {
+				result[SequenceLayersLstm.Count - i - 1] = SequenceLayersLstm[i].Output;
+			}
+			return result;
 		}
 
-		public override Vector[] Run(Vector[] input) {
-			throw new System.NotImplementedException();
+		private void InitializeElementOfLstmAndGates(int inputLength, int outputLength) {
+			BaseLayerLstm = new LstmLayer(inputLength, outputLength);
+			GatesForLayers = new LstmGates(inputLength, outputLength);
 		}
 	}
 }

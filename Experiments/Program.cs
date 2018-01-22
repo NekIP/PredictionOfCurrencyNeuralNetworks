@@ -8,12 +8,13 @@ namespace Experiment
 {
     public class Program
     {
-        private static List<Experiment> Experiments = new List<Experiment>
-        {
+		private static List<Experiment> Experiments = new List<Experiment>
+		{
             //new ConvertInputAndOutputDataExperimental(),
             //new UnsafeReferenceMatrix(),
             //new NeuralNetworkMatrixTest(),
-			new PerceptronNeuralNetworkTest(),
+			//new PerceptronNeuralNetworkTest(),
+			new LstmTest(),
         };
 
         public static void Main(string[] args)

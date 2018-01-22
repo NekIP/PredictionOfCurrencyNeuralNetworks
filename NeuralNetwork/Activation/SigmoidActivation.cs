@@ -8,13 +8,13 @@ namespace NeuralNetwork {
 			ActivationCoefficient = activationCoefficient;
 		}
 
-		public double Func(double input) =>
+		public override double Func(double input) =>
 			1 / (1 + Math.Exp(-ActivationCoefficient * input));
 
-		public double DeriveFunc(double input) =>
+		public override double DeriveFunc(double input) =>
 			(1 - input) * input;
 
-		public double InverseFunc(double input) =>
+		public override double InverseFunc(double input) =>
 			-Math.Log(1 / input - 1) / ActivationCoefficient;
 	}
 }

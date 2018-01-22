@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace NeuralNetwork {
@@ -19,6 +20,8 @@ namespace NeuralNetwork {
 			}
 		}
 
+		protected Vector() { }
+
 		public double this[int index] {
 			get {
 				return Values[index];
@@ -27,6 +30,18 @@ namespace NeuralNetwork {
 				Values[index] = value;
 			}
 		}
+
+		public Vector Copy() {
+			var result = new double[Length];
+			for (var i = 0; i < result.Length; i++) {
+				result[i] = Values[i];
+			}
+			return result;
+		}
+
+		public Vector Section(int bias) => bias > 0 
+			? new Vector(Values.Skip(bias).ToArray())
+			: new Vector(Values.SkipLast(-bias).ToArray());
 
 		public override string ToString() {
 			var result = "[";
@@ -42,8 +57,20 @@ namespace NeuralNetwork {
 		public static Vector operator -(Vector vector1, Vector vector2) =>
 			Combine(vector1, vector2, (x1, x2) => x1 - x2);
 
+		public static Vector operator *(Vector vector1, Vector vector2) =>
+			Combine(vector1, vector2, (x1, x2) => x1 * x2);
+
+		public static Vector operator /(Vector vector1, Vector vector2) =>
+			Combine(vector1, vector2, (x1, x2) => x1 / x2);
+
 		public static Vector operator *(Vector vector, double scalar) =>
 			Convert(vector, x => x * scalar);
+
+		public static Vector operator *(double scalar, Vector vector) => 
+			vector * scalar;
+
+		public static Vector operator ^(Vector vector, double scalar) =>
+			Convert(vector, x => Math.Pow(x, scalar));
 
 		public static Vector operator -(Vector item) => 
 			Convert(item, x => -x);
@@ -79,6 +106,9 @@ namespace NeuralNetwork {
 			}
 			return result;
 		}
+
+		public static Vector CreateLikeA(Vector vector, Func<double> initializer = null) => 
+			new Vector(vector.Length, initializer);
 
 		public static implicit operator Vector(double[] vector) => new Vector(vector);
 

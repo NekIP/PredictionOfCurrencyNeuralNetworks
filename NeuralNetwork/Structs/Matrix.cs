@@ -25,6 +25,8 @@ namespace NeuralNetwork {
 			}
 		}
 
+		protected Matrix() { }
+
 		public Vector this[int i] {
 			get {
 				return Vectors[i];
@@ -41,6 +43,17 @@ namespace NeuralNetwork {
 			set {
 				Vectors[i][j] = value;
 			}
+		}
+
+		public Matrix GetTransposed() {
+			var result = new Matrix(ColumnCount, RowCount);
+			for (var i = 0; i < RowCount; i++) {
+				for (var j = 0; j < ColumnCount; j++) {
+					result[j][i] = Vectors[i][j];
+				}
+			}
+
+			return result;
 		}
 
 		public override string ToString() {
@@ -68,12 +81,25 @@ namespace NeuralNetwork {
 
 		public static Vector operator *(Matrix matrix, Vector vector) {
 			if (matrix.ColumnCount != vector.Length) {
-				throw new ArithmeticException("Count column of matrix1 and count row of matrix2 must be equals");
+				throw new ArithmeticException("Count column of matrix and length of vector must be equals");
 			}
 			var result = new Vector(matrix.RowCount);
 			for (int i = 0; i < matrix.RowCount; i++) {
 				for (int j = 0; j < matrix.ColumnCount; j++) {
 					result[i] += matrix[i, j] * vector[j];
+				}
+			}
+			return result;
+		}
+
+		public static Vector operator *(Vector vector, Matrix matrix) {
+			if (matrix.RowCount != vector.Length) {
+				throw new ArithmeticException("Count row of matrix and length of vector must be equals");
+			}
+			var result = new Vector(matrix.ColumnCount);
+			for (int i = 0; i < matrix.ColumnCount; i++) {
+				for (int j = 0; j < matrix.RowCount; j++) {
+					result[i] += matrix[j, i] * vector[j];
 				}
 			}
 			return result;
@@ -107,6 +133,18 @@ namespace NeuralNetwork {
 			}
 			return result;
 		}
+
+		public static Matrix Outer(Vector vector1, Vector vector2) {
+			var matrix = new Matrix();
+			matrix.Vectors = new Vector[vector1.Length];
+			for (var i = 0; i < vector1.Length; i++) {
+				matrix[i] = vector1[i] * vector2;
+			}
+			return matrix;
+		}
+
+		public static Matrix CreateLikeA(Matrix matrix, Func<double> initializer = null) =>
+			new Matrix(matrix.RowCount, matrix.ColumnCount, initializer);
 
 		public static implicit operator Matrix(double[][] matrix) => new Matrix(matrix);
 

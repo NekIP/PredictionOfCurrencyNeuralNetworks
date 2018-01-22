@@ -8,6 +8,6 @@ namespace Experiment
 {
     public abstract class Experiment
     {
-        public virtual void Run() { }
+		public abstract void Run();
     }
 }
