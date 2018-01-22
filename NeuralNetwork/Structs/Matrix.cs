@@ -64,6 +64,12 @@ namespace NeuralNetwork {
 			return result + Vectors.Last() + "]";
 		}
 
+		public static Matrix operator *(Matrix matrix, double value) => 
+			Convert(matrix, x => x * value);
+
+		public static Matrix operator *(double value, Matrix matrix) => 
+			matrix * value;
+
 		public static Matrix operator *(Matrix matrix1, Matrix matrix2) {
 			if (matrix1.ColumnCount != matrix2.RowCount) {
 				throw new ArithmeticException("Count column of matrix1 and count row of matrix2 must be equals");

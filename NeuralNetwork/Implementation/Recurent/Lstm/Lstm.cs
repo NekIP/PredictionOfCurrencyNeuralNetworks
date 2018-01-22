@@ -80,16 +80,17 @@ namespace NeuralNetwork {
 				diffForgetFromNext = diffOutput * layer.ForgetGateResultF;
 			}
 
+			var lr = 0.1;
 			// предпологается что Xt есть верное значение для Yt-1, если верное значение для слоя t-1 не задано
-			GatesForLayers.InputLayer += GatesForLayers.InputLayerDiff;
-			GatesForLayers.ForgetLayer += GatesForLayers.ForgetLayerDiff;
-			GatesForLayers.OutputLayer += GatesForLayers.OutputLayerDiff;
-			GatesForLayers.TanhLayer += GatesForLayers.TanhLayerDiff;
+			GatesForLayers.InputLayer += lr * GatesForLayers.InputLayerDiff;
+			GatesForLayers.ForgetLayer += lr * GatesForLayers.ForgetLayerDiff;
+			GatesForLayers.OutputLayer += lr * GatesForLayers.OutputLayerDiff;
+			GatesForLayers.TanhLayer += lr * GatesForLayers.TanhLayerDiff;
 
-			GatesForLayers.BiasInputLayer += GatesForLayers.BiasInputLayerDiff;
-			GatesForLayers.BiasForgetLayer += GatesForLayers.BiasForgetLayerDiff;
-			GatesForLayers.BiasOutputLayer += GatesForLayers.BiasOutputLayerDiff;
-			GatesForLayers.BiasTanhLayer += GatesForLayers.BiasTanhLayerDiff;
+			GatesForLayers.BiasInputLayer += lr * GatesForLayers.BiasInputLayerDiff;
+			GatesForLayers.BiasForgetLayer += lr * GatesForLayers.BiasForgetLayerDiff;
+			GatesForLayers.BiasOutputLayer += lr * GatesForLayers.BiasOutputLayerDiff;
+			GatesForLayers.BiasTanhLayer += lr * GatesForLayers.BiasTanhLayerDiff;
 
 			GatesForLayers.InitDiffs(Parameters.LengthOfInput, Parameters.LengthOfOutput);
 
