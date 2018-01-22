@@ -14,7 +14,8 @@ namespace Experiment
             //new UnsafeReferenceMatrix(),
             //new NeuralNetworkMatrixTest(),
 			//new PerceptronNeuralNetworkTest(),
-			new LstmTest(),
+			//new LstmTest(),
+			new LstmLearningTest(),
         };
 
         public static void Main(string[] args)
