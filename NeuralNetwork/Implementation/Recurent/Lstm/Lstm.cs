@@ -117,6 +117,7 @@ namespace NeuralNetwork {
 					SequenceLayersLstm.Add(layer.CopyOnNext());
 				}
 			}
+			// под вопросом нужно ли тянуть все эти запоминающие вектора и далее
 			BaseLayerLstm = SequenceLayersLstm.Last().Copy();
 			var result = new Vector[Parameters.LengthOfOutputSequence];
 			for (var i = SequenceLayersLstm.Count - 1; 
