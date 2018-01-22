@@ -77,7 +77,7 @@ namespace NeuralNetwork {
 				diffInputConcataneted += GatesForLayers.TanhLayer.GetTransposed() * diffTanhLayerInput;
 
 				diffOutputFromNext = diffInputConcataneted.Section(Parameters.LengthOfInput);
-				diffForgetFromNext = diffOutput * layer.Forget;
+				diffForgetFromNext = diffOutput * layer.ForgetGateResultF;
 			}
 
 			// предпологается что Xt есть верное значение для Yt-1, если верное значение для слоя t-1 не задано
