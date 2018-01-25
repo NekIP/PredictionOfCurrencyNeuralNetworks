@@ -39,9 +39,13 @@ namespace NeuralNetwork {
 			return result;
 		}
 
-		public Vector Section(int bias) => bias > 0 
+		public Vector Skip(int bias) => bias > 0 
 			? new Vector(Values.Skip(bias).ToArray())
 			: new Vector(Values.SkipLast(-bias).ToArray());
+
+		public Vector Take(int length) => length > 0
+			? new Vector(Values.Take(length).ToArray())
+			: new Vector(Values.TakeLast(-length).ToArray());
 
 		public override string ToString() {
 			var result = "[";

@@ -9,10 +9,12 @@ namespace Experiment {
 		public override void Run() {
 			var rnd = new Random();
 			var lstm = new Lstm(new RecurentParameters {
-				ActivationCoefficient = 1,
-				LengthOfOutputSequence = 3,
+				LearnSpeed = 0.1,
 				LengthOfInput = 3,
-				LengthOfOutput = 2
+				LengthOfOutput = 2,
+				Cells = new RecurentCellParameters[] {
+					new RecurentCellParameters(3, 2)
+				}
 			});
 
 			/*lstm.GatesForLayers.ForgetLayer = new double[][] {
@@ -52,7 +54,7 @@ namespace Experiment {
 				new [] { 0.96366276, 0.38344152, 0.79172504 }
 			};
 			var t = new TimeSpan(0);
-			for (var i = 0; i < 1000; i++) {
+			for (var i = 0; i < 100000; i++) {
 				var perf = new Stopwatch();
 				perf.Start();
 				var (outputs, errors) = lstm.Learn(input, ideal);
@@ -62,7 +64,7 @@ namespace Experiment {
 				for (var j = 0; j < outputs.Length; j++) {
 					Console.WriteLine("\tOutput:\t" + j);
 					Console.WriteLine("\t\tI:\t" + ideal[j]);
-					Console.WriteLine("\t\tO:\t" + Vector.Convert(outputs[j], x => Math.Round(x, 1)));
+					Console.WriteLine("\t\tO:\t" + outputs[j]);
 					Console.WriteLine("\t\tE:\t" + errors[j]);
 				}
 			}
