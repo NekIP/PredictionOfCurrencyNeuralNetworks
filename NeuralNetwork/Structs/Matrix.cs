@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace NeuralNetwork {
 	public class Matrix {
@@ -103,6 +104,11 @@ namespace NeuralNetwork {
 				throw new ArithmeticException("Count row of matrix and length of vector must be equals");
 			}
 			var result = new Vector(matrix.ColumnCount);
+			/*Parallel.For(0, matrix.ColumnCount, i => {
+				for (int j = 0; j < matrix.RowCount; j++) {
+					result[i] += matrix[j, i] * vector[j];
+				}
+			});*/
 			for (int i = 0; i < matrix.ColumnCount; i++) {
 				for (int j = 0; j < matrix.RowCount; j++) {
 					result[i] += matrix[j, i] * vector[j];
@@ -125,6 +131,7 @@ namespace NeuralNetwork {
 				throw new ArithmeticException("Count row and column of matrix must be equals");
 			}
 			var result = new Matrix(matrix1.RowCount, matrix1.ColumnCount);
+			//Parallel.For(0, matrix1.RowCount, i => result[i] = Vector.Combine(matrix1[i], matrix2[i], converter));
 			for (var i = 0; i < matrix1.RowCount; i++) {
 				result[i] = Vector.Combine(matrix1[i], matrix2[i], converter);
 			}
@@ -134,6 +141,7 @@ namespace NeuralNetwork {
 		public static Matrix Convert(Matrix matrix,
 			Func<double, double> converter) {
 			var result = new Matrix(matrix.RowCount, matrix.ColumnCount);
+			//Parallel.For(0, matrix.RowCount, i => result[i] = Vector.Convert(matrix[i], converter));
 			for (var i = 0; i < matrix.RowCount; i++) {
 				result[i] = Vector.Convert(matrix[i], converter);
 			}
@@ -141,12 +149,13 @@ namespace NeuralNetwork {
 		}
 
 		public static Matrix Outer(Vector vector1, Vector vector2) {
-			var matrix = new Matrix();
-			matrix.Vectors = new Vector[vector1.Length];
+			var result = new Matrix();
+			result.Vectors = new Vector[vector1.Length];
+			//Parallel.For(0, vector1.Length, i => result[i] = vector1[i] * vector2);
 			for (var i = 0; i < vector1.Length; i++) {
-				matrix[i] = vector1[i] * vector2;
+				result[i] = vector1[i] * vector2;
 			}
-			return matrix;
+			return result;
 		}
 
 		public static Matrix CreateLikeA(Matrix matrix, Func<double> initializer = null) =>

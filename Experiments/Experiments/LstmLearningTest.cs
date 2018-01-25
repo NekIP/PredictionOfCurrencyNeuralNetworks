@@ -1,6 +1,7 @@
 ﻿using NeuralNetwork;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Experiment {
@@ -50,9 +51,14 @@ namespace Experiment {
 				new [] { 0.64589411, 0.43758721, 0.8911773 },
 				new [] { 0.96366276, 0.38344152, 0.79172504 }
 			};
+			var t = new TimeSpan(0);
 			for (var i = 0; i < 1000; i++) {
+				var perf = new Stopwatch();
+				perf.Start();
 				var (outputs, errors) = lstm.Learn(input, ideal);
-				Console.WriteLine("Learn:\t" + i);
+				perf.Stop();
+				t += perf.Elapsed;
+				Console.WriteLine("Learn:\t" + i + "\t time = " + (t / (i + 1)));
 				for (var j = 0; j < outputs.Length; j++) {
 					Console.WriteLine("\tOutput:\t" + j);
 					Console.WriteLine("\t\tI:\t" + ideal[j]);
