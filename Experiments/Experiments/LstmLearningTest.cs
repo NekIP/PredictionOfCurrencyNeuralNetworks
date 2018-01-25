@@ -14,7 +14,7 @@ namespace Experiment {
 				LengthOfOutput = 2
 			});
 
-			lstm.GatesForLayers.ForgetLayer = new double[][] {
+			/*lstm.GatesForLayers.ForgetLayer = new double[][] {
 				new [] { 0.0097627, 0.04303787, 0.02055268, 0.00897664, -0.01526904 },
 				new [] { 0.02917882, -0.01248256, 0.0783546, 0.09273255, -0.0233117 }
 			};
@@ -34,7 +34,7 @@ namespace Experiment {
 			lstm.GatesForLayers.BiasForgetLayer = new [] { 0.0097627, 0.04303787 };
 			lstm.GatesForLayers.BiasInputLayer = new [] { 0.0097627, 0.04303787 };
 			lstm.GatesForLayers.BiasOutputLayer = new [] { 0.0097627, 0.04303787 };
-			lstm.GatesForLayers.BiasTanhLayer = new [] { 0.0097627, 0.04303787 };
+			lstm.GatesForLayers.BiasTanhLayer = new [] { 0.0097627, 0.04303787 };*/
 
 			//lstm.BaseLayerLstm.Forget = new Vector(2, () => rnd.NextDouble());
 			//lstm.BaseLayerLstm.ForgetFromPreviousLayer = new Vector(2, () => rnd.NextDouble());
@@ -56,7 +56,7 @@ namespace Experiment {
 				for (var j = 0; j < outputs.Length; j++) {
 					Console.WriteLine("\tOutput:\t" + j);
 					Console.WriteLine("\t\tI:\t" + ideal[j]);
-					Console.WriteLine("\t\tO:\t" + outputs[j]);
+					Console.WriteLine("\t\tO:\t" + Vector.Convert(outputs[j], x => Math.Round(x, 1)));
 					Console.WriteLine("\t\tE:\t" + errors[j]);
 				}
 			}
