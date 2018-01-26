@@ -15,6 +15,7 @@ namespace NeuralNetwork {
 			CheckDataOnError(parameters);
 			Parameters = parameters;
 			InitializeElementOfLstmAndGates(parameters);
+			Activation = new HyperbolicActivation(parameters.ActivationCoefficient);
 		}
 
 		public override (Vector[] outputValues, Vector[] errors) Learn(Vector[] inputs, Vector[] ideals) {
@@ -29,6 +30,7 @@ namespace NeuralNetwork {
 			}
 			GatesForLayer.ApplyDiff(Parameters.LearnSpeed);
 			GatesForLayer.InitDiffs(Parameters.Cells);
+			SetNextEpoch();
 			return (actuals, errors);
 		}
 

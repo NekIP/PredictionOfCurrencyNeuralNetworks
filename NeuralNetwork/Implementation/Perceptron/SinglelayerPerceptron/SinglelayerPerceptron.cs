@@ -20,7 +20,7 @@ namespace NeuralNetwork {
 		public override Vector Run(Vector input) {
 			CheckInputVector(input, InputNeurons);
 			InputNeurons = input;
-			OutputNeurons = Vector.Convert(Weights * InputNeurons + Bias, Activation.Func);
+			OutputNeurons = Activation.Func(Weights * InputNeurons + Bias);
 			return OutputNeurons;
 		}
 

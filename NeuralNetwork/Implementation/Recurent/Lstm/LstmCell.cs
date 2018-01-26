@@ -35,15 +35,14 @@ namespace NeuralNetwork {
 			InputLayerGateResultI = Sigmoid.Func(gatesForCell.InputLayer * InputConcatenated + gatesForCell.BiasInputLayer);
 			TanhLayerGateResultG = Tanh.Func(gatesForCell.TanhLayer * InputConcatenated + gatesForCell.BiasTanhLayer);
 			OutputLayerGateResultO = Sigmoid.Func(gatesForCell.OutputLayer * InputConcatenated + gatesForCell.BiasOutputLayer);
-			Forget = ForgetFromPreviousLayer * ForgetGateResultF +
-				TanhLayerGateResultG * InputLayerGateResultI;
-			Output = Tanh.Func(Forget) * OutputLayerGateResultO;
+			Forget = ForgetFromPreviousLayer * ForgetGateResultF + TanhLayerGateResultG * InputLayerGateResultI;
+			Output = Forget * OutputLayerGateResultO;
 			return Output;
 		}
 
 		public (Vector diffOutput, Vector diffForget, Vector diffInput) Learn(Vector diffInputFromNextCell, 
 			Vector diffOutputFromNextLayer, Vector diffForgetFromNextLayer, LstmGatesForCell gatesForCell) {
-			var diffOutput = OutputLayerGateResultO * (diffOutputFromNextLayer + diffInputFromNextCell) + diffForgetFromNextLayer;
+			var diffOutput = OutputLayerGateResultO * diffOutputFromNextLayer + diffForgetFromNextLayer;
 			var diffOutputGate = Forget * diffOutputFromNextLayer;
 			var diffInputGate = TanhLayerGateResultG * diffOutput;
 			var diffTanhLayer = InputLayerGateResultI * diffOutput;
@@ -73,7 +72,7 @@ namespace NeuralNetwork {
 
 		public LstmCell Copy() {
 			var result = new LstmCell(Input.Length, Output.Length, Sigmoid, Tanh);
-			result.Forget = Forget.Copy();
+			//result.Forget = Forget.Copy();
 			result.OutputFromPreviousLayer = OutputFromPreviousLayer.Copy();
 			result.ForgetFromPreviousLayer = ForgetFromPreviousLayer.Copy();
 			return result;

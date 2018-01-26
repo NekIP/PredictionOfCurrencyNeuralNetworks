@@ -10,10 +10,13 @@ namespace NeuralNetwork {
 		public Vector Input { get; set; }
 		public Vector Output { get; set; }
 
+		private Activation Sigmoid;
+
 		public LstmLayer(RecurentParameters parameters, Activation sigmoid, Activation tanh) {
 			InitializeCells(parameters, sigmoid, tanh);
 			Input = new Vector(parameters.Cells.First().LengthOfInput);
 			Output = new Vector(parameters.Cells.Last().LengthOfOutput);
+			Sigmoid = sigmoid;
 		}
 
 		protected LstmLayer() { }
@@ -35,13 +38,14 @@ namespace NeuralNetwork {
 			var diffsOutput = new Vector[Cells.Count];
 			var diffsForget = new Vector[Cells.Count];
 			var actual = Run(input, gatesLayer);
+			ideal = (new HyperbolicActivation()).Func(ideal);
 			var error = (ideal - actual) ^ 2;
 			var diffInputFromNextCell = new Vector(Cells.Last().Output.Length);
 			for (var i = Cells.Count - 1; i >= 0; i--) {
 				var diffOutputFromNextLayer = 
 					i == Cells.Count - 1 
 					? diffsOutputFromNext[i] + 2 * (actual - ideal)
-					: diffsOutputFromNext[i];
+					: diffsOutputFromNext[i] + diffInputFromNextCell;
 				var diffForgetFromNextLayer = diffsForgetFromNext[i];
 				var gatesForCell = gatesLayer[i];
 				var (diffOutput, diffForget, diffInput) = Cells[i].Learn(diffInputFromNextCell, diffOutputFromNextLayer, 
