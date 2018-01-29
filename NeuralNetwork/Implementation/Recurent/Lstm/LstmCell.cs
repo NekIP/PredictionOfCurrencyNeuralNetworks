@@ -36,37 +36,41 @@ namespace NeuralNetwork {
 			TanhLayerGateResultG = Tanh.Func(gatesForCell.TanhLayer * InputConcatenated + gatesForCell.BiasTanhLayer);
 			OutputLayerGateResultO = Sigmoid.Func(gatesForCell.OutputLayer * InputConcatenated + gatesForCell.BiasOutputLayer);
 			Forget = ForgetFromPreviousLayer * ForgetGateResultF + TanhLayerGateResultG * InputLayerGateResultI;
-			Output = Forget * OutputLayerGateResultO;
+			Output = Tanh.Func(Forget) * OutputLayerGateResultO;
 			return Output;
 		}
 
 		public (Vector diffOutput, Vector diffForget, Vector diffInput) Learn(Vector diffInputFromNextCell, 
 			Vector diffOutputFromNextLayer, Vector diffForgetFromNextLayer, LstmGatesForCell gatesForCell) {
-			var diffOutput = OutputLayerGateResultO * diffOutputFromNextLayer + diffForgetFromNextLayer;
-			var diffOutputGate = Forget * diffOutputFromNextLayer;
-			var diffInputGate = TanhLayerGateResultG * diffOutput;
-			var diffTanhLayer = InputLayerGateResultI * diffOutput;
-			var diffForgetLayer = ForgetFromPreviousLayer * diffOutput;
-			var diffInputGateInput = Sigmoid.DeriveFunc(InputLayerGateResultI) * diffInputGate;
-			var diffForgetGateInput = Sigmoid.DeriveFunc(ForgetGateResultF) * diffForgetLayer;
-			var diffOutputGateInput = Sigmoid.DeriveFunc(OutputLayerGateResultO) * diffOutputGate;
-			var diffTanhLayerInput = Tanh.DeriveFunc(TanhLayerGateResultG) * diffTanhLayer;
-			gatesForCell.InputLayerDiff += Matrix.Outer(diffInputGateInput, InputConcatenated);
-			gatesForCell.ForgetLayerDiff += Matrix.Outer(diffForgetGateInput, InputConcatenated);
-			gatesForCell.OutputLayerDiff += Matrix.Outer(diffOutputGateInput, InputConcatenated);
-			gatesForCell.TanhLayerDiff += Matrix.Outer(diffTanhLayerInput, InputConcatenated);
-			gatesForCell.BiasInputLayerDiff += diffInputGateInput;
-			gatesForCell.BiasForgetLayerDiff += diffForgetGateInput;
-			gatesForCell.BiasOutputLayerDiff += diffOutputGateInput;
-			gatesForCell.BiasTanhLayerDiff += diffTanhLayerInput;
+			var diffOutput = diffInputFromNextCell + diffOutputFromNextLayer;// + diffForgetFromNextLayer;
+
+			var one = new Vector(Forget.Length, () => 1);
+			var diffForget = diffOutput * OutputLayerGateResultO * (one - Tanh.Func(Forget) ^ 2) + diffForgetFromNextLayer;
+
+			var diffTanhGate = diffForget * InputLayerGateResultI * Tanh.DeriveFunc(TanhLayerGateResultG);
+			var diffInputGate = diffForget * TanhLayerGateResultG * Sigmoid.DeriveFunc(InputLayerGateResultI);
+			var diffForgetGate = diffForget * ForgetFromPreviousLayer * Sigmoid.DeriveFunc(ForgetGateResultF);
+			var diffOutputGate = diffOutput * Tanh.Func(Forget) * Sigmoid.DeriveFunc(OutputLayerGateResultO);
+
+			gatesForCell.InputLayerDiff += Matrix.Outer(diffInputGate, InputConcatenated);
+			gatesForCell.ForgetLayerDiff += Matrix.Outer(diffForgetGate, InputConcatenated);
+			gatesForCell.OutputLayerDiff += Matrix.Outer(diffOutputGate, InputConcatenated);
+			gatesForCell.TanhLayerDiff += Matrix.Outer(diffTanhGate, InputConcatenated);
+			gatesForCell.BiasInputLayerDiff += diffInputGate;
+			gatesForCell.BiasForgetLayerDiff += diffForgetGate;
+			gatesForCell.BiasOutputLayerDiff += diffOutputGate;
+			gatesForCell.BiasTanhLayerDiff += diffTanhGate;
+
 			var diffInputConcataneted = Vector.CreateLikeA(InputConcatenated);
-			diffInputConcataneted += gatesForCell.InputLayer.GetTransposed() * diffInputGateInput;
-			diffInputConcataneted += gatesForCell.ForgetLayer.GetTransposed() * diffForgetGateInput;
-			diffInputConcataneted += gatesForCell.OutputLayer.GetTransposed() * diffOutputGateInput;
-			diffInputConcataneted += gatesForCell.TanhLayer.GetTransposed() * diffTanhLayerInput;
+			diffInputConcataneted += gatesForCell.InputLayer.GetTransposed() * diffInputGate;
+			diffInputConcataneted += gatesForCell.ForgetLayer.GetTransposed() * diffForgetGate;
+			diffInputConcataneted += gatesForCell.OutputLayer.GetTransposed() * diffOutputGate;
+			diffInputConcataneted += gatesForCell.TanhLayer.GetTransposed() * diffTanhGate;
+
 			var diffOutputOnNext = diffInputConcataneted.Skip(Input.Length);
 			var diffInputOnNext = diffInputConcataneted.Take(Input.Length);
-			var diffForgetOnNext = diffOutput * ForgetGateResultF;
+			var diffForgetOnNext = diffForget * ForgetGateResultF;
+
 			return (diffOutputOnNext, diffForgetOnNext, diffInputOnNext);
 		}
 
@@ -99,3 +103,33 @@ namespace NeuralNetwork {
 		}
 	}
 }
+
+/*
+var diffOutput = OutputLayerGateResultO * diffOutputFromNextLayer + diffForgetFromNextLayer;
+			var diffOutputGate = Forget * diffOutputFromNextLayer;
+			var diffInputGate = TanhLayerGateResultG * diffOutput;
+			var diffTanhLayer = InputLayerGateResultI * diffOutput;
+			var diffForgetLayer = ForgetFromPreviousLayer * diffOutput;
+			var diffInputGateInput = Sigmoid.DeriveFunc(InputLayerGateResultI) * diffInputGate;
+			var diffForgetGateInput = Sigmoid.DeriveFunc(ForgetGateResultF) * diffForgetLayer;
+			var diffOutputGateInput = Sigmoid.DeriveFunc(OutputLayerGateResultO) * diffOutputGate;
+			var diffTanhLayerInput = Tanh.DeriveFunc(TanhLayerGateResultG) * diffTanhLayer;
+			gatesForCell.InputLayerDiff += Matrix.Outer(diffInputGateInput, InputConcatenated);
+			gatesForCell.ForgetLayerDiff += Matrix.Outer(diffForgetGateInput, InputConcatenated);
+			gatesForCell.OutputLayerDiff += Matrix.Outer(diffOutputGateInput, InputConcatenated);
+			gatesForCell.TanhLayerDiff += Matrix.Outer(diffTanhLayerInput, InputConcatenated);
+			gatesForCell.BiasInputLayerDiff += diffInputGateInput;
+			gatesForCell.BiasForgetLayerDiff += diffForgetGateInput;
+			gatesForCell.BiasOutputLayerDiff += diffOutputGateInput;
+			gatesForCell.BiasTanhLayerDiff += diffTanhLayerInput;
+			var diffInputConcataneted = Vector.CreateLikeA(InputConcatenated);
+			diffInputConcataneted += gatesForCell.InputLayer.GetTransposed() * diffInputGateInput;
+			diffInputConcataneted += gatesForCell.ForgetLayer.GetTransposed() * diffForgetGateInput;
+			diffInputConcataneted += gatesForCell.OutputLayer.GetTransposed() * diffOutputGateInput;
+			diffInputConcataneted += gatesForCell.TanhLayer.GetTransposed() * diffTanhLayerInput;
+			var diffOutputOnNext = diffInputConcataneted.Skip(Input.Length);
+			var diffInputOnNext = diffInputConcataneted.Take(Input.Length);
+			var diffForgetOnNext = diffOutput * ForgetGateResultF;
+			return (diffOutputOnNext, diffForgetOnNext, diffInputOnNext);
+ 
+	 */

@@ -26,7 +26,7 @@ namespace NeuralNetwork {
 		public LstmGates(int lengthOfInput, int lengthOfOutput) {
 			var commonLength = lengthOfInput + lengthOfOutput;
 			var rnd = new Random();
-			Func<double> initializer = () => rnd.NextDouble();
+			Func<double> initializer = () => rnd.NextDouble() * 2 - 1;
 			ForgetLayer = new Matrix(lengthOfOutput, commonLength, initializer);
 			InputLayer = new Matrix(lengthOfOutput, commonLength, initializer);
 			TanhLayer = new Matrix(lengthOfOutput, commonLength, initializer);

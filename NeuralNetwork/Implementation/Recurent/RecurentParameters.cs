@@ -5,6 +5,8 @@
 		public double LearnSpeed { get; set; } = 0.1;
 		public int LengthOfInput { get; set; }
 		public int LengthOfOutput { get; set; }
+		public int LayerCount { get; set; }
+		public int LengthOfOutputSequence { get; set; }
 		public RecurentCellParameters[] Cells { get; set; } 
 	}
 }

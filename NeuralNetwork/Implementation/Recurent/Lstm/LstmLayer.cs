@@ -33,19 +33,18 @@ namespace NeuralNetwork {
 			return Output;
 		}
 
-		public (Vector output, Vector error, Vector[] diffsOutput, Vector[] diffsForget) Learn(Vector input, Vector ideal, 
+		public (Vector output, Vector error, Vector[] diffsOutput, Vector[] diffsForget) Learn(Vector actual, Vector ideal, 
 			Vector[] diffsOutputFromNext, Vector[] diffsForgetFromNext, LstmGatesForLayer gatesLayer) {
 			var diffsOutput = new Vector[Cells.Count];
 			var diffsForget = new Vector[Cells.Count];
-			var actual = Run(input, gatesLayer);
-			ideal = (new HyperbolicActivation()).Func(ideal);
-			var error = (ideal - actual) ^ 2;
+			//ideal = ideal is null ? null : (new SigmoidActivation()).Func(ideal);
+			var error = ideal is null ? null : (ideal - actual) ^ 2;
 			var diffInputFromNextCell = new Vector(Cells.Last().Output.Length);
 			for (var i = Cells.Count - 1; i >= 0; i--) {
-				var diffOutputFromNextLayer = 
-					i == Cells.Count - 1 
-					? diffsOutputFromNext[i] + 2 * (actual - ideal)
-					: diffsOutputFromNext[i] + diffInputFromNextCell;
+				var diffOutputFromNextLayer = diffsOutputFromNext[i];
+				if (i == Cells.Count - 1 && !(ideal is null)) {
+					diffInputFromNextCell = 2 * (actual - ideal);
+				}
 				var diffForgetFromNextLayer = diffsForgetFromNext[i];
 				var gatesForCell = gatesLayer[i];
 				var (diffOutput, diffForget, diffInput) = Cells[i].Learn(diffInputFromNextCell, diffOutputFromNextLayer, 

@@ -2,20 +2,24 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Experiment {
 	public class LstmLearningTest : Experiment {
 		public override void Run() {
 			var rnd = new Random();
 			var lstm = new Lstm(new RecurentParameters {
-				LearnSpeed = 0.4,
+				ActivationCoefficient = 0.5,
+				LearnSpeed = 1,
 				LengthOfInput = 2,
-				LengthOfOutput = 2,
+				LengthOfOutput = 1,
+				LengthOfOutputSequence = 3,
+				LayerCount = 3,
 				Cells = new RecurentCellParameters[] {
 					new RecurentCellParameters(2, 4),
-					new RecurentCellParameters(4, 4),
-					new RecurentCellParameters(4, 2),
+					new RecurentCellParameters(4, 1)
 				}
 			});
 
@@ -81,20 +85,47 @@ namespace Experiment {
 				new [] { 0.7, 0.8 },
 				new [] { 0.2, 0.1 }
 			};
+			var errorCommon = 0.0;
+			var minError = double.MaxValue;
 			var t = new TimeSpan(0);
-			for (var i = 0; i < 50000; i++) {
+			for (var i = 0; i < 10000000; i++) {
 				var perf = new Stopwatch();
+				
 				perf.Start();
-				var (outputs, errors) = lstm.Learn(learn, ideal1);
+				var (outputs, errors) = lstm.Learn(input, ideal);
 				perf.Stop();
 				t += perf.Elapsed;
+				if (outputs.ToList().Any(x => double.IsNaN(x[0]))) {
+					Console.WriteLine("NaN");
+					for (var h = 0; h < 5; h++) {
+						Console.Beep(1000, 700);
+						Thread.Sleep(100);
+					}
+					Console.ReadLine();
+					Console.ReadLine();
+					Console.ReadLine();
+				}
+				var error = errors.Sum(x => x[0]);
+				if (error <= minError) {
+					minError = error;
+				}
+				/*else {
+					Console.WriteLine("Increath");
+					Console.ReadLine();
+				}*/
+				errorCommon += error;
 				Console.WriteLine("Learn:\t" + i + "\t time = " + (t / (i + 1)));
 				for (var j = 0; j < outputs.Length; j++) {
 					Console.WriteLine("\tOutput:\t" + j);
-					Console.WriteLine("\t\tI:\t" + ideal1[j]);
-					Console.WriteLine("\t\tO:\t" + lstm.ConvertOutput(outputs[j]));
+					Console.WriteLine("\t\tI:\t" + ideal[j]);
+					Console.WriteLine("\t\tO:\t" + outputs[j]);
 					Console.WriteLine("\t\tE:\t" + errors[j]);
 				}
+				Console.WriteLine("Common error:\t" + errorCommon / lstm.Epoch);
+				Console.WriteLine("Min error:\t" + minError);
+				Console.WriteLine("Error:\t" + error);
+				Thread.Sleep(20);
+				//Console.ReadKey();
 			}
 		}
 	}

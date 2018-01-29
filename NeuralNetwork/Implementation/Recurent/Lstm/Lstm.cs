@@ -15,37 +15,41 @@ namespace NeuralNetwork {
 			CheckDataOnError(parameters);
 			Parameters = parameters;
 			InitializeElementOfLstmAndGates(parameters);
-			Activation = new HyperbolicActivation(parameters.ActivationCoefficient);
+			Activation = new SigmoidActivation(parameters.ActivationCoefficient);
 		}
 
 		public override (Vector[] outputValues, Vector[] errors) Learn(Vector[] inputs, Vector[] ideals) {
 			var actuals = Run(inputs);
-			var outputs = new Vector[inputs.Length];
-			var errors = new Vector[inputs.Length];
+			var outputs = new Vector[SequenceOfLayers.Count];
+			var errors = new Vector[SequenceOfLayers.Count];
 			var (diffsOutputFromNext, diffsForgetFromNext) = InitOutputAndForgetDiffs();
-			for (var i = SequenceOfLayers.Count - 1; i >= 0; i--) {
+			for (var (i, j) = (SequenceOfLayers.Count - 1, ideals.Length - 1); i >= 0; i--, j--) {
 				var layer = SequenceOfLayers[i];
 				(outputs[i], errors[i], diffsOutputFromNext, diffsForgetFromNext) = layer.Learn(
-					inputs[i], ideals[i], diffsOutputFromNext, diffsForgetFromNext, GatesForLayer);
+					SequenceOfLayers[i].Output, j >= 0 ? ideals[j] : null, diffsOutputFromNext, diffsForgetFromNext, GatesForLayer);
 			}
 			GatesForLayer.ApplyDiff(Parameters.LearnSpeed);
 			GatesForLayer.InitDiffs(Parameters.Cells);
 			SetNextEpoch();
-			return (actuals, errors);
+			return (actuals, errors.TakeLast(actuals.Length).ToArray());
 		}
 
 		public override Vector[] Run(Vector[] inputs) {
-			var result = new Vector[inputs.Length];
+			var layerCount = inputs.Length < Parameters.LayerCount
+				? Parameters.LayerCount
+				: inputs.Length;
+			var result = new Vector[layerCount];
 			SequenceOfLayers = new List<LstmLayer>() { BaseLayerLstm.Copy() };
-			for (var i = 0; i < inputs.Length; i++) {
+			for (var i = 0; i < layerCount; i++) {
 				var layer = SequenceOfLayers[i];
-				result[i] = layer.Run(inputs[i], GatesForLayer);
-				if (i < inputs.Length - 1) {
+				var input = inputs.Length > i ? inputs[i] : new Vector(Parameters.LengthOfInput);
+				result[i] = layer.Run(input, GatesForLayer);
+				if (i < layerCount - 1) {
 					SequenceOfLayers.Add(layer.CopyOnNext());
 				}
 			}
 			BaseLayerLstm = SequenceOfLayers.Last().Copy();
-			return result;
+			return result.TakeLast(Parameters.LengthOfOutputSequence).ToArray();
 		}
 
 		private (Vector[] diffsOutput, Vector[] diffsForget) InitOutputAndForgetDiffs() {
@@ -59,6 +63,8 @@ namespace NeuralNetwork {
 		}
 
 		private void CheckDataOnError(RecurentParameters parameters) {
+			CheckConditionOnException(parameters.LayerCount < 1,
+				"Count of layer must be greater than 0");
 			CheckConditionOnException(parameters.Cells.Length < 1,
 				"Count of cells must be greater than 0");
 			CheckConditionOnException(parameters.Cells.First().LengthOfInput != parameters.LengthOfInput,
