@@ -1,8 +1,7 @@
 ﻿using System;
 
 namespace Experiment {
-	public static class Helper
-    {
+	public static class Helper {
 		public static void PrintMatrix(double[][] matrix) {
 			for (var i = 0; i < matrix.Length; i++) {
 				for (var j = 0; j < matrix[i].Length; j++) {
