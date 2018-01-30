@@ -4,7 +4,7 @@ using System;
 namespace Experiment {
 	public class LstmTest : Experiment {
 		public override void Run() {
-			var lstm = new Lstm(new RecurentParameters {
+			/*var lstm = new Lstm(new RecurentParameters {
 				ActivationCoefficient = 1,
 				LengthOfInput = 2,
 				LengthOfOutput = 1
@@ -15,7 +15,7 @@ namespace Experiment {
 				new[] { 0.23, 0.57 },
 				new[] { 0.567, 0.35 }
 			});
-			Console.WriteLine(result[0].ToString());
+			Console.WriteLine(result[0].ToString());*/
 		}
 	}
 }

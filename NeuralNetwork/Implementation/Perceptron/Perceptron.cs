@@ -1,12 +1,9 @@
 ﻿using System;
+using System.Linq;
 
 namespace NeuralNetwork {
-	public abstract class Perceptron : NeuralNetwork, OneToOneWithTeacher {
+	public abstract class Perceptron : NeuralNetwork {
 		public PerceptronParameters Parameters { get; set; }
-
-		public abstract Vector Run(Vector input);
-
-		public abstract (Vector outputValue, Vector error) Learn(Vector input, Vector ideal);
 
 		protected void CheckInitializationParameters(PerceptronParameters parameters, 
 			Activation activation,
@@ -19,7 +16,13 @@ namespace NeuralNetwork {
 			}
 		}
 
-		protected void CheckInputVector(Vector input, Vector inputNeurons) {
+		protected Vector ConvertDataToVector(NeuralNetworkData data) {
+			CheckConditionOnException(data.DataType != NeuralNetworkDataType.Vector, "Perceptron implements the 'one to one' approach, " +
+				"so the input shape must contain only a single vector. For example: nt.Run(new NeuralNetworkData(new [] { 0.0, 0.3 }))");
+			return data.Shape.Values.First().First();
+		}
+
+		protected void CheckInput(Vector input, Vector inputNeurons) {
 			CheckConditionOnException(input.Length != inputNeurons.Length,
 				"The length of the input vector and the number of neurons in the first layer must be equal");
 		}

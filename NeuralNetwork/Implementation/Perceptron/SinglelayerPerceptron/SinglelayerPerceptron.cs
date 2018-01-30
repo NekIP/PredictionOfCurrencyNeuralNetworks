@@ -17,14 +17,32 @@ namespace NeuralNetwork {
 			InitMatrixes(lengthOfInput, lengthOfOutput);
 		}
 
-		public override Vector Run(Vector input) {
-			CheckInputVector(input, InputNeurons);
+
+		public override NeuralNetworkResult Run(NeuralNetworkData inputData) {
+			var input = ConvertDataToVector(inputData);
+			var output = Run(input);
+			return new NeuralNetworkResult(output);
+		}
+
+		public override NeuralNetworkLearnResult Learn(NeuralNetworkData inputData, NeuralNetworkData idealData) {
+			var input = ConvertDataToVector(inputData);
+			var ideal = ConvertDataToVector(idealData);
+			var (output, error) = Learn(input, ideal);
+			return new NeuralNetworkLearnResult(output, error);
+		}
+
+		public override NeuralNetworkLearnResult Learn(NeuralNetworkData inputData) {
+			throw new NotImplementedException();
+		}
+
+		public Vector Run(Vector input) {
+			CheckInput(input, InputNeurons);
 			InputNeurons = input;
 			OutputNeurons = Activation.Func(Weights * InputNeurons + Bias);
 			return OutputNeurons;
 		}
 
-		public override (Vector outputValue, Vector error) Learn(Vector input, Vector ideal) {
+		public (Vector output, Vector error) Learn(Vector input, Vector ideal) {
 			CheckIdealVector(ideal, OutputNeurons);
 			var actual = Run(input);
 			var error = new Vector(actual.Length);

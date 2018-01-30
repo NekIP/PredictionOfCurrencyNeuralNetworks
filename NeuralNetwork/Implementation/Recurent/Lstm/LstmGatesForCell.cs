@@ -60,5 +60,17 @@ namespace NeuralNetwork {
 			BiasTanhLayerDiff = new Vector(lengthOfOutput);
 			BiasOutputLayerDiff = new Vector(lengthOfOutput);
 		}
+
+		public void CalculateDiff(Vector diffInputGate, Vector diffForgetGate,
+			Vector diffOutputGate, Vector diffTanhGate, Vector inputConcatenated) {
+			InputLayerDiff += Matrix.Outer(diffInputGate, inputConcatenated);
+			ForgetLayerDiff += Matrix.Outer(diffForgetGate, inputConcatenated);
+			OutputLayerDiff += Matrix.Outer(diffOutputGate, inputConcatenated);
+			TanhLayerDiff += Matrix.Outer(diffTanhGate, inputConcatenated);
+			BiasInputLayerDiff += diffInputGate;
+			BiasForgetLayerDiff += diffForgetGate;
+			BiasOutputLayerDiff += diffOutputGate;
+			BiasTanhLayerDiff += diffTanhGate;
+		}
 	}
 }

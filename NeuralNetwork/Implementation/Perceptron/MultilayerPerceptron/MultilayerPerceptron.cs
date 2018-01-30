@@ -6,12 +6,12 @@ namespace NeuralNetwork {
 		public Vector[] Neurons { get; private set; }
 
 		/// <summary>
-		/// Weigths for i(layer), for link from j(neuron in (i + 1) layer) to k(neuronin i layer)
+		/// Weigths for i(layer), for link from j(neuron in (i + 1) layer) to k(neuron in i layer)
 		/// </summary>
 		public Matrix[] Weights { get; set; }
 
 		/// <summary>
-		/// Defference weigths for i(layer), for link from j(neuron in (i + 1) layer) to k(neuronin i layer)
+		/// Defference weigths for i(layer), for link from j(neuron in (i + 1) layer) to k(neuron in i layer)
 		/// </summary>
 		public Matrix[] DefferenceWeights { get; set; }
 
@@ -28,7 +28,31 @@ namespace NeuralNetwork {
 		/// <summary>
 		/// Calculates the output vector of the neural network
 		/// </summary>
-		public override Vector Run(Vector input) {
+		public override NeuralNetworkResult Run(NeuralNetworkData inputData) {
+			var input = ConvertDataToVector(inputData);
+			var output = Run(input);
+			return new NeuralNetworkResult(output);
+		}
+
+		/// <summary>
+		/// Perceptron is trained with the help of a teacher using the method of back propagation of an error using deltas
+		/// </summary>
+		/// <param name="ideal">The correct output value</param>
+		public override NeuralNetworkLearnResult Learn(NeuralNetworkData inputData, NeuralNetworkData idealData) {
+			var input = ConvertDataToVector(inputData);
+			var ideal = ConvertDataToVector(idealData);
+			var (output, error) = Learn(input, ideal);
+			return new NeuralNetworkLearnResult(output, error);
+		}
+
+		public override NeuralNetworkLearnResult Learn(NeuralNetworkData inputData) {
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Calculates the output vector of the neural network
+		/// </summary>
+		public Vector Run(Vector input) {
 			InitializeNeuronsWithInput(input);
 			for (var i = 0; i < Neurons.Length - 1; i++) {
 				for (int j = 0; j < Neurons[i + 1].Length; j++) {
@@ -45,7 +69,7 @@ namespace NeuralNetwork {
 		/// Perceptron is trained with the help of a teacher using the method of back propagation of an error using deltas
 		/// </summary>
 		/// <param name="ideal">The correct output value</param>
-		public override (Vector outputValue, Vector error) Learn(Vector input, Vector ideal) {
+		public (Vector output, Vector error) Learn(Vector input, Vector ideal) {
 			CheckIdealVector(ideal, Neurons.Last());
 			var actual = Run(input);
 			var error = new Vector(actual.Length);
@@ -81,7 +105,7 @@ namespace NeuralNetwork {
 		}
 
 		private void InitializeNeuronsWithInput(Vector input) {
-			CheckInputVector(input, Neurons.First());
+			CheckInput(input, Neurons.First());
 			for (var i = 0; i < Neurons.Length; i++) {
 				for (var j = 0; j < Neurons[i].Length; j++) {
 					Neurons[i][j] = i == 0 ? input[j] : 0;

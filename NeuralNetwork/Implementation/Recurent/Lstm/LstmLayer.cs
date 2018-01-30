@@ -12,10 +12,10 @@ namespace NeuralNetwork {
 
 		private Activation Sigmoid;
 
-		public LstmLayer(RecurentParameters parameters, Activation sigmoid, Activation tanh) {
-			InitializeCells(parameters, sigmoid, tanh);
-			Input = new Vector(parameters.Cells.First().LengthOfInput);
-			Output = new Vector(parameters.Cells.Last().LengthOfOutput);
+		public LstmLayer(RecurentCellParameters[] cellsParameters, Activation sigmoid, Activation tanh) {
+			InitializeCells(cellsParameters, sigmoid, tanh);
+			Input = new Vector(cellsParameters.First().LengthOfInput);
+			Output = new Vector(cellsParameters.Last().LengthOfOutput);
 			Sigmoid = sigmoid;
 		}
 
@@ -33,27 +33,24 @@ namespace NeuralNetwork {
 			return Output;
 		}
 
-		public (Vector output, Vector error, Vector[] diffsOutput, Vector[] diffsForget) Learn(Vector actual, Vector ideal, 
+		public (Vector error, Vector[] diffsOutput, Vector[] diffsForget) Learn(Vector actual, Vector ideal, 
 			Vector[] diffsOutputFromNext, Vector[] diffsForgetFromNext, LstmGatesForLayer gatesLayer) {
 			var diffsOutput = new Vector[Cells.Count];
 			var diffsForget = new Vector[Cells.Count];
-			//ideal = ideal is null ? null : (new SigmoidActivation()).Func(ideal);
-			var error = ideal is null ? null : (ideal - actual) ^ 2;
-			var diffInputFromNextCell = new Vector(Cells.Last().Output.Length);
+			var error = ideal is null 
+				? null 
+				: ((actual - ideal) ^ 2) * 0.5;
+			var diffInputFromNextCell = ideal is null 
+				? new Vector(Cells.Last().Output.Length) 
+				: actual - ideal;
 			for (var i = Cells.Count - 1; i >= 0; i--) {
 				var diffOutputFromNextLayer = diffsOutputFromNext[i];
-				if (i == Cells.Count - 1 && !(ideal is null)) {
-					diffInputFromNextCell = 2 * (actual - ideal);
-				}
 				var diffForgetFromNextLayer = diffsForgetFromNext[i];
 				var gatesForCell = gatesLayer[i];
-				var (diffOutput, diffForget, diffInput) = Cells[i].Learn(diffInputFromNextCell, diffOutputFromNextLayer, 
+				(diffsOutput[i], diffsForget[i], diffInputFromNextCell) = Cells[i].Learn(diffInputFromNextCell, diffOutputFromNextLayer, 
 					diffForgetFromNextLayer, gatesForCell);
-				diffInputFromNextCell = diffInput;
-				diffsOutput[i] = diffOutput;
-				diffsForget[i] = diffForget;
 			}
-			return (actual, error, diffsOutput, diffsForget);
+			return (error, diffsOutput, diffsForget);
 		}
 
 		public LstmLayer Copy() => CopyTemplate(cell => cell.Copy());
@@ -71,23 +68,10 @@ namespace NeuralNetwork {
 			return result;
 		}
 
-		/*private void InitializeData(int lengthOfInput, int lengthOfOutput) {
-			Input = new Vector(lengthOfInput);
-			InputConcatenated = new Vector(lengthOfInput + lengthOfOutput);
-			Output = new Vector(lengthOfOutput);
-			Forget = new Vector(lengthOfOutput);
-			OutputFromPreviousLayer = new Vector(lengthOfOutput);
-			ForgetFromPreviousLayer = new Vector(lengthOfOutput);
-			ForgetGateResultF = new Vector(lengthOfOutput);
-			InputLayerGateResultI = new Vector(lengthOfOutput);
-			TanhLayerGateResultG = new Vector(lengthOfOutput);
-			OutputLayerGateResultO = new Vector(lengthOfOutput);
-		}*/
-
-		private void InitializeCells(RecurentParameters parameters, Activation sigmoid, Activation tanh) {
+		private void InitializeCells(RecurentCellParameters[] cellsParameters, Activation sigmoid, Activation tanh) {
 			Cells = new List<LstmCell>();
-			for (var i = 0; i < parameters.Cells.Length; i++) {
-				Cells.Add(new LstmCell(parameters.Cells[i].LengthOfInput, parameters.Cells[i].LengthOfOutput, 
+			for (var i = 0; i < cellsParameters.Length; i++) {
+				Cells.Add(new LstmCell(cellsParameters[i].LengthOfInput, cellsParameters[i].LengthOfOutput, 
 					sigmoid, tanh));
 			}
 		}

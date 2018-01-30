@@ -10,7 +10,11 @@ namespace Experiment {
 	public class LstmLearningTest : Experiment {
 		public override void Run() {
 			var rnd = new Random();
-			var lstm = new Lstm(new RecurentParameters {
+			var lstm = new Lstm(2, 2, new RecurentParameters(0.5, 1), 
+				new RecurentCellParameters(2, 16),
+				new RecurentCellParameters(16, 2));
+
+			/*new RecurentParameters {
 				ActivationCoefficient = 0.5,
 				LearnSpeed = 1,
 				LengthOfInput = 2,
@@ -21,7 +25,7 @@ namespace Experiment {
 					new RecurentCellParameters(2, 4),
 					new RecurentCellParameters(4, 1)
 				}
-			});
+			}*/
 
 			/*lstm.GatesForLayers.ForgetLayer = new double[][] {
 				new [] { 0.0097627, 0.04303787, 0.02055268, 0.00897664, -0.01526904 },
@@ -57,9 +61,9 @@ namespace Experiment {
 				new [] { 0.00835, -0.0316 },
 				new [] { 0.041049, -0.041505 },
 				new [] { 0.050914, -0.046292 },
-				new [] { 0.076138, -0.106684 },
+				/*new [] { 0.076138, -0.106684 },
 				new [] { 0.131035, -0.092031 },
-				new [] { 0.206694, -0.209201 },
+				new [] { 0.206694, -0.209201 },*/
 			};
 
 			var ideal1 = new Vector[] {
@@ -71,12 +75,12 @@ namespace Experiment {
 				new [] { 0.041049, -0.041505 },
 				new [] { 0.050914, -0.046292 },
 				new [] { 0.076138, -0.106684 },
-				new [] { 0.131035, -0.092031 },
+				/*new [] { 0.131035, -0.092031 },
 				new [] { 0.206694, -0.209201 },
-				new [] { 0.168238, -0.211099 }
+				new [] { 0.168238, -0.211099 }*/
 			};
 			var ideal = new Vector[] {
-				new [] { -0.5 },
+				new [] { -0.4 },
 				new [] { 0.1 },
 				new [] { 0.4 }
 			};
@@ -92,10 +96,10 @@ namespace Experiment {
 				var perf = new Stopwatch();
 				
 				perf.Start();
-				var (outputs, errors) = lstm.Learn(input, ideal);
+				var (outputs, errors) = lstm.Learn(learn, ideal1);
 				perf.Stop();
 				t += perf.Elapsed;
-				if (outputs.ToList().Any(x => double.IsNaN(x[0]))) {
+				if (outputs.ToList().Any(x => double.IsNaN(x[0]) || double.IsNaN(x[1]))) {
 					Console.WriteLine("NaN");
 					for (var h = 0; h < 5; h++) {
 						Console.Beep(1000, 700);
@@ -105,16 +109,20 @@ namespace Experiment {
 					Console.ReadLine();
 					Console.ReadLine();
 				}
-				var error = errors.Sum(x => x[0]);
+				var error = errors.Sum(x => x[0] + x[1]);
 				if (error <= minError) {
 					minError = error;
+				}
+				if (error < 0.000000000000000000001) {
+					Console.WriteLine("End \t" + lstm.Epoch);
+					Console.ReadLine();
 				}
 				/*else {
 					Console.WriteLine("Increath");
 					Console.ReadLine();
 				}*/
 				errorCommon += error;
-				Console.WriteLine("Learn:\t" + i + "\t time = " + (t / (i + 1)));
+				/*Console.WriteLine("Learn:\t" + i + "\t time = " + (t / (i + 1)));
 				for (var j = 0; j < outputs.Length; j++) {
 					Console.WriteLine("\tOutput:\t" + j);
 					Console.WriteLine("\t\tI:\t" + ideal[j]);
@@ -122,9 +130,8 @@ namespace Experiment {
 					Console.WriteLine("\t\tE:\t" + errors[j]);
 				}
 				Console.WriteLine("Common error:\t" + errorCommon / lstm.Epoch);
-				Console.WriteLine("Min error:\t" + minError);
+				Console.WriteLine("Min error:\t" + minError);*/
 				Console.WriteLine("Error:\t" + error);
-				Thread.Sleep(20);
 				//Console.ReadKey();
 			}
 		}
