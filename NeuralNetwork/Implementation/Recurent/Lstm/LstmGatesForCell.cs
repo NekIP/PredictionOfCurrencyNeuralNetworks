@@ -23,6 +23,15 @@ namespace NeuralNetwork {
 		public Vector BiasTanhLayerDiff { get; set; }
 		public Vector BiasOutputLayerDiff { get; set; }
 
+		public Matrix ForgetLayerDiffPrevious { get; set; }
+		public Matrix InputLayerDiffPrevious { get; set; }
+		public Matrix TanhLayerDiffPrevious { get; set; }
+		public Matrix OutputLayerDiffPrevious { get; set; }
+		public Vector BiasForgetLayerDiffPrevious { get; set; }
+		public Vector BiasInputLayerDiffPrevious { get; set; }
+		public Vector BiasTanhLayerDiffPrevious { get; set; }
+		public Vector BiasOutputLayerDiffPrevious { get; set; }
+
 		public LstmGatesForCell(int lengthOfInput, int lengthOfOutput) {
 			var commonLength = lengthOfInput + lengthOfOutput;
 			var rnd = new Random();
@@ -35,22 +44,53 @@ namespace NeuralNetwork {
 			BiasInputLayer = new Vector(lengthOfOutput);
 			BiasTanhLayer = new Vector(lengthOfOutput);
 			BiasOutputLayer = new Vector(lengthOfOutput);
-			InitDiffs(lengthOfInput, lengthOfOutput);
+			FirstInitDiffs(lengthOfInput, lengthOfOutput);
 		}
 
-		public void ApplyDiffs(double learnSpeed) {
-			InputLayer -= learnSpeed * InputLayerDiff;
-			ForgetLayer -= learnSpeed * ForgetLayerDiff;
-			OutputLayer -= learnSpeed * OutputLayerDiff;
-			TanhLayer -= learnSpeed * TanhLayerDiff;
-			BiasInputLayer -= learnSpeed * BiasInputLayerDiff;
-			BiasForgetLayer -= learnSpeed * BiasForgetLayerDiff;
-			BiasOutputLayer -= learnSpeed * BiasOutputLayerDiff;
-			BiasTanhLayer -= learnSpeed * BiasTanhLayerDiff;
+		public void ApplyDiffs(double learnSpeed, double moment) {
+			InputLayer -= learnSpeed * InputLayerDiff + moment * InputLayerDiffPrevious;
+			ForgetLayer -= learnSpeed * ForgetLayerDiff + moment * ForgetLayerDiffPrevious;
+			OutputLayer -= learnSpeed * OutputLayerDiff + moment * OutputLayerDiffPrevious;
+			TanhLayer -= learnSpeed * TanhLayerDiff + moment * TanhLayerDiffPrevious;
+			BiasInputLayer -= learnSpeed * BiasInputLayerDiff + moment * BiasInputLayerDiffPrevious;
+			BiasForgetLayer -= learnSpeed * BiasForgetLayerDiff + moment * BiasForgetLayerDiffPrevious;
+			BiasOutputLayer -= learnSpeed * BiasOutputLayerDiff + moment * BiasOutputLayerDiffPrevious;
+			BiasTanhLayer -= learnSpeed * BiasTanhLayerDiff + moment * BiasTanhLayerDiffPrevious;
+		}
+
+		public void FirstInitDiffs(int lengthOfInput, int lengthOfOutput) {
+			var commonLength = lengthOfInput + lengthOfOutput;
+			ForgetLayerDiff = new Matrix(lengthOfOutput, commonLength);
+			InputLayerDiff = new Matrix(lengthOfOutput, commonLength);
+			TanhLayerDiff = new Matrix(lengthOfOutput, commonLength);
+			OutputLayerDiff = new Matrix(lengthOfOutput, commonLength);
+			BiasForgetLayerDiff = new Vector(lengthOfOutput);
+			BiasInputLayerDiff = new Vector(lengthOfOutput);
+			BiasTanhLayerDiff = new Vector(lengthOfOutput);
+			BiasOutputLayerDiff = new Vector(lengthOfOutput);
+
+			ForgetLayerDiffPrevious = new Matrix(lengthOfOutput, commonLength);
+			InputLayerDiffPrevious = new Matrix(lengthOfOutput, commonLength);
+			TanhLayerDiffPrevious = new Matrix(lengthOfOutput, commonLength);
+			OutputLayerDiffPrevious = new Matrix(lengthOfOutput, commonLength);
+			BiasForgetLayerDiffPrevious = new Vector(lengthOfOutput);
+			BiasInputLayerDiffPrevious = new Vector(lengthOfOutput);
+			BiasTanhLayerDiffPrevious = new Vector(lengthOfOutput);
+			BiasOutputLayerDiffPrevious = new Vector(lengthOfOutput);
 		}
 
 		public void InitDiffs(int lengthOfInput, int lengthOfOutput) {
 			var commonLength = lengthOfInput + lengthOfOutput;
+
+			ForgetLayerDiffPrevious = ForgetLayerDiff;
+			InputLayerDiffPrevious = InputLayerDiff;
+			TanhLayerDiffPrevious = TanhLayerDiff;
+			OutputLayerDiffPrevious = OutputLayerDiff;
+			BiasForgetLayerDiffPrevious = BiasForgetLayerDiff;
+			BiasInputLayerDiffPrevious = BiasInputLayerDiff;
+			BiasTanhLayerDiffPrevious = BiasTanhLayerDiff;
+			BiasOutputLayerDiffPrevious = BiasOutputLayerDiff;
+
 			ForgetLayerDiff = new Matrix(lengthOfOutput, commonLength);
 			InputLayerDiff = new Matrix(lengthOfOutput, commonLength);
 			TanhLayerDiff = new Matrix(lengthOfOutput, commonLength);

@@ -10,9 +10,9 @@ namespace Experiment {
 	public class LstmLearningTest : Experiment {
 		public override void Run() {
 			var rnd = new Random();
-			var lstm = new Lstm(2, 2, new RecurentParameters(0.5, 1), 
-				new RecurentCellParameters(2, 16),
-				new RecurentCellParameters(16, 2));
+			var lstm = new Lstm(2, 1, new RecurentParameters(0.5, 1, 0.5), 
+				new RecurentCellParameters(2, 4),
+				new RecurentCellParameters(4, 1));
 
 			/*new RecurentParameters {
 				ActivationCoefficient = 0.5,
@@ -96,10 +96,10 @@ namespace Experiment {
 				var perf = new Stopwatch();
 				
 				perf.Start();
-				var (outputs, errors) = lstm.Learn(learn, ideal1);
+				var (outputs, errors) = lstm.Learn(input, ideal);
 				perf.Stop();
 				t += perf.Elapsed;
-				if (outputs.ToList().Any(x => double.IsNaN(x[0]) || double.IsNaN(x[1]))) {
+				if (outputs.ToList().Any(x => double.IsNaN(x[0]))) {
 					Console.WriteLine("NaN");
 					for (var h = 0; h < 5; h++) {
 						Console.Beep(1000, 700);
@@ -109,7 +109,7 @@ namespace Experiment {
 					Console.ReadLine();
 					Console.ReadLine();
 				}
-				var error = errors.Sum(x => x[0] + x[1]);
+				var error = errors.Sum(x => x[0]);
 				if (error <= minError) {
 					minError = error;
 				}

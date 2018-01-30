@@ -16,9 +16,9 @@ namespace NeuralNetwork {
 
 		public LstmGatesForCell this[int cellNumber] => Gates[cellNumber];
 
-		public void ApplyDiff(double learnSpeed) {
+		public void ApplyDiff(double learnSpeed, double moment) {
 			for (var i = 0; i < Gates.Count; i++) {
-				Gates[i].ApplyDiffs(learnSpeed);
+				Gates[i].ApplyDiffs(learnSpeed, moment);
 			}
 		}
 

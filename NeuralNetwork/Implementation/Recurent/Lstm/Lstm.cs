@@ -113,7 +113,7 @@ namespace NeuralNetwork {
 				(errors[i], diffsOutputFromNext, diffsForgetFromNext) = layer.Learn(
 					SequenceOfLayers[i].Output, ideal, diffsOutputFromNext, diffsForgetFromNext, GatesForLayer);
 			}
-			GatesForLayer.ApplyDiff(Parameters.LearnSpeed);
+			GatesForLayer.ApplyDiff(Parameters.LearnSpeed, Parameters.Moment);
 			GatesForLayer.InitDiffs(CellsParameters);
 			SetNextEpoch();
 			return (actuals, errors.TakeLast(actuals.Length).ToArray());

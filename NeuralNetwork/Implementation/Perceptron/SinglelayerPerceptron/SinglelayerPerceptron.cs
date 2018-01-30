@@ -17,7 +17,6 @@ namespace NeuralNetwork {
 			InitMatrixes(lengthOfInput, lengthOfOutput);
 		}
 
-
 		public override NeuralNetworkResult Run(NeuralNetworkData inputData) {
 			var input = ConvertDataToVector(inputData);
 			var output = Run(input);
