@@ -5,14 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Repositories\ProductsRepository.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Repositories\UsdToRubCurrencyRepository.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.5.0" />
   </ItemGroup>
