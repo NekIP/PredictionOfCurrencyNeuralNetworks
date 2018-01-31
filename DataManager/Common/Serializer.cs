@@ -6,6 +6,23 @@ using System.Threading.Tasks;
 
 namespace DataManager {
 	public class Serializer {
+		public async Task AppendToTxt(string line, string path) {
+			if (!File.Exists(path)) {
+				File.Create(path);
+			}
+			using (var stream = new StreamWriter(File.Open(path, FileMode.Append))) {
+				await stream.WriteLineAsync(line);
+			}
+		}
+
+		public async Task AppendToTxt<T>(T entity, string path, Func<T, string> converter) {
+			await AppendToTxt(converter(entity), path);
+		}
+
+		public async Task AppendToTxt<T>(T entity, string path) {
+			await AppendToTxt(entity, path, x => x.ToString());
+		}
+
 		public async Task SaveToTxt(string text, string path) {
 			using (var stream = new StreamWriter(File.Open(path, FileMode.OpenOrCreate))) {
 				await stream.WriteAsync(text);
