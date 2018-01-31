@@ -1,13 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using DataBase;
+using System;
+using System.Threading.Tasks;
 
 namespace DataManager {
-	public abstract class DataCollector<T> {
-		public T[] Data { get; protected set; }
+	public abstract class DataCollector<T> where T : Entity, new() {
+		public string Source { get; protected set; }
+		public IRepository<T> Repository { get; protected set; }
 
-		public abstract Task<T[]> GetFromSource();
-		public abstract Task<T[]> GetFromDb();
-		public abstract Task SaveToDb();
-		public abstract Task LoadFromDb();
-		public abstract Task UpdateFromSource();
+		public abstract Task<T[]> Get();
+		public abstract Task<T[]> Get(DateTime date);
+		public abstract Task<T[]> Get(DateTime from, DateTime to);
 	}
 }
