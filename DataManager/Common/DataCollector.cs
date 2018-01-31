@@ -1,5 +1,6 @@
 ﻿using DataBase;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DataManager {
@@ -7,8 +8,27 @@ namespace DataManager {
 		public string Source { get; protected set; }
 		public IRepository<T> Repository { get; protected set; }
 
-		public abstract Task<T[]> Get();
-		public abstract Task<T[]> Get(DateTime date);
-		public abstract Task<T[]> Get(DateTime from, DateTime to);
+		public DataCollector(string source, IRepository<T> repository) {
+			Source = source;
+			Repository = repository;
+		}
+
+		public abstract Task<List<T>> List();
+		public abstract Task<List<T>> List(DateTime from, DateTime to, TimeSpan step);
+		public abstract bool TryGet(DateTime date, TimeSpan step, out T result);
+		public abstract Task DownloadMissingData(DateTime before, TimeSpan step);
+
+		protected void CheckConditionOnException<TException>(bool conditionFunc, string message)
+			where TException : Exception, new() {
+			if (conditionFunc) {
+				throw new DataCollectorException(message, new TException());
+			}
+		}
+
+		protected void CheckConditionOnException(bool conditionFunc, string message) {
+			if (conditionFunc) {
+				throw new DataCollectorException(message);
+			}
+		}
 	}
 }
