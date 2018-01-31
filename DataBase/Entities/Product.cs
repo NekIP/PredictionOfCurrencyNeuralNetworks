@@ -1,9 +1,13 @@
-﻿namespace DataBase.Entities {
+﻿using System;
+
+namespace DataBase.Entities {
 	public class Product : Entity {
-		public string Name { get; set; }
-		public string Description { get; set; }
-		public decimal Price { get; set; }
-		public string ImageSource { get; set; }
-		public double Rating { get; set; }
+		public DateTime Date { get; set; }
+		public double Open { get; set; }
+		public double High { get; set; }
+		public double Low { get; set; }
+		public double Close { get; set; }
+		public double ChangeCloseOpen { get; set; }
+		public double ChangeHighLow { get; set; }
 	}
 }
