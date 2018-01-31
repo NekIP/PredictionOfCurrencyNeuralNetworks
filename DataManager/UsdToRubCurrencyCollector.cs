@@ -9,19 +9,19 @@ using System.Threading.Tasks;
 namespace DataManager {
 	public class UsdToRubCurrencyCollector : DataCollector<Product> {
 		public UsdToRubCurrencyCollector(IConfiguration configuration) {
-			Source = "";
+			Source = "http://export.finam.ru/";
 			Repository = new UsdToRubCurrencyRepository(configuration);
 		}
 
-		public override Task<Product[]> Get() {
-			throw new NotImplementedException();
+		public override Task<List<Product>> Get() {
+			Repository.List();
 		}
 
 		public override Task<Product> Get(DateTime date) {
 			throw new NotImplementedException();
 		}
 
-		public override Task<Product[]> Get(DateTime from, DateTime to) {
+		public override Task<List<Product>> Get(DateTime from, DateTime to) {
 			throw new NotImplementedException();
 		}
 	}
