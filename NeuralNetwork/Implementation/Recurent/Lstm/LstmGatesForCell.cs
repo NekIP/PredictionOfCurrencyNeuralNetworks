@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NeuralNetwork {
+namespace NeuralNetwork.Details {
 	/// <summary>
 	/// This class stores the gate weights for each cell in all layers (deployed in time)
 	/// </summary>

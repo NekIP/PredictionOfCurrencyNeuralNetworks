@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace NeuralNetwork {
+﻿namespace NeuralNetwork.Details {
 	public class LstmCell {
 		public Vector Forget { get; set; }
 		public Vector Input { get; set; }

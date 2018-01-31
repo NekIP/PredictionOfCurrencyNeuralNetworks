@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NeuralNetwork {
+namespace NeuralNetwork.Details {
 	// Пока я реализую lstm лишь для случая когда слой состоит из одной клетки, в дальнейшем же 
 	// данный класс будет содержать список клеток и в каждой клетки будет содержимое данного класса
 	public class LstmLayer {
