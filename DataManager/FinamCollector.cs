@@ -11,20 +11,23 @@ namespace DataManager {
 	public abstract class FinamCollector : DataCollector<Product> {
 		/*it's horrible*/
 		protected static readonly Dictionary<string, string> FinamData = new Dictionary<string, string> {
-            { "code", "" },			// tool on the market
-			{ "e", ".txt" },		// extension of the received file; possible options - .txt or .csv
-			{ "market", "" },		// market
+            { "market", "" },		// market
 			{ "em", "" },			// index, label paper
-			{ "p", "7" },			// the period of quotations (1 tick, 2 1 minute, 3 5 minutes, 4 10 minutes, 5 15 minutes, 6 30 minutes, 7 1 hour, 8 1 day, 9 1 week, 10 1 month)
-			{ "mf", "" },			// mf - month from
-			{ "mt", "" },
+            { "code", "" },			// tool on the market
+            { "apply", "0"},
             { "df", "" },
-            { "dt", "" },
+            { "mf", "" },			// mf - month from
             { "yf", "" },
-            { "yt", "" },
             { "from", ""},			// dd.MM.yyyy
+            { "dt", "" },
+            { "mt", "" },
+            { "yt", "" },
 			{ "to", ""},			// dd.MM.yyyy
-			{ "dtf", "4" },			// The format of the date (1 - yyyymmdd, 2 - yymmdd, 3 - ddmmgg, 4 - dd/mm/yy, 5 - mm/dd/yy)
+            { "p", "7" },           // the period of quotations (1 tick, 2 1 minute, 3 5 minutes, 4 10 minutes, 5 15 minutes, 6 30 minutes, 7 1 hour, 8 1 day, 9 1 week, 10 1 month)
+            { "f", ""},				// output filename
+            { "e", ".txt" },        // extension of the received file; possible options - .txt or .csv
+            { "cn", ""},			// he name of the contract, the same as the code
+            { "dtf", "4" },			// The format of the date (1 - yyyymmdd, 2 - yymmdd, 3 - ddmmgg, 4 - dd/mm/yy, 5 - mm/dd/yy)
 			{ "tmf", "3" },			// time format (1 - hhmmss, 2 - hhmm, 3 - hh:mm:ss, 4 - hh:mm)
 			{ "MSOR", "1" },		// give time (0 - the beginning of the candle, 1 - the end of the candle)
 			{ "mstimever", "1" },	// type of time (0 - not Moscow, 1 - Moscow)
@@ -38,10 +41,7 @@ namespace DataManager {
 										#5 — DATE, TIME, OPEN, HIGH, LOW, CLOSE, VOL; 
 										#6 — DATE, TIME, LAST, VOL, ID, OPER
 										, - delimeter).*/
-			{ "at", "1" },			//  add a title to the file (0 - no, 1 - yes)
-			{ "f", ""},				// output filename
-			{ "apply", "0"},
-            { "cn", ""}				// he name of the contract, the same as the code
+			{ "at", "1" },			// add a title to the file (0 - no, 1 - yes)
 		};
 
 		protected string FinamCode { get; set; }
@@ -54,7 +54,8 @@ namespace DataManager {
 			FinamCode = finamCode;
 			FinamEm = finamEm;
 			FinamMarket = finamMarket;
-		}
+            Log = new Log($"log_{ FinamCode }.txt", true);
+        }
 
 		public override Task<List<Product>> List() =>
 			Repository.List();
@@ -71,8 +72,8 @@ namespace DataManager {
 		}
 
 		public override bool TryGet(DateTime date, TimeSpan step, out Product result) {
-			var task = Repository.Where(x => x.Date - date < step).Execute();
-			task.Wait();
+            var task = Repository.Where(x => x.Date - date < step).Execute();
+            task.Wait();
 			var list = task.Result;
 			var entityExistInRepository = list.Count > 0;
 			result = entityExistInRepository ? list.First() : null;
@@ -102,10 +103,10 @@ namespace DataManager {
             finamData["from"] = from.ToString("dd.MM.yyyy");
             finamData["to"] = to.ToString("dd.MM.yyyy");
             finamData["df"] = from.Day.ToString();
-            finamData["mf"] = from.Month.ToString();
+            finamData["mf"] = (from.Month - 1).ToString();
             finamData["yf"] = from.Year.ToString();
             finamData["dt"] = to.Day.ToString();
-            finamData["mt"] = to.Month.ToString();
+            finamData["mt"] = (to.Month - 1).ToString();
             finamData["yt"] = to.Year.ToString();
             finamData["cn"] = FinamCode;
             finamData["f"] = FinamCode + "_" + from.ToString("dd.MM.yyyy") + "_" + to.ToString("dd.MM.yyyy");
@@ -119,6 +120,10 @@ namespace DataManager {
 			for (var current = from; current <= to; current += step) {
 				var next = current + step < to ? current + step : to;
 				var entities = await loader.Get(GetUrl(current, next), Converter, GetParameters(current, next));
+                await Log.Write($"AddedRecords={ entities.Count };From={ current.ToString("dd/MM/yyyy HH:mm:ss") };" +
+                    $"To={ next.ToString("dd/MM/yyyy HH:mm:ss") };" +
+                    $"DateOfFirstItemInArray={ entities.FirstOrDefault()?.Date.ToString("dd/MM/yyyy HH:mm:ss") }" +
+                    $"DateOfLastItemInArray={ entities.LastOrDefault()?.Date.ToString("dd/MM/yyyy HH:mm:ss") }");
 				result.AddRange(entities);
                 Thread.Sleep(250);
 			}
@@ -188,6 +193,6 @@ namespace DataManager {
         }
 
         protected string GetUrl(DateTime from, DateTime to) =>
-            $"{ Source }{ FinamCode }_{ from.ToString("yyyyMMdd") }_{ to.ToString("yyyyMMdd") }{ FinamData["e"] }";
+            $"{ Source }{ FinamCode }_{ from.ToString("yyMMdd") }_{ to.ToString("yyMMdd") }{ FinamData["e"] }";
     }
 }

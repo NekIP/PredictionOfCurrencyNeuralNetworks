@@ -45,7 +45,7 @@ namespace DataBase {
 			}
 		}
 
-		public T this[long i] {
+		public T this[ObjectId i] {
 			get {
 				return Collection.Find(x => x.Id == i).FirstOrDefault();
 			}
@@ -69,7 +69,7 @@ namespace DataBase {
 		}
 
 		public Task<List<T>> Execute() {
-			if (CurrentContext == null) {
+			if (CurrentContext != null) {
 				var result = CurrentContext.ToListAsync();
 				CurrentContext = null;
 				return result;
