@@ -10,19 +10,19 @@ using System.Threading.Tasks;
 namespace DataManager {
 	public abstract class FinamCollector : DataCollector<Product> {
 		/*it's horrible*/
-		protected static Dictionary<string, string> FinamData = new Dictionary<string, string> {
-			{ "code", "" },			// tool on the market
+		protected static readonly Dictionary<string, string> FinamData = new Dictionary<string, string> {
+            { "code", "" },			// tool on the market
 			{ "e", ".txt" },		// extension of the received file; possible options - .txt or .csv
 			{ "market", "" },		// market
 			{ "em", "" },			// index, label paper
 			{ "p", "7" },			// the period of quotations (1 tick, 2 1 minute, 3 5 minutes, 4 10 minutes, 5 15 minutes, 6 30 minutes, 7 1 hour, 8 1 day, 9 1 week, 10 1 month)
 			{ "mf", "" },			// mf - month from
 			{ "mt", "" },
-			{ "df", "" },
-			{ "dt", "" },
-			{ "yf", "" },
-			{ "yt", "" },
-			{ "from", ""},			// dd.MM.yyyy
+            { "df", "" },
+            { "dt", "" },
+            { "yf", "" },
+            { "yt", "" },
+            { "from", ""},			// dd.MM.yyyy
 			{ "to", ""},			// dd.MM.yyyy
 			{ "dtf", "4" },			// The format of the date (1 - yyyymmdd, 2 - yymmdd, 3 - ddmmgg, 4 - dd/mm/yy, 5 - mm/dd/yy)
 			{ "tmf", "3" },			// time format (1 - hhmmss, 2 - hhmm, 3 - hh:mm:ss, 4 - hh:mm)
@@ -41,12 +41,13 @@ namespace DataManager {
 			{ "at", "1" },			//  add a title to the file (0 - no, 1 - yes)
 			{ "f", ""},				// output filename
 			{ "apply", "0"},
-			{ "cn", ""}				// he name of the contract, the same as the code
+            { "cn", ""}				// he name of the contract, the same as the code
 		};
 
 		protected string FinamCode { get; set; }
 		protected int FinamEm { get; set; }
 		protected int FinamMarket { get; set; }
+        protected Log Log { get; set; }
 
 		protected FinamCollector(string source, IRepository<Product> repository, 
 			string finamCode, int finamEm, int finamMarket) : base(source, repository) {
@@ -95,20 +96,20 @@ namespace DataManager {
 
 		protected KeyValuePair<string, string>[] GetParameters(DateTime from, DateTime to) {
 			var finamData = new Dictionary<string, string>(FinamData);
-			FinamData["code"] = FinamCode;
-			FinamData["em"] = FinamEm.ToString();
-			FinamData["market"] = FinamMarket.ToString();
-			FinamData["from"] = from.ToString("dd.MM.yyyy");
-			FinamData["to"] = to.ToString("dd.MM.yyyy");
-			FinamData["df"] = from.Day.ToString();
-			FinamData["mf"] = from.Month.ToString();
-			FinamData["yf"] = from.Year.ToString();
-			FinamData["dt"] = to.Day.ToString();
-			FinamData["mt"] = to.Month.ToString();
-			FinamData["yt"] = to.Year.ToString();
-			FinamData["cn"] = FinamCode;
-			FinamData["f"] = FinamCode + "_" + from.ToString("dd.MM.yyyy") + "_" + to.ToString("dd.MM.yyyy");
-			return FinamData.ToArray();
+            finamData["code"] = FinamCode;
+            finamData["em"] = FinamEm.ToString();
+            finamData["market"] = FinamMarket.ToString();
+            finamData["from"] = from.ToString("dd.MM.yyyy");
+            finamData["to"] = to.ToString("dd.MM.yyyy");
+            finamData["df"] = from.Day.ToString();
+            finamData["mf"] = from.Month.ToString();
+            finamData["yf"] = from.Year.ToString();
+            finamData["dt"] = to.Day.ToString();
+            finamData["mt"] = to.Month.ToString();
+            finamData["yt"] = to.Year.ToString();
+            finamData["cn"] = FinamCode;
+            finamData["f"] = FinamCode + "_" + from.ToString("dd.MM.yyyy") + "_" + to.ToString("dd.MM.yyyy");
+			return finamData.ToArray();
 		}
 
 		protected async Task<List<Product>> DownloadDataByStep(DateTime from, DateTime to) {
