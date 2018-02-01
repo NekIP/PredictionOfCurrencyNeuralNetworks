@@ -10,7 +10,8 @@ namespace Experiment {
             //new NeuralNetworkMatrixTest(),
 			//new PerceptronNeuralNetworkTest(),
 			//new LstmTest(),
-			new LstmLearningTest(),
+			//new LstmLearningTest(),
+            new UsdToRubCurrencyExperiment()
 		};
 
 		public static void Main(string[] args) {
