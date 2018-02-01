@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DataManager {
@@ -79,6 +80,11 @@ namespace DataManager {
 
 		public override async Task DownloadMissingData(DateTime before, TimeSpan step) {
 			var list = await Repository.List();
+            if (list.Count == 0) {
+                var newData = await DownloadDataByStep(GlobalFrom, before);
+                await Repository.AddRange(newData);
+                return;
+            }
 			var minDeff = list.Min(x => before - x.Date);
 			if (minDeff >= step) {
 				var lastExistTime = list.Where(x => before - x.Date == minDeff).First().Date;
@@ -106,13 +112,14 @@ namespace DataManager {
 		}
 
 		protected async Task<List<Product>> DownloadDataByStep(DateTime from, DateTime to) {
-			var loader = new Loader(Source);
+			var loader = new Loader();
 			var result = new List<Product>();
-			var step = TimeSpan.FromDays(30);
+			var step = TimeSpan.FromDays(10);
 			for (var current = from; current <= to; current += step) {
 				var next = current + step < to ? current + step : to;
-				var entities = await loader.Get(Converter, GetParameters(current, next));
+				var entities = await loader.Get(GetUrl(current, next), Converter, GetParameters(current, next));
 				result.AddRange(entities);
+                Thread.Sleep(250);
 			}
 			return result;
 		}
@@ -122,8 +129,11 @@ namespace DataManager {
 			var result = new List<Product>();
 			var fieldDelimeter = ';';
 			var lineDelimetr = '\n';
-			var lines = text.Split(lineDelimetr);
+			var lines = text.Split(lineDelimetr).Skip(1);
 			foreach (var line in lines) {
+                if (string.IsNullOrWhiteSpace(line)) {
+                    continue;
+                }
 				var fields = line.Split(fieldDelimeter);
 				var date = DateTime.ParseExact($"{ fields[0] }-{ fields[1] }", "dd/MM/yy-HH:mm:ss",
 					CultureInfo.InvariantCulture);
@@ -175,5 +185,8 @@ namespace DataManager {
             }
             return result.OrderBy(x => x.Date).ToList();
         }
+
+        protected string GetUrl(DateTime from, DateTime to) =>
+            $"{ Source }{ FinamCode }_{ from.ToString("yyyyMMdd") }_{ to.ToString("yyyyMMdd") }{ FinamData["e"] }";
     }
 }

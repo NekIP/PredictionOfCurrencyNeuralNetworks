@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace DataManager {
 	public abstract class DataCollector<T> where T : Entity, new() {
+        public DateTime GlobalFrom { get; set; } = new DateTime(2007, 1, 1);
 		public string Source { get; protected set; }
 		public IRepository<T> Repository { get; protected set; }
 
