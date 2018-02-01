@@ -4,24 +4,32 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace DataManager {
-	public class Log {
-		public string OutputFilePath { get; set; }
+    public class Log {
+        public string OutputFilePath { get; set; }
+        public bool OutputInConsole { get; set; }
 
-		private Serializer Serializer;
+        private Serializer Serializer;
 
-		public Log(string outputFilePath) {
-			OutputFilePath = outputFilePath;
-			Serializer = new Serializer();
-		}
+        public Log(string outputFilePath, bool outputInConsole = false) {
+            OutputFilePath = outputFilePath;
+            OutputInConsole = outputInConsole;
+            Serializer = new Serializer();
+        }
 
-		public Task Write(string line) => 
-			Serializer.AppendToTxt(line, OutputFilePath);
+        public Task Write(string line) {
+            WriteInConsoleIfNeed(line);
+            return Serializer.AppendToTxt(line, OutputFilePath);
+        }
 
-		public Task Write<T>(T entity) => 
-			Serializer.AppendToTxt(entity, OutputFilePath);
+        public Task Write<T>(T entity) {
+            WriteInConsoleIfNeed(entity.ToString());
+            return Serializer.AppendToTxt(entity, OutputFilePath);
+        }
 
-		public Task Write<T>(T entity, Func<T, string> converter) => 
-			Serializer.AppendToTxt(entity, OutputFilePath, converter);
+        public Task Write<T>(T entity, Func<T, string> converter) {
+            WriteInConsoleIfNeed(converter(entity));
+            return Serializer.AppendToTxt(entity, OutputFilePath, converter);
+         }
 
 		public async Task<IEnumerable<string>> Read() =>
 			(await Serializer.ReadFromTxt(OutputFilePath)).Split('\n');
@@ -34,5 +42,11 @@ namespace DataManager {
 
 		public async Task<T> Read<T>(int i, Func<string, T> converter) =>
 			(await Serializer.ReadFromTxt(OutputFilePath, converter)).ElementAt(i);
+
+        private void WriteInConsoleIfNeed(string text) {
+            if (OutputInConsole) {
+                Console.WriteLine($"{ DateTime.Now.ToString("dd/MM/YYYY HH:mm:ss") }\t{ text }");
+            }
+        }
 	}
 }
