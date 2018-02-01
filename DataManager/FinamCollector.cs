@@ -57,10 +57,15 @@ namespace DataManager {
 		public override Task<List<Product>> List() =>
 			Repository.List();
 
-		public override Task<List<Product>> List(DateTime from, DateTime to, TimeSpan step) {
-			CheckConditionOnException(to - from < step,
-				$"The difference in time should be more than { step.ToString() }");
-			throw new NotImplementedException();
+		public override async Task<List<Product>> List(DateTime from, DateTime to, TimeSpan step) {
+			CheckConditionOnException(to - from < TimeSpan.FromDays(1),
+                "The difference in time should be more than day");
+            var list = await Repository
+                .Where(x => x.Date >= from && x.Date < to)
+                .SortBy(x => x.Date)
+                .Execute();
+            var result = TakeLastProductForEachStep(list, step);
+            return result;
 		}
 
 		public override bool TryGet(DateTime date, TimeSpan step, out Product result) {
@@ -75,7 +80,7 @@ namespace DataManager {
 		public override async Task DownloadMissingData(DateTime before, TimeSpan step) {
 			var list = await Repository.List();
 			var minDeff = list.Min(x => before - x.Date);
-			if (minDeff > step) {
+			if (minDeff >= step) {
 				var lastExistTime = list.Where(x => before - x.Date == minDeff).First().Date;
 				var newData = await DownloadDataByStep(lastExistTime, before);
 				await Repository.AddRange(newData);
@@ -138,5 +143,37 @@ namespace DataManager {
 			}
 			return result;
 		}
-	}
+
+        protected List<Product> TakeLastProductForEachStep(List<Product> productsSorted, TimeSpan step) {
+            var result = new List<Product>();
+            if (productsSorted.Count == 0) {
+                return result;
+            }
+            var lastDate = productsSorted.Last().Date + step;
+            for (var i = productsSorted.Count - 1; i >= 0; i--) {
+                var product = productsSorted[i];
+                if (product.Date <= lastDate - step) {
+                    lastDate = product.Date;
+                    result.Add(product);
+                }
+            }
+            return result.OrderBy(x => x.Date).ToList();
+        }
+
+        protected List<Product> TakeLastProductFirstEachStep(List<Product> productsSorted, TimeSpan step) {
+            var result = new List<Product>();
+            if (productsSorted.Count == 0) {
+                return result;
+            }
+            var firstDate = productsSorted.First().Date - step;
+            for (var i = 0; i < productsSorted.Count; i++) {
+                var product = productsSorted[i];
+                if (product.Date >= firstDate + step) {
+                    firstDate = product.Date;
+                    result.Add(product);
+                }
+            }
+            return result.OrderBy(x => x.Date).ToList();
+        }
+    }
 }
