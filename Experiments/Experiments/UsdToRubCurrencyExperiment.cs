@@ -1,16 +1,24 @@
-﻿using DataManager;
+﻿using DataBase.Repositories;
+using DataManager;
+using Microsoft.EntityFrameworkCore.Extensions.Internal;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 
 namespace Experiment {
     public class UsdToRubCurrencyExperiment : Experiment {
         public override async void Run() {
             var configuration = GetConfiguration();
-            var collector = new UsdToRubCurrencyCollector(configuration);
-            await collector.DownloadMissingData(DateTime.Now, TimeSpan.FromHours(1));
+            var repository = new UsdToRubCurrencyRepository(configuration);
+            var collector = new UsdToRubCurrencyCollector(repository);
+            collector.GlobalFrom = DateTime.Now - TimeSpan.FromDays(20);
+            //await collector.DownloadMissingData(DateTime.Now, TimeSpan.FromHours(1));
+            //var y = collector.TryGet(new DateTime(2018, 1, 31, 14, 0, 0), TimeSpan.FromHours(1), out var result);
+            //var t = result;
+            var o = collector.List(DateTime.Now - TimeSpan.FromDays(10), 
+                DateTime.Now - TimeSpan.FromDays(5), 
+                TimeSpan.FromHours(24));
         }
 
         private IConfiguration GetConfiguration() {

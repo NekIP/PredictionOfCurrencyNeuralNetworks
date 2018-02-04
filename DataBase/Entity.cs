@@ -1,9 +1,8 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DataBase {
 	public class Entity {
-		[BsonId]
-		public ObjectId Id { get; set; }
+        [Key]
+		public long Id { get; set; }
 	}
 }

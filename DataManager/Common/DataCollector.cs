@@ -4,7 +4,17 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DataManager {
-	public abstract class DataCollector<T> where T : Entity, new() {
+    public interface IDataCollector<T> where T : Entity, new() {
+        DateTime GlobalFrom { get; set; }
+        string Source { get; }
+        IRepository<T> Repository { get; }
+        Task<List<T>> List();
+        Task<List<T>> List(DateTime from, DateTime to, TimeSpan step);
+        bool TryGet(DateTime date, TimeSpan step, out T result);
+        Task DownloadMissingData(DateTime before, TimeSpan step);
+    }
+
+	public abstract class DataCollector<T> : IDataCollector<T> where T : Entity, new() {
         public DateTime GlobalFrom { get; set; } = new DateTime(2007, 1, 1);
 		public string Source { get; protected set; }
 		public IRepository<T> Repository { get; protected set; }

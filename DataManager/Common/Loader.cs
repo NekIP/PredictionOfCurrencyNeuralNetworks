@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 
 namespace DataManager {
 	public class Loader {
-		public Loader() {}
-
         public Task<string> Get(string url, params KeyValuePair<string, string>[] parameters) {
             var client = new WebClient();
             client.Encoding = Encoding.UTF8;

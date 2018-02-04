@@ -1,5 +1,6 @@
 ﻿using DataBase;
 using DataBase.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,7 +9,9 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace DataManager {
-	public abstract class FinamCollector : DataCollector<Product> {
+    public interface IFinamCollector : IDataCollector<Product> { }
+
+	public abstract class FinamCollector : DataCollector<Product>, IFinamCollector {
 		/*it's horrible*/
 		protected static readonly Dictionary<string, string> FinamData = new Dictionary<string, string> {
             { "market", "" },		// market
@@ -58,41 +61,44 @@ namespace DataManager {
         }
 
 		public override Task<List<Product>> List() =>
-			Repository.List();
+			Repository.Table().ToListAsync();
 
-		public override async Task<List<Product>> List(DateTime from, DateTime to, TimeSpan step) {
+		public override Task<List<Product>> List(DateTime from, DateTime to, TimeSpan step) {
 			CheckConditionOnException(to - from < TimeSpan.FromDays(1),
                 "The difference in time should be more than day");
-            var list = await Repository
+            var list = Repository.Table()
                 .Where(x => x.Date >= from && x.Date < to)
-                .SortBy(x => x.Date)
-                .Execute();
+                .OrderBy(x => x.Date)
+                .ToList();
             var result = TakeLastProductForEachStep(list, step);
-            return result;
+            return Task.FromResult(result);
 		}
 
 		public override bool TryGet(DateTime date, TimeSpan step, out Product result) {
-            var task = Repository.Where(x => x.Date - date < step).Execute();
-            task.Wait();
-			var list = task.Result;
+			var list = Repository.Table().Where(x => 
+                new TimeSpan(Math.Abs(x.Date.Ticks - date.Ticks)) < step
+            ).ToList();
 			var entityExistInRepository = list.Count > 0;
 			result = entityExistInRepository ? list.First() : null;
 			return entityExistInRepository;
 		}
 
 		public override async Task DownloadMissingData(DateTime before, TimeSpan step) {
-			var list = await Repository.List();
-            if (list.Count == 0) {
+            var table = Repository.Table();
+            if (table.Count() == 0) {
                 var newData = await DownloadDataByStep(GlobalFrom, before);
-                await Repository.AddRange(newData);
+                await table.AddRangeAsync(newData);
+                await Repository.SaveChangesAsync();
                 return;
             }
-			var minDeff = list.Min(x => before - x.Date);
+			var minDeff = table.Min(x => new TimeSpan(before.Ticks - x.Date.Ticks));
 			if (minDeff >= step) {
-				var lastExistTime = list.Where(x => before - x.Date == minDeff).First().Date;
+				var lastExistTime = table
+                    .Where(x => new TimeSpan(before.Ticks - x.Date.Ticks) == minDeff).First().Date;
 				var newData = await DownloadDataByStep(lastExistTime, before);
-				await Repository.AddRange(newData);
-			}
+				await table.AddRangeAsync(newData);
+                await Repository.SaveChangesAsync();
+            }
 		}
 
 		protected KeyValuePair<string, string>[] GetParameters(DateTime from, DateTime to) {
