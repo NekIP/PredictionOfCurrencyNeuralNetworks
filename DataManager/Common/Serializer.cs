@@ -5,7 +5,20 @@ using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 
 namespace DataManager {
-	public class Serializer {
+    public interface ISerializer {
+        Task AppendToTxt(string line, string path);
+        Task AppendToTxt<T>(T entity, string path, Func<T, string> converter);
+        Task AppendToTxt<T>(T entity, string path);
+        Task SaveToTxt(string text, string path);
+        Task SaveToTxt<T>(IEnumerable<T> array, string path, Func<T, string> converter);
+        Task SaveToTxt<T>(IEnumerable<T> array, string path);
+        Task<string> ReadFromTxt(string path);
+        Task<IEnumerable<T>> ReadFromTxt<T>(string path, Func<string, T> converter);
+        void Serialize<T>(T entity, string path);
+        T Deserialize<T>(string path);
+    }
+
+	public class Serializer : ISerializer {
 		public async Task AppendToTxt(string line, string path) {
 			if (!File.Exists(path)) {
 				File.Create(path);
