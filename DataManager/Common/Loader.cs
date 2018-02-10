@@ -6,7 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataManager {
-	public class Loader {
+    public interface ILoader {
+        Task<string> Get(string url, params KeyValuePair<string, string>[] parameters);
+        Task<string> Post(string url, params KeyValuePair<string, string>[] parameters);
+        Task<T> Get<T>(string url, Func<string, T> converter, params KeyValuePair<string, string>[] parameters);
+        Task<T> Post<T>(string url, Func<string, T> converter, params KeyValuePair<string, string>[] parameters);
+    }
+
+	public class Loader : ILoader {
         public Task<string> Get(string url, params KeyValuePair<string, string>[] parameters) {
             var client = new WebClient();
             client.Encoding = Encoding.UTF8;
