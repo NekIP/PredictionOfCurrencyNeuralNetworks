@@ -4,7 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace DataManager {
-    public class Log {
+    public interface ILog {
+        string OutputFilePath { get; set; }
+        bool OutputInConsole { get; set; }
+        Task Write(string line);
+        Task Write<T>(T entity);
+        Task Write<T>(T entity, Func<T, string> converter);
+        Task<IEnumerable<string>> Read();
+        Task<string> Read(int i);
+        Task<IEnumerable<T>> Read<T>(Func<string, T> converter);
+        Task<T> Read<T>(int i, Func<string, T> converter);
+    }
+
+    public class Log : ILog {
         public string OutputFilePath { get; set; }
         public bool OutputInConsole { get; set; }
 
