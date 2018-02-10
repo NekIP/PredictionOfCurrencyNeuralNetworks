@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 
 namespace DataManager {
@@ -14,7 +14,7 @@ namespace DataManager {
         Task SaveToTxt<T>(IEnumerable<T> array, string path);
         Task<string> ReadFromTxt(string path);
         Task<IEnumerable<T>> ReadFromTxt<T>(string path, Func<string, T> converter);
-        void Serialize<T>(T entity, string path);
+        Task Serialize(object entity, string path);
         T Deserialize<T>(string path);
     }
 
@@ -70,18 +70,18 @@ namespace DataManager {
 			return result;
 		}
 
-		public void Serialize<T>(T entity, string path) {
-			var serializer = new DataContractJsonSerializer(typeof(T));
-			using (var stream = new FileStream(path, FileMode.OpenOrCreate)) {
-				serializer.WriteObject(stream, entity);
-			}
+		public Task Serialize(object entity, string path) {
+            var json = JsonConvert.SerializeObject(entity);
+			using (var stream = new StreamWriter(File.Open(path, FileMode.OpenOrCreate))) {
+                return stream.WriteAsync(json);
+            }
 		}
 
 		public T Deserialize<T>(string path) {
-			var serializer = new DataContractJsonSerializer(typeof(T));
-			using (var stream = new FileStream(path, FileMode.Open)) {
-				return (T)serializer.ReadObject(stream);
-			}
+			using (var stream = new StreamReader(File.Open(path, FileMode.Open))) {
+                var resultText = stream.ReadToEnd();
+                return JsonConvert.DeserializeObject<T>(resultText);
+            }
 		}
 	}
 }
