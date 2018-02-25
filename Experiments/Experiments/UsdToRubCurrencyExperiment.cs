@@ -12,13 +12,10 @@ namespace Experiment {
             var configuration = GetConfiguration();
             var repository = new UsdToRubCurrencyRepository(configuration);
             var collector = new UsdToRubCurrencyCollector(repository);
-            collector.GlobalFrom = DateTime.Now - TimeSpan.FromDays(20);
-            //await collector.DownloadMissingData(DateTime.Now, TimeSpan.FromHours(1));
+            //collector.GlobalFrom = DateTime.Now - TimeSpan.FromDays(20);
+            await collector.DownloadMissingData(DateTime.Now, TimeSpan.FromHours(1));
             //var y = collector.TryGet(new DateTime(2018, 1, 31, 14, 0, 0), TimeSpan.FromHours(1), out var result);
             //var t = result;
-            var o = collector.List(DateTime.Now - TimeSpan.FromDays(10), 
-                DateTime.Now - TimeSpan.FromDays(5), 
-                TimeSpan.FromHours(24));
         }
 
         private IConfiguration GetConfiguration() {

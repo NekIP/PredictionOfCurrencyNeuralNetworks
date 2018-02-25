@@ -15,7 +15,7 @@ namespace DataManager {
     }
 
 	public abstract class DataCollector<T> : IDataCollector<T> where T : Entity, new() {
-        public DateTime GlobalFrom { get; set; } = new DateTime(2007, 1, 1);
+        public DateTime GlobalFrom { get; set; } = new DateTime(2007, 10, 8);
 		public string Source { get; protected set; }
 		public IRepository<T> Repository { get; protected set; }
 

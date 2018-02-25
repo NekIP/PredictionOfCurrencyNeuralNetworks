@@ -52,8 +52,8 @@ namespace DataManager {
 		protected int FinamMarket { get; set; }
         protected Log Log { get; set; }
 
-		protected FinamCollector(string source, IRepository<Product> repository, 
-			string finamCode, int finamEm, int finamMarket) : base(source, repository) {
+		protected FinamCollector(IRepository<Product> repository, 
+			string finamCode, int finamEm, int finamMarket) : base("http://export.finam.ru/", repository) {
 			FinamCode = finamCode;
 			FinamEm = finamEm;
 			FinamMarket = finamMarket;
@@ -76,7 +76,7 @@ namespace DataManager {
 
 		public override bool TryGet(DateTime date, TimeSpan step, out Product result) {
 			var list = Repository.Table().Where(x => 
-                new TimeSpan(Math.Abs(x.Date.Ticks - date.Ticks)) < step
+                new TimeSpan(Math.Abs(x.Date.Ticks - date.Ticks)) < step && x.Date.Ticks <= date.Ticks
             ).ToList();
 			var entityExistInRepository = list.Count > 0;
 			result = entityExistInRepository ? list.First() : null;
@@ -86,20 +86,30 @@ namespace DataManager {
 		public override async Task DownloadMissingData(DateTime before, TimeSpan step) {
             var table = Repository.Table();
             if (table.Count() == 0) {
-                var newData = await DownloadDataByStep(GlobalFrom, before);
-                await table.AddRangeAsync(newData);
-                await Repository.SaveChangesAsync();
+                await GetAndSaveData(GlobalFrom, before);
                 return;
             }
-			var minDeff = table.Min(x => new TimeSpan(before.Ticks - x.Date.Ticks));
-			if (minDeff >= step) {
+			var minDeffRight = table.Min(x => new TimeSpan(Math.Abs(before.Ticks - x.Date.Ticks)));
+			if (minDeffRight >= step) {
 				var lastExistTime = table
-                    .Where(x => new TimeSpan(before.Ticks - x.Date.Ticks) == minDeff).First().Date;
-				var newData = await DownloadDataByStep(lastExistTime, before);
-				await table.AddRangeAsync(newData);
-                await Repository.SaveChangesAsync();
+                    .Where(x => new TimeSpan(Math.Abs(before.Ticks - x.Date.Ticks)) == minDeffRight).First().Date;
+                await GetAndSaveData(lastExistTime, before);
             }
-		}
+            var minDeffLeft = table.Min(x => new TimeSpan(Math.Abs(x.Date.Ticks - GlobalFrom.Ticks)));
+            if (minDeffLeft >= step) {
+                var firstExistTime = table
+                    .Where(x => new TimeSpan(Math.Abs(GlobalFrom.Ticks - x.Date.Ticks)) == minDeffLeft).First().Date;
+                await GetAndSaveData(GlobalFrom, firstExistTime);
+            }
+        }
+
+        protected async Task GetAndSaveData(DateTime from, DateTime to) {
+            var table = Repository.Table();
+            var newData = await DownloadDataByStep(from, to);
+            await table.AddRangeAsync(newData);
+            await Repository.SaveChangesAsync();
+            DeleteDuplicateEntries();
+        }
 
 		protected KeyValuePair<string, string>[] GetParameters(DateTime from, DateTime to) {
 			var finamData = new Dictionary<string, string>(FinamData);
@@ -124,7 +134,7 @@ namespace DataManager {
 			var result = new List<Product>();
 			var step = TimeSpan.FromDays(10);
 			for (var current = from; current <= to; current += step) {
-				var next = current + step < to ? current + step : to;
+				var next = current + step < to ? current + step : to + TimeSpan.FromDays(1);
 				var entities = await loader.Get(GetUrl(current, next), Converter, GetParameters(current, next));
                 await Log.Write($"AddedRecords={ entities.Count };From={ current.ToString("dd/MM/yyyy HH:mm:ss") };" +
                     $"To={ next.ToString("dd/MM/yyyy HH:mm:ss") };" +
@@ -182,7 +192,7 @@ namespace DataManager {
             return result.OrderBy(x => x.Date).ToList();
         }
 
-        protected List<Product> TakeLastProductFirstEachStep(List<Product> productsSorted, TimeSpan step) {
+        protected List<Product> TakeFirstProductForEachStep(List<Product> productsSorted, TimeSpan step) {
             var result = new List<Product>();
             if (productsSorted.Count == 0) {
                 return result;
@@ -200,5 +210,20 @@ namespace DataManager {
 
         protected string GetUrl(DateTime from, DateTime to) =>
             $"{ Source }{ FinamCode }_{ from.ToString("yyMMdd") }_{ to.ToString("yyMMdd") }{ FinamData["e"] }";
+
+        protected void DeleteDuplicateEntries() {
+            var all = Repository.Table().ToList();
+            var unique = all.Distinct(new ProductComparer()).ToList();
+            var forDelete = all.Except(unique).ToList();
+            if (forDelete.Count() > 0) {
+                Repository.Table().RemoveRange(forDelete);
+                Repository.SaveChanges();
+            }
+        }
+
+        protected class ProductComparer : IEqualityComparer<Product> {
+            public bool Equals(Product x, Product y) => x.Date == y.Date;
+            public int GetHashCode(Product obj) => obj.Date.GetHashCode();
+        }
     }
 }

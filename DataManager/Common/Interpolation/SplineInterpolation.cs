@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace DataManager {
-    class Interpolation {
+    public class SplineInterpolation {
         private readonly double[] keys;
 
         private readonly double[] values;
@@ -17,37 +16,31 @@ namespace DataManager {
         /// Collection of known points for further interpolation.
         /// Should contain at least two items.
         /// </param>
-        public Interpolation(IDictionary<double, double> nodes) {
+        public SplineInterpolation(IDictionary<double, double> nodes) {
             if (nodes == null) {
                 throw new ArgumentNullException("nodes");
             }
-
             var n = nodes.Count;
             if (n < 2) {
                 throw new ArgumentException("At least two point required for interpolation.");
             }
-
             keys = nodes.Keys.ToArray();
             values = nodes.Values.ToArray();
             a = new double[n];
             h = new double[n];
-
             for (var i = 1; i < n; i++) {
                 h[i] = keys[i] - keys[i - 1];
             }
-
             if (n > 2) {
                 var sub = new double[n - 1];
                 var diag = new double[n - 1];
                 var sup = new double[n - 1];
-
                 for (var i = 1; i <= n - 2; i++) {
                     diag[i] = (h[i] + h[i + 1]) / 3;
                     sup[i] = h[i + 1] / 6;
                     sub[i] = h[i] / 6;
                     a[i] = (values[i + 1] - values[i]) / h[i + 1] - (values[i] - values[i - 1]) / h[i];
                 }
-
                 SolveTridiag(sub, diag, sup, ref a, n - 2);
             }
         }

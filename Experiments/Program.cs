@@ -11,7 +11,8 @@ namespace Experiment {
 			//new PerceptronNeuralNetworkTest(),
 			//new LstmTest(),
 			//new LstmLearningTest(),
-            new UsdToRubCurrencyExperiment()
+            new UsdToRubCurrencyExperiment(),
+            //new InterpolationTesst()
 		};
 
 		public static void Main(string[] args) {

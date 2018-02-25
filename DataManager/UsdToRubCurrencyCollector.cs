@@ -5,6 +5,6 @@ namespace DataManager {
 
     public class UsdToRubCurrencyCollector : FinamCollector, IUsdToRubCurrencyCollector {
 		public UsdToRubCurrencyCollector(IUsdToRubCurrencyRepository repository) 
-			: base("http://export.finam.ru/", repository, "USDRUB", 901, 5) { }
+			: base(repository, "USDRUB", 901, 5) { }
 	}
 }

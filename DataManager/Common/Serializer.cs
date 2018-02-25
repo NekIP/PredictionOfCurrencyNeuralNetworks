@@ -20,9 +20,6 @@ namespace DataManager {
 
 	public class Serializer : ISerializer {
 		public async Task AppendToTxt(string line, string path) {
-			if (!File.Exists(path)) {
-				File.Create(path);
-			}
 			using (var stream = new StreamWriter(File.Open(path, FileMode.Append))) {
 				await stream.WriteLineAsync(line);
 			}
