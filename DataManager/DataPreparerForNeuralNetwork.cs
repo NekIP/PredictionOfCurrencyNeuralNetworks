@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DataManager
-{
-    class DataPreparerForNeuralNetwork
-    {
+﻿namespace DataManager {
+    public interface IDataPreparerForNeuralNetwork { }
+    public class DataPreparerForNeuralNetwork : IDataPreparerForNeuralNetwork {
+        
     }
 }
