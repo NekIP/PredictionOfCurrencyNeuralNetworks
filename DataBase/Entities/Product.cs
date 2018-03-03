@@ -2,7 +2,6 @@
 
 namespace DataBase.Entities {
 	public class Product : Entity {
-		public DateTime Date { get; set; }
 		public double Open { get; set; }
 		public double High { get; set; }
 		public double Low { get; set; }

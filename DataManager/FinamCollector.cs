@@ -60,30 +60,13 @@ namespace DataManager {
             Log = new Log($"log_{ FinamCode }.txt", true);
         }
 
-		public override Task<List<Product>> List() =>
-			Repository.Table().ToListAsync();
-
 		public override Task<List<Product>> List(DateTime from, DateTime to, TimeSpan step) {
 			CheckConditionOnException(to - from < TimeSpan.FromDays(1),
                 "The difference in time should be more than day");
-            var list = Repository.Table()
-                .Where(x => x.Date >= from && x.Date < to)
-                .OrderBy(x => x.Date)
-                .ToList();
-            var result = TakeLastProductForEachStep(list, step);
-            return Task.FromResult(result);
+            return base.List(from, to, step);
 		}
 
-		public override bool TryGet(DateTime date, TimeSpan step, out Product result) {
-			var list = Repository.Table().Where(x => 
-                new TimeSpan(Math.Abs(x.Date.Ticks - date.Ticks)) < step && x.Date.Ticks <= date.Ticks
-            ).ToList();
-			var entityExistInRepository = list.Count > 0;
-			result = entityExistInRepository ? list.First() : null;
-			return entityExistInRepository;
-		}
-
-		public override async Task DownloadMissingData(DateTime before, TimeSpan step) {
+        public override async Task DownloadMissingData(DateTime before, TimeSpan step) {
             var table = Repository.Table();
             if (table.Count() == 0) {
                 await GetAndSaveData(GlobalFrom, before);
@@ -108,7 +91,7 @@ namespace DataManager {
             var newData = await DownloadDataByStep(from, to);
             await table.AddRangeAsync(newData);
             await Repository.SaveChangesAsync();
-            DeleteDuplicateEntries();
+            DeleteDuplicateEntries(new ProductComparer());
         }
 
 		protected KeyValuePair<string, string>[] GetParameters(DateTime from, DateTime to) {
@@ -176,50 +159,8 @@ namespace DataManager {
 			return result;
 		}
 
-        protected List<Product> TakeLastProductForEachStep(List<Product> productsSorted, TimeSpan step) {
-            var result = new List<Product>();
-            if (productsSorted.Count == 0) {
-                return result;
-            }
-            var lastDate = productsSorted.Last().Date + step;
-            for (var i = productsSorted.Count - 1; i >= 0; i--) {
-                var product = productsSorted[i];
-                if (product.Date <= lastDate - step) {
-                    lastDate = product.Date;
-                    result.Add(product);
-                }
-            }
-            return result.OrderBy(x => x.Date).ToList();
-        }
-
-        protected List<Product> TakeFirstProductForEachStep(List<Product> productsSorted, TimeSpan step) {
-            var result = new List<Product>();
-            if (productsSorted.Count == 0) {
-                return result;
-            }
-            var firstDate = productsSorted.First().Date - step;
-            for (var i = 0; i < productsSorted.Count; i++) {
-                var product = productsSorted[i];
-                if (product.Date >= firstDate + step) {
-                    firstDate = product.Date;
-                    result.Add(product);
-                }
-            }
-            return result.OrderBy(x => x.Date).ToList();
-        }
-
         protected string GetUrl(DateTime from, DateTime to) =>
             $"{ Source }{ FinamCode }_{ from.ToString("yyMMdd") }_{ to.ToString("yyMMdd") }{ FinamData["e"] }";
-
-        protected void DeleteDuplicateEntries() {
-            var all = Repository.Table().ToList();
-            var unique = all.Distinct(new ProductComparer()).ToList();
-            var forDelete = all.Except(unique).ToList();
-            if (forDelete.Count() > 0) {
-                Repository.Table().RemoveRange(forDelete);
-                Repository.SaveChanges();
-            }
-        }
 
         protected class ProductComparer : IEqualityComparer<Product> {
             public bool Equals(Product x, Product y) => x.Date == y.Date;
