@@ -31,7 +31,7 @@ namespace DataManager {
                 var serializer = new Serializer();
                 var newData = (await serializer.ReadFromTxt(Source, x => new EconomicIndicator() {
                     Date = DateTime.Parse(x.Split(";")[0]),
-                    Value = double.Parse(x.Split(";")[1])
+                    Indicator = double.Parse(x.Split(";")[1])
                 })).ToList();
                 Repository.Table().AddRange(newData);
                 Repository.SaveChanges();

@@ -22,6 +22,7 @@ namespace DataBase {
         public Repository(IConfiguration configuration) {
             Configuration = configuration;
             Database.EnsureCreated();
+            SaveChanges();
         }
 
         public Repository(DbContextOptions<Repository<T>> options) : base(options) {

@@ -2,6 +2,7 @@
 
 namespace DataBase.Entities {
     public class EconomicIndicator : Entity {
-        public double Value { get; set; }
+        public double Indicator { get; set; }
+        public override double Value() => Indicator;
     }
 }

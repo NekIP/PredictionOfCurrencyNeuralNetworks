@@ -1,6 +1,5 @@
 ﻿using DataBase;
 using DataBase.Entities;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -87,10 +86,7 @@ namespace DataManager {
         }
 
         protected async Task GetAndSaveData(DateTime from, DateTime to) {
-            var table = Repository.Table();
-            var newData = await DownloadDataByStep(from, to);
-            await table.AddRangeAsync(newData);
-            await Repository.SaveChangesAsync();
+            await DownloadDataByStepAndSaveIt(from, to);
             DeleteDuplicateEntries(new ProductComparer());
         }
 
@@ -112,9 +108,9 @@ namespace DataManager {
 			return finamData.ToArray();
 		}
 
-		protected async Task<List<Product>> DownloadDataByStep(DateTime from, DateTime to) {
+		protected async Task DownloadDataByStepAndSaveIt(DateTime from, DateTime to) {
 			var loader = new Loader();
-			var result = new List<Product>();
+            var table = Repository.Table();
 			var step = TimeSpan.FromDays(10);
 			for (var current = from; current <= to; current += step) {
 				var next = current + step < to ? current + step : to + TimeSpan.FromDays(1);
@@ -123,10 +119,10 @@ namespace DataManager {
                     $"To={ next.ToString("dd/MM/yyyy HH:mm:ss") };" +
                     $"DateOfFirstItemInArray={ entities.FirstOrDefault()?.Date.ToString("dd/MM/yyyy HH:mm:ss") }" +
                     $"DateOfLastItemInArray={ entities.LastOrDefault()?.Date.ToString("dd/MM/yyyy HH:mm:ss") }");
-				result.AddRange(entities);
+                await table.AddRangeAsync(entities);
+                await Repository.SaveChangesAsync();
                 Thread.Sleep(250);
 			}
-			return result;
 		}
 
 		// #5 — DATE, TIME, OPEN, HIGH, LOW, CLOSE, VOL;

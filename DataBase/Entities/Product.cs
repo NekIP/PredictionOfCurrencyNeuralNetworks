@@ -8,5 +8,6 @@ namespace DataBase.Entities {
 		public double Close { get; set; }
 		public double ChangeCloseOpen { get; set; }
 		public double ChangeHighLow { get; set; }
-	}
+        public override double Value() => Close;
+    }
 }
