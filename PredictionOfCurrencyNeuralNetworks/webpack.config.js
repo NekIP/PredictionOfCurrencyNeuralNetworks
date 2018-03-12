@@ -13,7 +13,13 @@ module.exports = {
         rules: [
             {
                 test: /\.vue$/,
-                loader: 'vue-loader'
+                loader: 'vue-loader',
+                options: {
+                    loaders: {
+                        scss: 'vue-style-loader!css-loader!sass-loader', // <style lang="scss">
+                        sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax' // <style lang="sass">
+                    }
+                }
             },
             {
                 test: /\.css$/,
@@ -51,7 +57,7 @@ module.exports = {
         ]
     },
     plugins: [
-        new UglifyJSPlugin(), // not worked with sass
+        //new UglifyJSPlugin(), // not worked with sass
         new ExtractTextPlugin('styles.css', {
             allChunks: true
         }),

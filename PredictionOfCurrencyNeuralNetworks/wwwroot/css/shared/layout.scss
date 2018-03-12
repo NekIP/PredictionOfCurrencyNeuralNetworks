@@ -1,9 +1,5 @@
-﻿$lazureTextColor: #00a47f;
-$orangeTextColor: #fea62b;
-$headerLogoTextSize: 20px;
-
-.header {
-    background: linear-gradient(180deg, #f0f0f0, #fff);
+﻿.header {
+    /*background: linear-gradient(180deg, #f0f0f0, #fff);*/
     height: 45px;
     width: 100%;
     margin: 0px;
@@ -44,7 +40,6 @@ $headerLogoTextSize: 20px;
             .info {
                 margin: 5px 10px;
                 //text-align: right;
-
                 .title {
                     font-weight: 500;
                     font-size: 14px;

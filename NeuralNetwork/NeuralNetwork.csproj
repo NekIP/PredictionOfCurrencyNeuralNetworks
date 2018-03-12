@@ -8,4 +8,8 @@
     <Compile Remove="Implementation\Recurent\Lstm\LstmGatesForAllLayer.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DataAssistants\DataAssistants.csproj" />
+  </ItemGroup>
+
 </Project>

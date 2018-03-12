@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 
-namespace NeuralNetwork {
-	public class Shape {
+namespace DataAssistants.Structs {
+    public class Shape {
 		public Vector[][] Values { get; set; }
 
 		public Shape(Vector value) {

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using DataAssistants.Structs;
+using System;
 using System.Linq;
 
 namespace NeuralNetwork {
-	public abstract class Perceptron : NeuralNetwork {
+    public abstract class Perceptron : NeuralNetwork {
 		public PerceptronParameters Parameters { get; set; }
 
 		protected void CheckInitializationParameters(PerceptronParameters parameters, 
@@ -19,7 +20,7 @@ namespace NeuralNetwork {
 		protected Vector ConvertDataToVector(NeuralNetworkData data) {
 			CheckConditionOnException(data.DataType != NeuralNetworkDataType.Vector, "Perceptron implements the 'one to one' approach, " +
 				"so the input shape must contain only a single vector. For example: nt.Run(new NeuralNetworkData(new [] { 0.0, 0.3 }))");
-			return data.Shape.Values.First().First();
+			return data.Shape.Values.First().First().Copy();
 		}
 
 		protected void CheckInput(Vector input, Vector inputNeurons) {

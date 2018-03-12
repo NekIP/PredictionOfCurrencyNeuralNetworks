@@ -2,8 +2,6 @@
 
 namespace NeuralNetwork {
 	public class SigmoidActivation : Activation {
-		public double ActivationCoefficient { get; set; }
-
 		public SigmoidActivation(double activationCoefficient = 1) {
 			ActivationCoefficient = activationCoefficient;
 		}

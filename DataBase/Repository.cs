@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DataBase.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -14,8 +15,8 @@ namespace DataBase {
         DatabaseFacade Database { get; }
     }
 
-    public abstract class Repository<T> : DbContext, IRepository<T> where T : Entity {
-        public abstract DbSet<T> Table();
+    public class Repository<T> : DbContext, IRepository<T> where T : Entity {
+        public virtual DbSet<T> Table() { return null; }
 
         private IConfiguration Configuration { get; set; }
 

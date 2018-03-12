@@ -1,4 +1,5 @@
-﻿using NeuralNetwork.Details;
+﻿using DataAssistants.Structs;
+using NeuralNetwork.Details;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -195,5 +196,13 @@ namespace NeuralNetwork {
 				new HyperbolicActivation(Parameters.ActivationCoefficient));
 			GatesForLayer = new LstmGatesForLayer(CellsParameters);
 		}
-	}
+
+        public override void Load(string nameOfNeuralNetwork) {
+            throw new System.NotImplementedException();
+        }
+
+        public override void Save(string nameOfNeuralNetwork) {
+            throw new System.NotImplementedException();
+        }
+    }
 }

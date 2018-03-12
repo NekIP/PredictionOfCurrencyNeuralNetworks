@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using DataAssistants.Structs;
+using System.Linq;
 
 namespace NeuralNetwork {
 	public abstract class Recurent : NeuralNetwork {

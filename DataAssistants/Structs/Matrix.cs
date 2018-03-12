@@ -1,12 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace NeuralNetwork {
-	public class Matrix {
+namespace DataAssistants.Structs {
+    public class Matrix {
+        [JsonProperty]
 		public Vector[] Vectors { get; private set; }
-		public int RowCount => Vectors.Length;
-		public int ColumnCount => Vectors.First().Length;
+        [JsonIgnore]
+        public int RowCount => Vectors.Length;
+        [JsonIgnore]
+        public int ColumnCount => Vectors.First().Length;
 
 		public Matrix(double[][] values) {
 			var сountElementsInFirstVectors = values.First().Length;

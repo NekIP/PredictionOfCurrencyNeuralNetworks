@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataAssistants.Structs;
+using System;
 
 namespace NeuralNetwork {
 	public abstract class NeuralNetwork {
@@ -9,16 +10,22 @@ namespace NeuralNetwork {
 
 		public Activation Activation { get; protected set; }
 
+        protected string DefaultPath => "NeuralNetworks/";
+
 		public abstract NeuralNetworkResult Run(NeuralNetworkData inputData);
 
 		public abstract NeuralNetworkLearnResult Learn(NeuralNetworkData inputData, NeuralNetworkData idealData);
 
 		public abstract NeuralNetworkLearnResult Learn(NeuralNetworkData inputData);
 
-		/// <summary>
-		/// Converts the output values of a neural network using the inverse activation function
-		/// </summary>
-		public virtual Vector ConvertOutput(Vector output) => Vector.Convert(output, Activation.InverseFunc);
+        public abstract void Load(string nameOfNeuralNetwork);
+
+        public abstract void Save(string nameOfNeuralNetwork);
+    
+        /// <summary>
+        /// Converts the output values of a neural network using the inverse activation function
+        /// </summary>
+        public virtual Vector ConvertOutput(Vector output) => Vector.Convert(output, Activation.InverseFunc);
 
 		protected void SetNextEpoch() => Epoch++;
 

@@ -1,4 +1,6 @@
-﻿namespace NeuralNetwork {
+﻿using DataAssistants.Structs;
+
+namespace NeuralNetwork {
 	public class NeuralNetworkLearnResult {
 		public Shape Value { get; set; }
 		public Shape Error { get; set; }

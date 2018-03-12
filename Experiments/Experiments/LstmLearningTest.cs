@@ -1,13 +1,12 @@
-﻿using NeuralNetwork;
+﻿using DataAssistants.Structs;
+using NeuralNetwork;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace Experiment {
-	public class LstmLearningTest : Experiment {
+    public class LstmLearningTest : Experiment {
 		public override void Run() {
 			var rnd = new Random();
 			var lstm = new Lstm(2, 1, new RecurentParameters(0.5, 1, 0.5), 

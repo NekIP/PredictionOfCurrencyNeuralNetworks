@@ -1,8 +1,12 @@
-﻿using System;
+﻿using DataAssistants;
+using DataAssistants.Structs;
+using System;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace NeuralNetwork {
-	public class MultilayerPerceptron : Perceptron {
+    public class MultilayerPerceptron : Perceptron {
 		public Vector[] Neurons { get; private set; }
 
 		/// <summary>
@@ -82,7 +86,31 @@ namespace NeuralNetwork {
 			return (actual, error);
 		}
 
-		private void InitializeNeurons(int[] lengthsOfEachLayerNeurons) {
+
+        public override void Load(string nameOfNeuralNetwork) {
+            var serializer = new Serializer();
+            if (serializer.Exists(DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Weights.json")) {
+                Weights = serializer.Deserialize<Matrix[]>(DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Weights.json");
+                DefferenceWeights = serializer.Deserialize<Matrix[]>(DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_DefferenceWeights.json");
+                Neurons = serializer.Deserialize<Vector[]>(DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Neurons.json");
+                Parameters = serializer.Deserialize<PerceptronParameters>(DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Parameters.json");
+                var activationStr = serializer.Deserialize<string>(DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Activation.json");
+                var (typename, activationCoef) = (activationStr.Split(";")[0], double.Parse(activationStr.Split(";")[1]));
+                var type = Assembly.GetExecutingAssembly().GetType(typename);
+                Activation = Activator.CreateInstance(type, activationCoef) as Activation;
+            }
+        }
+
+        public override void Save(string nameOfNeuralNetwork) {
+            var serializer = new Serializer();
+            serializer.Serialize(Weights, DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Weights.json");
+            serializer.Serialize(Neurons, DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Neurons.json");
+            serializer.Serialize(DefferenceWeights, DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_DefferenceWeights.json");
+            serializer.Serialize(Parameters, DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Parameters.json");
+            serializer.Serialize(Activation.GetType().ToString() + ";" + Activation.ActivationCoefficient, DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Activation.json");
+        }
+
+        private void InitializeNeurons(int[] lengthsOfEachLayerNeurons) {
 			var countLayersOfNeurons = lengthsOfEachLayerNeurons.Length;
 			Neurons = new Vector[countLayersOfNeurons];
 			for (var i = 0; i < countLayersOfNeurons; i++) {

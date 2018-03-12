@@ -1,4 +1,6 @@
-﻿namespace NeuralNetwork.Details {
+﻿using DataAssistants.Structs;
+
+namespace NeuralNetwork.Details {
 	public class LstmCell {
 		public Vector Forget { get; set; }
 		public Vector Input { get; set; }

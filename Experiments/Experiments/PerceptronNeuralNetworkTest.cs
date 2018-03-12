@@ -1,9 +1,10 @@
-﻿using NeuralNetwork;
+﻿using DataAssistants.Structs;
+using NeuralNetwork;
 using System;
 using System.Diagnostics;
 
 namespace Experiment {
-	public class PerceptronNeuralNetworkTest : Experiment {
+    public class PerceptronNeuralNetworkTest : Experiment {
 		public override void Run() {
 			var nt = new MultilayerPerceptron(
 				new PerceptronParameters { LearningSpeed = 0.7, Moment = 0.3 },

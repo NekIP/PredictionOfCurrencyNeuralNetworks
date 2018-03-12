@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataAssistants.Structs;
+using System;
 
 namespace NeuralNetwork.Details {
 	/// <summary>

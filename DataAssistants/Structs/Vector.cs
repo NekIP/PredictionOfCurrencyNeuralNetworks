@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System;
 using System.Linq;
 
-namespace NeuralNetwork {
-	public class Vector {
+namespace DataAssistants.Structs {
+    public class Vector {
+        [JsonIgnore]
 		public int Length => Values.Length;
-		public double[] Values { get; private set; }
+        [JsonProperty]
+        public double[] Values { get; private set; }
 
 		public Vector(double[] values) {
 			Values = values;

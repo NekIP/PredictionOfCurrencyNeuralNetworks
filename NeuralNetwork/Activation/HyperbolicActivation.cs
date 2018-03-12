@@ -2,8 +2,6 @@
 
 namespace NeuralNetwork {
 	public class HyperbolicActivation : Activation {
-		public double ActivationCoefficient { get; set; }
-
 		public HyperbolicActivation(double activationCoefficient = 1) {
 			ActivationCoefficient = activationCoefficient;
 		}

@@ -1,4 +1,6 @@
-﻿namespace NeuralNetwork {
+﻿using DataAssistants.Structs;
+
+namespace NeuralNetwork {
 	public abstract class Activation {
 		public double ActivationCoefficient { get; set; }
 		public abstract double Func(double x);

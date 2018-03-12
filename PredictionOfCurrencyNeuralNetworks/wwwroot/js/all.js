@@ -1,1 +1,1 @@
-﻿
+﻿import './shared/layout.js'

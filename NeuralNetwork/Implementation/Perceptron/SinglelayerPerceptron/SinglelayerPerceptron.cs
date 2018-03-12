@@ -1,4 +1,7 @@
-﻿using System;
+﻿using DataAssistants;
+using DataAssistants.Structs;
+using System;
+using System.Reflection;
 
 namespace NeuralNetwork {
 	public class SinglelayerPerceptron : Perceptron {
@@ -76,5 +79,30 @@ namespace NeuralNetwork {
 				}
 			}
 		}
-	}
+
+        public override void Load(string nameOfNeuralNetwork) {
+            var serializer = new Serializer();
+            Weights = serializer.Deserialize<Matrix>(DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Weights.json");
+            DefferenceWeights = serializer.Deserialize<Matrix>(DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_DefferenceWeights.json");
+            Bias = serializer.Deserialize<Vector>(DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Bias.json");
+            InputNeurons = serializer.Deserialize<Vector>(DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_InputNeurons.json");
+            OutputNeurons = serializer.Deserialize<Vector>(DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_OutputNeurons.json");
+            Parameters = serializer.Deserialize<PerceptronParameters>(DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Parameters.json");
+            var activationStr = serializer.Deserialize<string>(DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Activation.json");
+            var (typename, activationCoef) = (activationStr.Split(";")[0], double.Parse(activationStr.Split(";")[1]));
+            var type = Assembly.GetExecutingAssembly().GetType(typename);
+            Activation = Activator.CreateInstance(type, activationCoef) as Activation;
+        }
+
+        public override void Save(string nameOfNeuralNetwork) {
+            var serializer = new Serializer();
+            serializer.Serialize(Weights, DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Weights.json");
+            serializer.Serialize(DefferenceWeights, DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_DefferenceWeights.json");
+            serializer.Serialize(Bias, DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Bias.json");
+            serializer.Serialize(InputNeurons, DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_InputNeurons.json");
+            serializer.Serialize(OutputNeurons, DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_OutputNeurons.json");
+            serializer.Serialize(Parameters, DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Parameters.json");
+            serializer.Serialize(Activation.GetType().Name + ";" + Activation.ActivationCoefficient, DefaultPath + nameOfNeuralNetwork + "/" + nameOfNeuralNetwork + "_Activation.json");
+        }
+    }
 }
