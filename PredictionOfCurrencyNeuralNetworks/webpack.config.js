@@ -65,7 +65,8 @@ module.exports = {
             Vue: "vue/dist/vue.min.js",
             $: "jquery/dist/jquery.min.js",
             jQuery: "jquery/dist/jquery.min.js",
-            "window.jQuery": "jquery/dist/jquery.min.js"  
+            "window.jQuery": "jquery/dist/jquery.min.js",
+            d3: "d3/build/d3.min.js"
         })
     ]
 };
