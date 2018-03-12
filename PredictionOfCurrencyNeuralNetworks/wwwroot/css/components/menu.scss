@@ -26,13 +26,13 @@
     background: #fff;
     z-index: 1000;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-}
 
-.menu-close {
-    background-image: url(../../images/MenuBackground.png);
-    width: 100%;
-    height: 200px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23) inset;
+    .menu-close {
+        background-image: url(../../images/MenuBackground.png);
+        width: 100%;
+        height: 200px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23) inset;
+    }
 }
 
 .menu-items {
@@ -43,19 +43,15 @@
     width: 100%;
     height: 34px;
     text-align: center;
-}
 
-.item a {
-    text-decoration: none;
-    font-size: 16px;
-    color: #00a47f;
-    font-weight: bold;
-}
+    a {
+        text-decoration: none;
+        font-size: 16px;
+        color: #00a47f;
+        font-weight: bold;
+    }
 
-.item a:link {
-    text-decoration: none;
-}
-
-.item a:focus {
-    color: #00a47f;
+    a:link {
+        text-decoration: none;
+    }
 }
