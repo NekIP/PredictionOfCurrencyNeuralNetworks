@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <Content Remove="wwwroot\components\configurator.cs" />
+    <Content Remove="wwwroot\js\api\request.js" />
+    <Content Remove="wwwroot\js\data-manager\dataManager.js" />
   </ItemGroup>
 
   <ItemGroup>

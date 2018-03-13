@@ -1,8 +1,7 @@
 ﻿new Vue({
-    el: "#layout",
+    el: ".layout",
     methods: {
-        test: function () {
-            alert("hello");
-        }
+    },
+    mounted: function () {
     }
 });

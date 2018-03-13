@@ -1,5 +1,5 @@
 ﻿<template>
-    <div>
+    <div class="custom-menu">
         <transition name="slide-fade">
             <div class="panel" v-show="show">
                 <div class="menu-close">
@@ -21,7 +21,7 @@
         <div class="background" v-show="show" v-on:click="showHide"></div>
         <div class="menu-activator" v-show="!show">
             <a class="menu col-md-1" href="#" role="button" v-on:click="showHide"><i class="fa fa-bars" aria-hidden="true"></i></a>
-        </div>
+        </div> 
 </div>
 </template>
 <script src="../js/components/menu.js"></script>

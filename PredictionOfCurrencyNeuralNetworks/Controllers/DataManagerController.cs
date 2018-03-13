@@ -58,7 +58,6 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
             TradeBalanceCollector = tradeBalanceCollector;
         }
 
-        // GET: /<controller>/
         public IActionResult Index() {
             return View();
         }

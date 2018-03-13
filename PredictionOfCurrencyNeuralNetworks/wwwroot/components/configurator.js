@@ -1,8 +1,7 @@
-﻿import menu from "./menu.vue"
+﻿import menu from "./custom-menu.vue"
+import dataWindow from "./data-window.vue"
 
 (function () {
-    new Vue({
-        el: '#menu',
-        render: h => h(menu)
-    })
+    Vue.component('data-window', dataWindow);
+    Vue.component('custom-menu', menu); 
 })();
