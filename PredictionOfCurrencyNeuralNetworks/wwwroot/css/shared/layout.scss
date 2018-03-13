@@ -1,9 +1,15 @@
-﻿.header {
-    /*background: linear-gradient(180deg, #f0f0f0, #fff);*/
+﻿@import '../consts.scss';
+
+body {
+    background-color: #f9f9f9;
+}
+
+.header {
+    background: #fff;//linear-gradient(180deg, #f0f0f0, #fff);
     height: 45px;
     width: 100%;
     margin: 0px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    box-shadow: $shadowMaterialDesign;
 
     .logo {
         margin: 3px;

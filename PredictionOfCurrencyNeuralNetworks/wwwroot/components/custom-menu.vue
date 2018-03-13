@@ -7,10 +7,10 @@
                 </div>
                 <div class="menu-items">
                     <div class="item">
-                        <a class="ref" href="#">Главная</a>
+                        <a class="ref" href="/">Главная</a>
                     </div>
                     <div class="item">
-                        <a class="ref" href="#">Менеджер данных</a>
+                        <a class="ref" href="/DataManager">Менеджер данных</a>
                     </div>
                     <div class="item">
                         <a class="ref" href="#">Анализ данных</a>

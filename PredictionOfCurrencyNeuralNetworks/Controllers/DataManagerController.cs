@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DataBase;
 using DataManager;
+using PredictionOfCurrencyNeuralNetworks.Models.DataManager;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,6 +26,8 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
         public IRTSCollector RtsCollector { get; set; }
         public ISAndP500Collector SAndPCollector { get; set; }
         public ITradeBalanceCollector TradeBalanceCollector { get; set; }
+
+        public Dictionary<string, IDataCollector> Collectors { get; set; }
 
         public DataManagerController(IUsdToRubCurrencyCollector usdToRubCollector,
             ICAC40Collector cac40Collector,
@@ -56,6 +59,23 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
             RtsCollector = rtsCollector;
             SAndPCollector = sAndPCollector;
             TradeBalanceCollector = tradeBalanceCollector;
+            Collectors = new Dictionary<string, IDataCollector> {
+                { "UsdToRub", UsdToRubCollector },
+                { "Cac40", Cac40Collector },
+                { "Csi200", Csi200Collector },
+                { "DataForNeuralNetwork", DataForNeuralNetworkCollector },
+                { "DowJones", DowJonesCollector },
+                { "GdpPerCapitaPpp", GdpPerCapitaPppCollector },
+                { "Gold", GoldCollector },
+                { "Inflation", InflationCollector },
+                { "Mmvb", MmvbCollector },
+                { "OliBrent", OliBrentCollector },
+                { "OliLight", OliLightCollector },
+                { "RefinancingRate", RefinancingRateCollector },
+                { "Rts", RtsCollector },
+                { "SAndP", SAndPCollector },
+                { "TradeBalance", TradeBalanceCollector }
+            };
         }
 
         public IActionResult Index() {
@@ -63,8 +83,12 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
         }
 
         [HttpGet]
-        public Task<List<Entity>> Get() {
-            return UsdToRubCollector.List();
+        public async Task<List<EntityApiModel>> Load(string code) {
+            if (!Collectors.ContainsKey(code)) {
+                throw new Exception("Code is not exist");
+            }
+            var result = await Collectors[code].List();
+            return result.Select(EntityApiModel.Map).ToList();
         }
     }
 }

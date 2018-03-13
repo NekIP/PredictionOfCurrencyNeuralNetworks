@@ -172,6 +172,7 @@ namespace DataManager {
 
             public Cache(bool need, IRepository<T> repository) {
                 Need = need;
+                Repository = repository;
             }
 
             public void Clear() {

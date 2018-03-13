@@ -1,3 +1,88 @@
-﻿.data-window {
-    color: red;
+﻿@import "../consts.scss";
+
+.data-window {
+    color: $lazureTextColor;
+    padding: 15px;
+    width: 80%;
+    margin: 0 auto;
+
+    .name {
+        display: flex;
+        flex-direction: row;
+        padding: 10px;
+        background: white;
+        width: 100%;
+        height: 50px;
+        box-shadow: $shadowMaterialDesign;
+        font-size: 20px;
+        font-weight: 500;
+
+        .text {
+            width: 95%;
+        }
+    }
+
+    .information {
+        margin-top: 2px;
+        padding: 10px;
+        background: white;
+        width: 100%;
+        height: auto;
+        box-shadow: $shadowMaterialDesign;
+
+        .meta {
+            width: 30%;
+
+            .additional {
+                color: $orangeTextColor;
+                margin-bottom: 10px;
+
+                i {
+                    float: right;
+                }
+            }
+
+            .table {
+                max-height: 400px;
+                overflow: auto;
+
+                table {
+                    tr {
+                        height: 20px;
+                    }
+                }
+            }
+
+            .page {
+                color: $orangeTextColor;
+                width: 150px;
+                margin: 0 auto;
+
+                input {
+                    max-width: 40px;
+                }
+            }
+        }
+
+        .spinner {
+            background-color: rgb(255, 255, 255);
+            width: 100%;
+            height: 500px;
+            text-align: center;
+            vertical-align: central;
+            line-height: 500px;
+            font-size: 24px;
+        }
+    }
+
+    input {
+        font-size: 13px;
+        padding: 6px 0 4px 10px;
+        border: 1px solid #cecece;
+        //border-radius: 8px;
+    }
+
+    .add-button {
+        font-size: 24px;
+    }
 }
