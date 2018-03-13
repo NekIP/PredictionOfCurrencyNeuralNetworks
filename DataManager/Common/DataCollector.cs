@@ -26,18 +26,17 @@ namespace DataManager {
 		public string Source { get; protected set; }
 		public IRepository<T> Repository { get; protected set; }
 
-        protected bool IsCache { get; set; }
         protected Cache Cacher { get; set; }
 
         public DataCollector(IRepository<T> repository, bool isCache = false) {
             Repository = repository;
-            InitializeCache(isCache);
+            Cacher = new Cache(isCache, repository);
         }
 
         public DataCollector(string source, IRepository<T> repository, bool isCache = false) {
 			Source = source;
 			Repository = repository;
-            InitializeCache(isCache);
+            Cacher = new Cache(isCache, repository);
         }
 
         public virtual Entity GetNearLeft(DateTime date) {
@@ -50,7 +49,8 @@ namespace DataManager {
         public abstract Task DownloadMissingData(DateTime before, TimeSpan step);
 
         public virtual async Task<List<Entity>> List() {
-            if (IsCache && !Cacher.IsClear) {
+            if (Cacher.Need) {
+                Cacher.Initialize();
                 return Cacher.Entries.Select(x => (Entity)x).ToList();
             }
             return await Repository.Table().Select(x => (Entity)x).ToListAsync();
@@ -58,7 +58,8 @@ namespace DataManager {
 
         public virtual Task<List<Entity>> List(DateTime from, DateTime to, TimeSpan step) {
             var list = new List<Entity>();
-            if (IsCache && !Cacher.IsClear) {
+            if (Cacher.Need) {
+                Cacher.Initialize();
                 list = Cacher.Entries
                     .Where(x => x.Date >= from && x.Date < to)
                     .OrderBy(x => x.Date)
@@ -77,7 +78,8 @@ namespace DataManager {
         }
 
         public virtual bool TryGet(DateTime date, TimeSpan step, out Entity result) {
-            if (IsCache && !Cacher.IsClear) {
+            if (Cacher.Need) {
+                Cacher.Initialize();
                 result = Cacher.Entries.Where(x =>
                     x.Date.Ticks <= date.Ticks && new TimeSpan(Math.Abs(x.Date.Ticks - date.Ticks)) < step
                 ).FirstOrDefault();
@@ -94,11 +96,10 @@ namespace DataManager {
         }
 
         public async Task Add(Entity entity) {
-            Cacher?.Clear();
+            Cacher.Clear();
             await Repository.Table().AddAsync((T)entity);
             Repository.SaveChanges();
             DeleteDuplicateEntries();
-            InitializeCache(IsCache);
         }
 
         protected List<Entity> TakeLastProductForEachStep(List<Entity> productsSorted, TimeSpan step) {
@@ -156,30 +157,37 @@ namespace DataManager {
 			}
 		}
 
-        protected void InitializeCache(bool isCache) {
-            IsCache = isCache;
-            if (IsCache) {
-                Cacher = new Cache();
-                Cacher.Entries = Repository.Table().OrderBy(x => x.Date).ToList();
-                Cacher.LeftDate = Cacher.Entries.FirstOrDefault()?.Date;
-                Cacher.RightDate = Cacher.Entries.LastOrDefault()?.Date;
-            }
-        }
-
         protected class Comparer : IEqualityComparer<T> {
             public bool Equals(T x, T y) => x.Date == y.Date;
             public int GetHashCode(T obj) => obj.Date.GetHashCode();
         }
 
         protected class Cache {
+            public IRepository<T> Repository { get; set; }
             public List<T> Entries { get; set; } = new List<T>();
             public DateTime? LeftDate { get; set; } = null;
             public DateTime? RightDate { get; set; } = null;
-            public bool IsClear => Entries.Count == 0;
+            public bool WasInit { get; set; } = false;
+            public bool Need { get; set; }
+
+            public Cache(bool need, IRepository<T> repository) {
+                Need = need;
+            }
+
             public void Clear() {
                 Entries = new List<T>();
                 LeftDate = null;
                 RightDate = null;
+                WasInit = false;
+            }
+
+            public void Initialize() {
+                if (!WasInit) {
+                    Entries = Repository.Table().OrderBy(x => x.Date).ToList();
+                    LeftDate = Entries.FirstOrDefault()?.Date;
+                    RightDate = Entries.LastOrDefault()?.Date;
+                    WasInit = true;
+                }
             }
         }
     }
