@@ -1,4 +1,6 @@
-﻿.custom-menu {
+﻿@import "../consts.scss";
+
+.custom-menu {
     .slide-fade-enter-active {
         transition: all .1s ease;
     }
@@ -48,7 +50,7 @@
         a {
             text-decoration: none;
             font-size: 16px;
-            color: #00a47f;
+            color: $lazureTextColor;
             font-weight: bold;
         }
 
