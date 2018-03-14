@@ -11,10 +11,16 @@
             <div class="spinner" v-show="!wasInit"><i class="fa fa-refresh fa-spin"></i></div>
             <div class="meta" v-show="wasInit">
                 <div class="additional">
-                    <input type="date"/>
-                    <input type="time" />
-                    <input type="number"/>
-                    <i class="fa fa-plus-circle add-button" role="button"></i>
+                    <input class="additional-item" type="date"/>
+                    <input class="additional-item" type="time" />
+                    <input class="additional-item" type="number"/>
+                    <i class="fa fa-plus-circle add-button additional-item" role="button" title="Добавить данные слева"></i>
+                    <i class="fa fa-pie-chart add-button additional-item" aria-hidden="true" role="button" title="Построить график"></i>
+                    <i class="fa fa-database add-button additional-item" 
+                       aria-hidden="true" role="button" 
+                       title="Загрузить все недостающие данные с удаленного источника(Finam.ru либо же из файла)"></i>
+                    <!--<button class="additional-item">График</button>-->
+                    <!--<button class="additional-item">DataProvide</button>-->
                 </div>
                 <div class="table" v-on:scroll="scroll">
                     <table>
@@ -22,11 +28,15 @@
                             <th>№</th>
                             <th>Дата</th>
                             <th>Значение</th>
+                            <th></th>
+                            <th></th>
                         </tr>
                         <tr v-for="(item, i) in itemsOnCurrentPage">
                             <td>{{ i }}</td>
                             <td>{{ item.date }}</td>
                             <td>{{ item.value }}</td>
+                            <td><i class="fa fa-pencil" aria-hidden="true" role="button"></i></td>
+                            <td><i class="fa fa-trash" aria-hidden="true" role="button"></i></td>
                         </tr>
                     </table>
                 </div>
