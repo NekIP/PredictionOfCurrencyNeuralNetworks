@@ -69,7 +69,7 @@ namespace Experiment {
             var result = new List<double[]>();
             // new DateTime(2007, 10, 14)
             // 25.02.2012 01:00:00
-            for (var i = new DateTime(2017, 9, 5); i < DateTime.Now; i = i.AddHours(1)) {
+            for (var i = new DateTime(2017, 6, 30); i < DateTime.Now; i = i.AddHours(1)) {
                 var item = await dataPreparer.GetData(i, TimeSpan.FromHours(1), true);
                 Console.WriteLine(i.ToString("dd.MM.yyyy HH:mm:ss") + "\t"
                     + string.Join("\t", item.Select(x => x == 0 ? " 0.00000000 " : " " + string.Format("{0:0.########}", x) + " ")));

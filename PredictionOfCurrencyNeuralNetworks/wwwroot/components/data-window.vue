@@ -17,7 +17,7 @@
                     <i class="fa fa-plus-circle add-button additional-item" 
                        role="button" v-on:click="addEntry" title="Добавить данные слева"></i>
                     <i class="fa fa-pie-chart add-button additional-item" 
-                       role="button" v-on:click="" title="Построить график"></i>
+                       role="button" v-on:click="showHideGraphic" title="Построить график"></i>
                     <i class="fa fa-database add-button additional-item" 
                        role="button" v-on:click="prepareData" 
                        title="Загрузить все недостающие данные с удаленного источника(Finam.ru либо же из файла)"></i>
@@ -55,6 +55,8 @@
                     <input type="number" v-model="currentPage"> | {{ countPages }} 
                     <i class="fa fa-arrow-circle-right" role="button" v-on:click="movePage(1)" v-show="rightAvailable()"></i>
                 </div>
+            </div>
+            <div v-bind:id="code + '-graphic'" class="graphic" v-show="graphic" v-bind:style="{ width: graphicWidth + 'px' }">
             </div>
         </div>
     </div>

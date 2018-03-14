@@ -22,15 +22,17 @@
     }
 
     .information {
+        display: flex;
         margin-top: 2px;
         padding: 10px;
         background: white;
-        width: 100%;
+        width: auto;
         height: auto;
         box-shadow: $shadowMaterialDesign;
 
         .meta {
-            width: 100%;
+            flex-grow: 1;
+            min-width: 30%;
 
             input {
                 color: $lazureTextColor;
@@ -98,6 +100,27 @@
 
                 input {
                     max-width: 40px;
+                }
+            }
+        }
+
+        .graphic {
+            margin: 10px;
+            flex-grow: 3;
+            background: #F9F9F9;
+            height: 500px;
+            box-shadow: $shadowMaterialDesignInsets;
+            color: $orangeTextColor;
+
+            svg {
+                width: 100%;
+                height: 100%;
+                margin: 0px;
+
+                path {
+                    stroke: $lazureTextColor;
+                    fill: none;
+                    stroke-width: 2;
                 }
             }
         }
