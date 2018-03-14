@@ -81,25 +81,28 @@ namespace DataManager {
             if (Cacher.Need) {
                 Cacher.Initialize();
                 result = Cacher.Entries.Where(x =>
-                    x.Date.Ticks <= date.Ticks && new TimeSpan(Math.Abs(x.Date.Ticks - date.Ticks)) < step
+                    x.Date.Ticks <= date.Ticks && Math.Abs(x.Date.Ticks - date.Ticks) < step.Ticks
                 ).FirstOrDefault();
                 return !(result is null);
             }
             else {
                 var list = Repository.Table().Where(x =>
-                    x.Date.Ticks <= date.Ticks && new TimeSpan(Math.Abs(x.Date.Ticks - date.Ticks)) < step
-                );
-                var entityExistInRepository = list.Count() > 0;
-                result = entityExistInRepository ? list.OrderBy(x => x.Date).Last() : null;
+                    x.Date.Ticks <= date.Ticks && Math.Abs(x.Date.Ticks - date.Ticks) < step.Ticks
+                ).ToList();
+                var entityExistInRepository = list.Count > 0;
+                result = null;
+                if (entityExistInRepository) {
+                    result = list.Count == 1 ? list[0] : list.OrderBy(x => x.Date).Last();
+                }
                 return entityExistInRepository;
             }
         }
 
         public async Task Add(Entity entity) {
-            Cacher.Clear();
             await Repository.Table().AddAsync((T)entity);
             Repository.SaveChanges();
             DeleteDuplicateEntries();
+            Cacher.Update((T)entity);
         }
 
         protected List<Entity> TakeLastProductForEachStep(List<Entity> productsSorted, TimeSpan step) {
@@ -188,6 +191,12 @@ namespace DataManager {
                     LeftDate = Entries.FirstOrDefault()?.Date;
                     RightDate = Entries.LastOrDefault()?.Date;
                     WasInit = true;
+                }
+            }
+
+            public void Update(T entity) {
+                if (Need && WasInit) {
+                    Entries.Add(entity);
                 }
             }
         }

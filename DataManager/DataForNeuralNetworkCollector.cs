@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DataManager {
     public interface IDataForNeuralNetworkCollector : IDataCollector<DataForNeuralNetwork> {
-        Task<double[]> GetData(DateTime date, TimeSpan step, bool caching = false);
+        Task<double[]> GetData(DateTime date, TimeSpan step, bool caching = true);
         Task LearnExtrapolators(double acceptableError = 0.000001, int maxIteration = 1000);
     }
     public class DataForNeuralNetworkCollector : DataCollector<DataForNeuralNetwork>, IDataForNeuralNetworkCollector {
@@ -46,7 +46,7 @@ namespace DataManager {
             };
         }
 
-        public async Task<double[]> GetData(DateTime date, TimeSpan step, bool caching = false) {
+        public async Task<double[]> GetData(DateTime date, TimeSpan step, bool caching = true) {
             if (caching && base.TryGet(date, step, out var chachingResult)) {
                 return (chachingResult as DataForNeuralNetwork)?.Data;
             }
@@ -147,7 +147,7 @@ namespace DataManager {
                         if (leftValues.Count > 1) {
                             var rightValues = await Collector.List(date + step, date + TimeSpan.FromDays(365) * 3, step);
                             if (rightValues.Count > 1) {
-                                var values = leftValues.TakeLast(1).Union(rightValues.Take(1)).ToList();
+                                var values =  new List<Entity>() { leftValues.Last(), rightValues.First() };// leftValues.TakeLast(1).Union(rightValues.Take(1)).ToList();
                                 var interpolator = new LinearInterpolation(
                                     new KeyValuePair<double, double>(values[0].Date.Ticks, Converter(values[0], GetNear(values[0], step))),
                                     new KeyValuePair<double, double>(values[1].Date.Ticks, Converter(values[1], GetNear(values[1], step)))
