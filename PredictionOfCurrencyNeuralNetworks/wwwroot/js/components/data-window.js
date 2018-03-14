@@ -27,7 +27,22 @@ export default {
         },
         addEntry: function () {
             let dateStr = this.entry.date + "T" + this.entry.time;
-            
+            let addEntry = new RequestApi("DataManager/Add", 'POST');
+            addEntry.execute({ code: this.code, dateStr: dateStr, value: +this.entry.value }, function () {
+                alert("ok");
+            });
+        },
+        removeEntry: function (id) {
+            let removeEntry = new RequestApi("DataManager/Remove", 'POST');
+            removeEntry.execute({ code: this.code, id: id }, function () {
+                alert("ok");
+            });
+        },
+        updateEntry: function (id, value) {
+            let updateEntry = new RequestApi("DataManager/Update", 'POST');
+            updateEntry.execute({ code: this.code, id: id, value: value }, function () {
+                alert("ok");
+            });
         },
         downloadData: function () {
             let loadItems = new RequestApi("DataManager/Load", 'GET');
