@@ -117,5 +117,13 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
             }
             return Collectors[code].Update(id, value);
         }
+
+        [HttpPost]
+        public Task PrepareData(string code) {
+            if (!Collectors.ContainsKey(code)) {
+                throw new Exception("Code is not exist");
+            }
+            return Collectors[code].DownloadMissingData(DateTime.Now, TimeSpan.FromHours(1));
+        }
     }
 }

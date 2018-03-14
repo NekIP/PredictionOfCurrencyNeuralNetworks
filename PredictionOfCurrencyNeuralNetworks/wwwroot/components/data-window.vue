@@ -19,7 +19,7 @@
                     <i class="fa fa-pie-chart add-button additional-item" 
                        role="button" v-on:click="" title="Построить график"></i>
                     <i class="fa fa-database add-button additional-item" 
-                       role="button" v-on:click="" 
+                       role="button" v-on:click="prepareData" 
                        title="Загрузить все недостающие данные с удаленного источника(Finam.ru либо же из файла)"></i>
                     <!--<button class="additional-item">График</button>-->
                     <!--<button class="additional-item">DataProvide</button>-->

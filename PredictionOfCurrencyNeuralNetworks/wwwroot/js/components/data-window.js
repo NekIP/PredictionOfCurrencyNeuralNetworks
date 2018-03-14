@@ -25,6 +25,13 @@ export default {
                 this.downloadData();
             }
         },
+        prepareData: function () {
+            let prepareData = new RequestApi("DataManager/PrepareData", 'POST');
+            this.wasInit = false;
+            prepareData.execute({
+                code: this.code
+            }, this.prepareDataSuccess);
+        },
         addEntry: function () {
             let dateStr = this.entry.date + "T" + this.entry.time;
             let addEntry = new RequestApi("DataManager/Add", 'POST');
@@ -61,6 +68,9 @@ export default {
         downloadData: function () {
             let loadItems = new RequestApi("DataManager/Load", 'GET');
             loadItems.execute({ code: this.code }, this.addData);
+        },
+        prepareDataSuccess: function (data) {
+            this.downloadData();
         },
         addEntrySuccess: function (data) {
             this.downloadData();
