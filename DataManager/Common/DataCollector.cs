@@ -12,6 +12,9 @@ namespace DataManager {
         Task<List<Entity>> List();
         Task<List<Entity>> List(DateTime from, DateTime to, TimeSpan step);
         Task Add(Entity entity);
+        Task Add(DateTime date, double value);
+        Task Remove(long id);
+        Task Update(long id, double value);
         bool TryGet(DateTime date, TimeSpan step, out Entity result);
         Task DownloadMissingData(DateTime before, TimeSpan step);
         Entity GetNearLeft(DateTime date);
@@ -103,6 +106,36 @@ namespace DataManager {
             Repository.SaveChanges();
             DeleteDuplicateEntries();
             Cacher.Update((T)entity);
+        }
+
+        public Task Add(DateTime date, double value) {
+            var result = new T {
+                Date = date
+            };
+            result.Setter(value);
+            return Add(result);
+        }
+
+        public Task Remove(long id) {
+            Cacher.Clear();
+            var entityForDelete = EntityById(id);
+            Repository.Table().Remove(entityForDelete);
+            return Repository.SaveChangesAsync();
+        }
+
+        public Task Update(long id, double value) {
+            Cacher.Clear();
+            var entityForChange = EntityById(id);
+            entityForChange.Setter(value);
+            return Repository.SaveChangesAsync();
+        }
+
+        protected T EntityById(long id) {
+            var entity = Repository.Table().Where(x => x.Id == id).FirstOrDefault();
+            if (entity is null) {
+                throw new Exception("Entity is not exist");
+            }
+            return entity;
         }
 
         protected List<Entity> TakeLastProductForEachStep(List<Entity> productsSorted, TimeSpan step) {

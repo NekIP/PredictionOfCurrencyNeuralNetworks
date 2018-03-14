@@ -7,5 +7,8 @@
 		public double ChangeCloseOpen { get; set; }
 		public double ChangeHighLow { get; set; }
         public override double Selector() => Close;
+        public override void Setter(double value) {
+            Close = value;
+        }
     }
 }

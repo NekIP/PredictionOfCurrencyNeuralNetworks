@@ -11,11 +11,13 @@
             <div class="spinner" v-show="!wasInit"><i class="fa fa-refresh fa-spin"></i></div>
             <div class="meta" v-show="wasInit">
                 <div class="additional">
-                    <input class="additional-item" type="date"/>
-                    <input class="additional-item" type="time" />
-                    <input class="additional-item" type="number"/>
-                    <i class="fa fa-plus-circle add-button additional-item" role="button" title="Добавить данные слева"></i>
-                    <i class="fa fa-pie-chart add-button additional-item" aria-hidden="true" role="button" title="Построить график"></i>
+                    <input class="additional-item" type="date" v-model="entry.date"/>
+                    <input class="additional-item" type="time" v-model="entry.time"/>
+                    <input class="additional-item" type="number" v-model="entry.value"/>
+                    <i class="fa fa-plus-circle add-button additional-item" 
+                       role="button" v-on:click="addEntry" title="Добавить данные слева"></i>
+                    <i class="fa fa-pie-chart add-button additional-item" 
+                       aria-hidden="true" role="button" title="Построить график"></i>
                     <i class="fa fa-database add-button additional-item" 
                        aria-hidden="true" role="button" 
                        title="Загрузить все недостающие данные с удаленного источника(Finam.ru либо же из файла)"></i>

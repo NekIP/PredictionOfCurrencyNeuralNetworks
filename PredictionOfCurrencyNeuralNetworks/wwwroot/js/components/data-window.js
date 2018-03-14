@@ -10,7 +10,12 @@ export default {
             itemsOnCurrentPage: [],
             chunk: 1000,
             currentPage: undefined,
-            countPages: undefined
+            countPages: undefined,
+            entry: {
+                date: "2018-01-01",
+                time: "00:00",
+                value: 0.0
+            }
         };
     },
     methods: {
@@ -19,6 +24,10 @@ export default {
             if (this.show && !this.wasInit) {
                 this.downloadData();
             }
+        },
+        addEntry: function () {
+            let dateStr = this.entry.date + "T" + this.entry.time;
+            
         },
         downloadData: function () {
             let loadItems = new RequestApi("DataManager/Load", 'GET');

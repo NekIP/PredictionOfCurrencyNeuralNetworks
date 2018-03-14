@@ -7,5 +7,6 @@ namespace DataBase {
 		public long Id { get; set; }
         public DateTime Date { get; set; }
         public virtual double Selector() => 0;
+        public virtual void Setter(double value) { }
     }
 }

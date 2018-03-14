@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using DataBase;
 using DataManager;
 using PredictionOfCurrencyNeuralNetworks.Models.DataManager;
+using System.Globalization;
+using DataBase.Entities;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -89,6 +91,31 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
             }
             var result = await Collectors[code].List();
             return result.Select(EntityApiModel.Map).ToList();
+        }
+
+        [HttpPost]
+        public Task Add(string code, string dateStr, double value) {
+            if (!Collectors.ContainsKey(code)) {
+                throw new Exception("Code is not exist");
+            }
+            var date = DateTime.ParseExact(dateStr, "yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture);
+            return Collectors[code].Add(date, value);
+        }
+
+        [HttpPost]
+        public Task Remove(string code, int id) {
+            if (!Collectors.ContainsKey(code)) {
+                throw new Exception("Code is not exist");
+            }
+            return Collectors[code].Remove(id);
+        }
+
+        [HttpPost]
+        public Task Update(string code, int id, double value) {
+            if (!Collectors.ContainsKey(code)) {
+                throw new Exception("Code is not exist");
+            }
+            return Collectors[code].Update(id, value);
         }
     }
 }
