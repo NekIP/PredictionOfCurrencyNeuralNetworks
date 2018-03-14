@@ -32,6 +32,34 @@
         .meta {
             width: 100%;
 
+            input {
+                color: $lazureTextColor;
+                font-size: 13px;
+                padding: 6px 0 4px 10px;
+                border: 1px solid $orangeTextColor;
+                border-radius: 2px;
+                max-width: 120px;
+            }
+
+            button {
+                margin: 0px 0px 0px 10px;
+                background: $orangeTextColor;
+                color: white;
+                font-size: 14px;
+                padding: 6px 3px 4px 3px;
+                box-shadow: $shadowMaterialDesign;
+                border: 1px solid $orangeTextColor;
+                font-weight: 600;
+                border-radius: 2px;
+            }
+
+            .add-button {
+                text-align: center;
+                width: 10%;
+                font-size: 24px;
+                padding: 5px 0px 0px 10px;
+            }
+
             .additional {
                 display: flex;
                 color: $orangeTextColor;
@@ -39,34 +67,6 @@
 
                 .additional-item {
                     width: 20%;
-                }
-
-                input {
-                    color: $lazureTextColor;
-                    font-size: 13px;
-                    padding: 6px 0 4px 10px;
-                    border: 1px solid $orangeTextColor;
-                    border-radius: 2px;
-                    max-width: 120px;
-                }
-
-                button {
-                    margin: 0px 0px 0px 10px;
-                    background: $orangeTextColor;
-                    color: white;
-                    font-size: 14px;
-                    padding: 6px 3px 4px 3px;
-                    box-shadow: $shadowMaterialDesign;
-                    border: 1px solid $orangeTextColor;
-                    font-weight: 600;
-                    border-radius: 2px;
-                }
-
-                .add-button {
-                    text-align: center;
-                    width: 10%;
-                    font-size: 24px;
-                    padding: 5px 0px 0px 10px;
                 }
             }
 
@@ -80,6 +80,10 @@
                     }
 
                     td {
+                        .updated {
+                            color: red;
+                        }
+
                         i {
                             color: $orangeTextColor;
                         }

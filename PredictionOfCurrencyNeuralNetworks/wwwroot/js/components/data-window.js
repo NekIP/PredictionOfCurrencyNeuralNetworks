@@ -28,25 +28,48 @@ export default {
         addEntry: function () {
             let dateStr = this.entry.date + "T" + this.entry.time;
             let addEntry = new RequestApi("DataManager/Add", 'POST');
-            addEntry.execute({ code: this.code, dateStr: dateStr, value: +this.entry.value }, function () {
-                alert("ok");
-            });
+            this.wasInit = false;
+            addEntry.execute({
+                code: this.code,
+                dateStr: dateStr,
+                value: ("" + this.entry.value).replace(".", ",")
+            }, this.addEntrySuccess);
         },
         removeEntry: function (id) {
             let removeEntry = new RequestApi("DataManager/Remove", 'POST');
-            removeEntry.execute({ code: this.code, id: id }, function () {
-                alert("ok");
-            });
+            this.wasInit = false;
+            removeEntry.execute({
+                code: this.code,
+                id: id
+            }, this.removeEntrySuccess);
         },
-        updateEntry: function (id, value) {
-            let updateEntry = new RequestApi("DataManager/Update", 'POST');
-            updateEntry.execute({ code: this.code, id: id, value: value }, function () {
-                alert("ok");
-            });
+        updateEntry: function (item) {
+            if (!item.update) {
+                item.update = true;
+            }
+            else {
+                this.wasInit = false;
+                item.update = false;
+                let updateEntry = new RequestApi("DataManager/Update", 'POST');
+                updateEntry.execute({
+                    code: this.code,
+                    id: item.id,
+                    value: ("" + item.value).replace(".", ",")
+                }, this.requestSuccess);
+            }
         },
         downloadData: function () {
             let loadItems = new RequestApi("DataManager/Load", 'GET');
             loadItems.execute({ code: this.code }, this.addData);
+        },
+        addEntrySuccess: function (data) {
+            this.downloadData();
+        },
+        removeEntrySuccess: function (data) {
+            this.downloadData();
+        },
+        requestSuccess: function (data) {
+            this.wasInit = true;
         },
         addData: function (data) {
             if (data && data.length > 0) {
@@ -69,15 +92,28 @@ export default {
         },
         initItemsOnCurrentPage: function () {
             this.itemsOnCurrentPage = [];
-            this.itemsOnCurrentPage = this.getItemsOnCurrentPage();
+            let items = this.getItemsOnCurrentPage();
+            for (let i = 0; i < items.length; i++) {
+                this.itemsOnCurrentPage.push({
+                    id: items[i].id,
+                    date: items[i].date,
+                    value: items[i].value,
+                    update: false
+                });
+            }
         },
         scroll: function (event) {
             if (this.currentPage < this.countPages 
                 && event.target.scrollTop + event.target.scrollWidth > event.target.scrollHeight - event.target.scrollWidth) {
                 this.incrementCurrentPage(1);
                 let forPush = this.getItemsOnCurrentPage();
-                for (var i = 0; i < forPush.length; i++) {
-                    this.itemsOnCurrentPage.push(forPush[i]);
+                for (let i = 0; i < forPush.length; i++) {
+                    this.itemsOnCurrentPage.push({
+                        id: forPush[i].id,
+                        date: forPush[i].date,
+                        value: forPush[i].value,
+                        update: false
+                    });
                 }
             }
         },
@@ -90,7 +126,7 @@ export default {
         getItemsOnCurrentPage: function () {
             return this.items.slice(this.chunk * (this.currentPage - 1),
                 this.chunk * this.currentPage >= this.items.length
-                    ? this.items.length - 1
+                    ? this.items.length
                     : this.chunk * this.currentPage);
         }
     }

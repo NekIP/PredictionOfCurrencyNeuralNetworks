@@ -17,9 +17,9 @@
                     <i class="fa fa-plus-circle add-button additional-item" 
                        role="button" v-on:click="addEntry" title="Добавить данные слева"></i>
                     <i class="fa fa-pie-chart add-button additional-item" 
-                       aria-hidden="true" role="button" title="Построить график"></i>
+                       role="button" v-on:click="" title="Построить график"></i>
                     <i class="fa fa-database add-button additional-item" 
-                       aria-hidden="true" role="button" 
+                       role="button" v-on:click="" 
                        title="Загрузить все недостающие данные с удаленного источника(Finam.ru либо же из файла)"></i>
                     <!--<button class="additional-item">График</button>-->
                     <!--<button class="additional-item">DataProvide</button>-->
@@ -33,12 +33,20 @@
                             <th></th>
                             <th></th>
                         </tr>
-                        <tr v-for="(item, i) in itemsOnCurrentPage">
-                            <td>{{ i }}</td>
+                        <tr v-for="item in itemsOnCurrentPage">
+                            <td>{{ item.id }}</td>
                             <td>{{ item.date }}</td>
-                            <td>{{ item.value }}</td>
-                            <td><i class="fa fa-pencil" aria-hidden="true" role="button"></i></td>
-                            <td><i class="fa fa-trash" aria-hidden="true" role="button"></i></td>
+                            <td>
+                                <p v-show="!item.update">{{ item.value }}</p>
+                                <input v-show="item.update" v-model="item.value"/>
+                            </td>
+                            <td>
+                                <i class="fa fa-pencil" aria-hidden="true" 
+                                   role="button" v-on:click="updateEntry(item)" v-show="!item.update"></i>
+                                <i class="fa fa-pencil updated" aria-hidden="true"
+                                   role="button" v-on:click="updateEntry(item)" v-show="item.update"></i>
+                            </td>
+                            <td><i class="fa fa-trash" v-on:click="removeEntry(item.id)" role="button"></i></td>
                         </tr>
                     </table>
                 </div>

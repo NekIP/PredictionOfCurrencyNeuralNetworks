@@ -12,7 +12,8 @@ export default function RequestApi(url, method) {
                 $.get(self.url, parameters, callback);
                 break;
             case 'post':
-                $.ajax({
+                $.post(self.url, parameters).done(callback);
+                /*$.ajax({
                     url: self.url,
                     type: 'POST',
                     data: parameters,
@@ -21,7 +22,7 @@ export default function RequestApi(url, method) {
                     processData: false,
                     contentType: false,
                     success: callback
-                });
+                });*/
                 break;
             case 'json':
                 $.getJSON(self.url, parameters, callback);
