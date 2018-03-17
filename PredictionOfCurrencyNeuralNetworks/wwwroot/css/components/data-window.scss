@@ -49,37 +49,6 @@
                     width: 20%;
                 }
             }
-
-            .table {
-                max-height: 400px;
-                overflow: auto;
-
-                table {
-                    tr {
-                        height: 20px;
-                    }
-
-                    td {
-                        .updated {
-                            color: red;
-                        }
-
-                        i {
-                            color: $orangeTextColor;
-                        }
-                    }
-                }
-            }
-
-            .page {
-                color: $orangeTextColor;
-                width: 150px;
-                margin: 0 auto;
-
-                input {
-                    max-width: 40px;
-                }
-            }
         }
     }
 }
