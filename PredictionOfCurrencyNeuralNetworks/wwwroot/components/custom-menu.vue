@@ -13,7 +13,7 @@
                         <a class="ref" href="/DataManager">Менеджер данных</a>
                     </div>
                     <div class="item">
-                        <a class="ref" href="#">Анализ данных</a>
+                        <a class="ref" href="/DataAnalysis">Анализ данных</a>
                     </div>
                 </div>
             </div>
