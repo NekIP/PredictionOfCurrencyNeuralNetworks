@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DataManager {
     public interface IDataForNeuralNetworkCollector : IDataCollector<DataForNeuralNetwork> {
-        Task<double[]> GetData(DateTime date, TimeSpan step, bool caching = true);
+        Task<DataForNeuralNetwork> GetData(DateTime date, TimeSpan step, bool caching = true);
         Task LearnExtrapolators(double acceptableError = 0.000001, int maxIteration = 1000);
     }
     public class DataForNeuralNetworkCollector : DataCollector<DataForNeuralNetwork>, IDataForNeuralNetworkCollector {
@@ -46,9 +46,9 @@ namespace DataManager {
             };
         }
 
-        public async Task<double[]> GetData(DateTime date, TimeSpan step, bool caching = true) {
+        public async Task<DataForNeuralNetwork> GetData(DateTime date, TimeSpan step, bool caching = true) {
             if (caching && base.TryGet(date, step, out var chachingResult)) {
-                return (chachingResult as DataForNeuralNetwork)?.Data;
+                return chachingResult as DataForNeuralNetwork;
             }
             var listResult = new List<double>();
             foreach (var context in Contexts) {
@@ -58,9 +58,9 @@ namespace DataManager {
                 }
                 listResult.Add(data.Value);
             }
-            var result = listResult.ToArray();
+            var result = new DataForNeuralNetwork(listResult.Count) { Data = listResult.ToArray(), Date = date };
             if (caching) {
-                await Add(new DataForNeuralNetwork(listResult.Count) { Data = result, Date = date });
+                await Add(result);
             }
             return result;
         }
