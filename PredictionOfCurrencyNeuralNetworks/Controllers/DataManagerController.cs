@@ -81,6 +81,7 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
         }
 
         public IActionResult Index() {
+            var medel = new DataForNeuralNetworkInformation();
             return View();
         }
 
