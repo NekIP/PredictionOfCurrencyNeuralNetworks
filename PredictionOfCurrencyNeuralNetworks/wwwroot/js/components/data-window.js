@@ -8,11 +8,6 @@ export default {
             wasInit: false,
             graphic: false,
             items: [],
-            itemsTest: [], ////---------------------
-            /*itemsOnCurrentPage: [],
-            chunk: 1000,
-            currentPage: undefined,
-            countPages: undefined,*/
             entry: {
                 date: "2018-01-01",
                 time: "00:00",
