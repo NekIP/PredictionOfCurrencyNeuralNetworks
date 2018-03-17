@@ -69,7 +69,22 @@ namespace DataAssistants.Structs {
 		public static Vector operator /(Vector vector1, Vector vector2) =>
 			Combine(vector1, vector2, (x1, x2) => x1 / x2);
 
-		public static Vector operator *(Vector vector, double scalar) =>
+        public static Vector operator /(Vector vector, double scalar) =>
+            Convert(vector, x => x / scalar);
+
+        public static Vector operator +(Vector vector, double scalar) =>
+            Convert(vector, x => x + scalar);
+
+        public static Vector operator +(double scalar, Vector vector) =>
+            vector + scalar;
+
+        public static Vector operator -(Vector vector, double scalar) =>
+            Convert(vector, x => x - scalar);
+
+        public static Vector operator -(double scalar, Vector vector) =>
+            Convert(vector, x => scalar - x);
+
+        public static Vector operator *(Vector vector, double scalar) =>
 			Convert(vector, x => x * scalar);
 
 		public static Vector operator *(double scalar, Vector vector) => 
