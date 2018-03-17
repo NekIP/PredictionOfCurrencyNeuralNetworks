@@ -19,13 +19,6 @@ export default {
             }
         };
     },
-    computed: {
-        graphicWidth: function () {
-            let dataManagerCoef = window.innerWidth< 1200 ? 1 : 0.9;
-            let width1 = window.innerWidth * dataManagerCoef - 30;
-            return width1 * 0.7 - 40;
-        }
-    },
     methods: {
         showHideGraphic: function () {
             d3.select("#" + this.code + '-graphic').selectAll("svg").remove();
@@ -54,78 +47,45 @@ export default {
                 }
                 data.push({ x: new Date(item.date).getTime(), y: item.value });
             }
-            console.log(data);
-            console.log(minMax);
             let y2 = minMax.minValue;
             let y1 = minMax.maxValue;
             let a = new Date(minMax.minDate).getTime();
             let b = new Date(minMax.maxDate).getTime();
-            let i1 = 25;
+            let i1 = 50;
             let j1 = 25;
             let i2 = $("#" + this.code + '-graphic').width() - 100;
             let j2 = $("#" + this.code + '-graphic').height() - 50;
             let xScreen = x => i1 + Math.trunc((x - a) * (i2 - i1) / (b - a));
             let yScreen = y => j1 + Math.trunc((y - y1) * (j2 - j1) / (y2 - y1));
-
-            //let i = 0;
             var line = d3.line()
                 .x(function (d) { return xScreen(d.x); })
                 .y(function (d) { return yScreen(d.y); });
-
-            this.graphic = !this.graphic;
-            let pathC = [
-                { x: 1, y: 3 },
-                { x: 2, y: 4 },
-                { x: 3, y: 2 },
-                { x: 4, y: 6 },
-                { x: 5, y: 2 },
-                { x: 6, y: 9 },
-            ];
-            let x = [1, 2, 3, 4, 5, 6];
-            let y = [2, 3, 4, 5, 6, 7];
-
-            var axisWidth = $("#" + this.code + '-graphic').width() - 100; 
-            var offset = 25;
-
             var svg = d3.select("#" + this.code + '-graphic').append("svg");
-            console.log(axisWidth);
-
-            var scale = d3.scaleTime() // от 1 января 2015 года до текущей даты
+            var scaleHorizontal = d3.scaleTime()
                 .domain([new Date(minMax.minDate), new Date(minMax.maxDate)])
-                .range([25, axisWidth]);
-
-            var axis = d3.axisBottom()
-                .scale(scale)
-                //.orient('bottom')
+                .range([i1, i2]);
+            var scaleVertical = d3.scaleLinear()
+                .domain([minMax.minValue, minMax.maxValue])
+                .range([j2, j1]);
+            var axisHorizontal = d3.axisBottom()
+                .scale(scaleHorizontal)
                 .ticks(12);
-                //.tickFormat(d3.timeFormat('%d.%m'));
-
+            var axisVertical = d3.axisLeft()
+                .scale(scaleVertical)
+                .ticks(24);
             svg.append("g")
-                //.attr("transform", "translate(" + 2 * xScreen(a) + "," + offset + ")")
-                .call(axis);
-
-
-
-            var width = 400,
-                height = 400;
-            /*svg.attr("height", height)
-                .attr("width", width);*/
-
-            // добавляем путь
-            //let data2 = this.itemsOnCurrentPage.slice(0, 1000);
+                .attr("transform", "translate(" + 0 + "," + j1 + ")")
+                .call(axisHorizontal);
+            svg.append("g")
+                .attr("transform", "translate(" + i1 + "," + 0 + ")")
+                .call(axisVertical);
             svg.append("path").attr("d", line(data));
-            /*
-            var phonesList = d3.select('.graphic')
-                .selectAll('div')
-                .data(x)
-                .text(function (d) { return d; })
-                .enter()
-                .append('div')
-                .text(function (d) { return d; });
-            */
-            /*phonesList.enter()
-                .append('div')
-                .text(function (d) { return d; });*/
+            this.graphic = !this.graphic;
+        },
+        graphicWidth: function () {
+            let dataManagerCoef = window.innerWidth < 1200 ? 1 : 0.9;
+            let width1 = window.innerWidth * dataManagerCoef - 30;
+            return width1 * 0.7 - 40;
         },
         showHide: function () {
             this.show = !this.show;

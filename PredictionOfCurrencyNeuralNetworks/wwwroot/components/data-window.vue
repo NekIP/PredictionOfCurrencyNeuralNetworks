@@ -56,7 +56,7 @@
                     <i class="fa fa-arrow-circle-right" role="button" v-on:click="movePage(1)" v-show="rightAvailable()"></i>
                 </div>
             </div>
-            <div v-bind:id="code + '-graphic'" class="graphic" v-show="graphic" v-bind:style="{ width: graphicWidth + 'px' }">
+            <div v-bind:id="code + '-graphic'" class="graphic" v-show="graphic" v-bind:style="{ width: graphicWidth() + 'px' }">
             </div>
         </div>
     </div>
