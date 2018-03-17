@@ -21,8 +21,9 @@ export default {
         },
         graphicWidth: function () {
             let dataManagerCoef = window.innerWidth < 1200 ? 1 : 0.9;
+            let dataManagerCoef1 = window.innerWidth < 1300 ? 0.5 : 0.51;
             let width1 = window.innerWidth * dataManagerCoef - 30;
-            return width1 * 0.7 - 40;
+            return width1 * dataManagerCoef1 - 40;
         },
         showHide: function () {
             this.show = !this.show;
@@ -31,29 +32,35 @@ export default {
             }
         },
         prepareData: function () {
-            let prepareData = new RequestApi("DataManager/PrepareData", 'POST');
-            this.wasInit = false;
-            prepareData.execute({
-                code: this.code
-            }, this.prepareDataSuccess);
+            if (confirm("Данная операция загружает со строннего источника все недостающие данные. Для некоторых таблиц она занимаеть долгое время. Вы хотите продолжить?")) {
+                let prepareData = new RequestApi("DataManager/PrepareData", 'POST');
+                this.wasInit = false;
+                prepareData.execute({
+                    code: this.code
+                }, this.prepareDataSuccess);
+            }
         },
         addEntry: function () {
-            let dateStr = this.entry.date + "T" + this.entry.time;
-            let addEntry = new RequestApi("DataManager/Add", 'POST');
-            this.wasInit = false;
-            addEntry.execute({
-                code: this.code,
-                dateStr: dateStr,
-                value: ("" + this.entry.value).replace(".", ",")
-            }, this.addEntrySuccess);
+            if (confirm("Добавить запись?")) {
+                let dateStr = this.entry.date + "T" + this.entry.time;
+                let addEntry = new RequestApi("DataManager/Add", 'POST');
+                this.wasInit = false;
+                addEntry.execute({
+                    code: this.code,
+                    dateStr: dateStr,
+                    value: ("" + this.entry.value).replace(".", ",")
+                }, this.addEntrySuccess);
+            }
         },
         removeEntry: function (id) {
-            let removeEntry = new RequestApi("DataManager/Remove", 'POST');
-            this.wasInit = false;
-            removeEntry.execute({
-                code: this.code,
-                id: id
-            }, this.removeEntrySuccess);
+            if (confirm("Удалить запись?")) {
+                let removeEntry = new RequestApi("DataManager/Remove", 'POST');
+                this.wasInit = false;
+                removeEntry.execute({
+                    code: this.code,
+                    id: id
+                }, this.removeEntrySuccess);
+            }
         },
         updateEntry: function (item) {
             if (!item.update) {
