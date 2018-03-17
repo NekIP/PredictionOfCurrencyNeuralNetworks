@@ -24,5 +24,5 @@
         </div> 
 </div>
 </template>
-<script src="../js/components/menu.js"></script>
-<style lang="scss" src="../css/components/menu.scss"></style>
+<script src="../js/components/custom-menu.js"></script>
+<style lang="scss" src="../css/components/custom-menu.scss"></style>
