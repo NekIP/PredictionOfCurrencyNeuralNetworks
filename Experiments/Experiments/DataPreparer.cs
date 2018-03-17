@@ -95,8 +95,8 @@ namespace Experiment {
             Vector normalize(Vector x, Vector expectedValue, Vector dispersion) => (x - expectedValue) / Vector.Convert(dispersion, Math.Sqrt);
             Vector denormalize(Vector y, Vector expectedValue, Vector dispersion) => y * Vector.Convert(dispersion, Math.Sqrt) + expectedValue;
 
-            Vector scaling(Vector x, Vector min, Vector max) => (x - min) / (max - min);
-            Vector descaling(Vector y, Vector min, Vector max) => (max - min) * y + min;
+            Vector scaling(Vector x, Vector min, Vector max) => (x - min) * (1 - (-1)) / (max - min) + (-1);
+            Vector descaling(Vector y, Vector min, Vector max) => ((max - min) * (y - (-1))) / (1 - (-1)) + min;
 
             var all = (await dataPreparer.List()).Select(x => x as DataForNeuralNetwork).ToList();
             var normalized = new List<DataForNeuralNetwork>();
@@ -161,6 +161,19 @@ namespace Experiment {
                 }
             }
 
+            var lstm = new Lstm(trainingSet.First().Count, 1, new RecurentParameters(0.5, 1, 0.5),
+                new RecurentCellParameters(trainingSet.First().Count, trainingSet.First().Count),
+                new RecurentCellParameters(trainingSet.First().Count, 1));
+            for (var i = 0; i < trainingSet.Count - 1; i++) {
+                if (trainingSet[i + 1].Date - trainingSet[i].Date == TimeSpan.FromHours(1)) {
+                    var input = new Vector[] { trainingSet[i].Data };
+                    var ideal = new Vector[] { new double[] { trainingSet[i + 1].Data.Last() } };
+                    var learnResult = lstm.Learn(input, ideal);
+                    Console.WriteLine(learnResult.errors[0]);
+                }
+            }
+
+
 
             //var item = await dataPreparer.GetData(new DateTime(2007, 10, 13, 16, 0, 0), TimeSpan.FromHours(1), true);
             /*var result = new List<double[]>();
@@ -171,23 +184,23 @@ namespace Experiment {
                 await Task.WhenAll(item1Task, item2Task, item3Task);
             }*/
 
-            /*var result = new List<double[]>();
-            // new DateTime(2007, 10, 14)
-            // 25.02.2012 01:00:00
-            for (var i = new DateTime(2017, 6, 30); i < DateTime.Now; i = i.AddHours(1)) {
-                var item = await dataPreparer.GetData(i, TimeSpan.FromHours(1), true);
-                Console.WriteLine(i.ToString("dd.MM.yyyy HH:mm:ss") + "\t"
-                    + string.Join("\t", item.Select(x => x == 0 ? " 0.00000000 " : " " + string.Format("{0:0.########}", x) + " ")));
-                result.Add(item);
-            }*/
+                /*var result = new List<double[]>();
+                // new DateTime(2007, 10, 14)
+                // 25.02.2012 01:00:00
+                for (var i = new DateTime(2017, 6, 30); i < DateTime.Now; i = i.AddHours(1)) {
+                    var item = await dataPreparer.GetData(i, TimeSpan.FromHours(1), true);
+                    Console.WriteLine(i.ToString("dd.MM.yyyy HH:mm:ss") + "\t"
+                        + string.Join("\t", item.Select(x => x == 0 ? " 0.00000000 " : " " + string.Format("{0:0.########}", x) + " ")));
+                    result.Add(item);
+                }*/
 
-            /*var result = new List<double[]>();
-            for (var i = new DateTime(2007, 10, 14); i < DateTime.Now; i = i.AddHours(3)) {
-                var item1Task = Method(dataPreparer, i, result);
-                var item2Task = Method(dataPreparer, i.AddHours(1), result);
-                var item3Task = Method(dataPreparer, i.AddHours(2), result);
-                await Task.WhenAll(item1Task, item2Task, item3Task);
-            }*/
+                /*var result = new List<double[]>();
+                for (var i = new DateTime(2007, 10, 14); i < DateTime.Now; i = i.AddHours(3)) {
+                    var item1Task = Method(dataPreparer, i, result);
+                    var item2Task = Method(dataPreparer, i.AddHours(1), result);
+                    var item3Task = Method(dataPreparer, i.AddHours(2), result);
+                    await Task.WhenAll(item1Task, item2Task, item3Task);
+                }*/
         }
 
         private async Task Method(DataForNeuralNetworkCollector dataPreparer, DateTime i, List<double[]> outer) {
