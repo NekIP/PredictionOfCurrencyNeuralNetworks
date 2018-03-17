@@ -18,10 +18,20 @@ namespace DataManager {
         bool TryGet(DateTime date, TimeSpan step, out Entity result);
         Task DownloadMissingData(DateTime before, TimeSpan step);
         Entity GetNearLeft(DateTime date);
+        double GetExpectedValue();
+        double GetDispersion();
+        double GetDispersion(double expectedValue);
+        double Min();
+        double Max();
     }
 
     public interface IDataCollector<T> : IDataCollector where T : Entity, new() {
         IRepository<T> Repository { get; }
+        double GetExpectedValue(Func<T, double> selector);
+        double GetDispersion(Func<T, double> selector);
+        double GetDispersion(double expectedValue, Func<T, double> selector);
+        double Min(Func<T, double> selector);
+        double Max(Func<T, double> selector);
     }
 
 	public abstract class DataCollector<T> : IDataCollector<T> where T : Entity, new() {
@@ -129,6 +139,52 @@ namespace DataManager {
             entityForChange.Setter(value);
             return Repository.SaveChangesAsync();
         }
+
+        public double GetExpectedValue(Func<T, double> selector) {
+            if (Cacher.Need) {
+                Cacher.Initialize();
+                return Cacher.Entries.Average(selector);
+            }
+            return Repository.Table().Average(selector);
+        }
+
+        public double GetDispersion(double expectedValue, Func<T, double> selector) {
+            if (Cacher.Need) {
+                Cacher.Initialize();
+                var summ1 = Cacher.Entries.Aggregate(0.0, (x, y) => x + Math.Pow(selector(y) - expectedValue, 2));
+                return summ1 / (Cacher.Entries.Count - 1);
+            }
+            var summ2 = Repository.Table().ToList().Aggregate(0.0, (x, y) => x + Math.Pow(selector(y) - expectedValue, 2));
+            return summ2 / (Repository.Table().Count() - 1);
+        }
+
+        public double GetExpectedValue() => GetExpectedValue(x => x.Selector());
+
+        public double GetDispersion(Func<T, double> selector) => GetDispersion(GetExpectedValue(selector), selector);
+
+        public double GetDispersion() => GetDispersion(GetExpectedValue());
+
+        public double GetDispersion(double expectedValue) => GetDispersion(expectedValue, x => x.Selector());
+
+        public double Min(Func<T, double> selector) {
+            if (Cacher.Need) {
+                Cacher.Initialize();
+                return Cacher.Entries.Min(selector);
+            }
+            return Repository.Table().Min(selector);
+        }
+
+        public double Max(Func<T, double> selector) {
+            if (Cacher.Need) {
+                Cacher.Initialize();
+                return Cacher.Entries.Max(selector);
+            }
+            return Repository.Table().Max(selector);
+        }
+
+        public double Min() => Min(x => x.Selector());
+
+        public double Max() => Max(x => x.Selector());
 
         protected T EntityById(long id) {
             var entity = Repository.Table().Where(x => x.Id == id).FirstOrDefault();
