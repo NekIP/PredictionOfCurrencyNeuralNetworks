@@ -24,7 +24,7 @@
                 </div>
                 <custom-table v-bind:data="items" code="code" v-bind:fieldsNames="['Дата', 'Значение']" v-bind:removeEntry="removeEntry"></custom-table>
             </div>
-            <div v-bind:id="code + '-graphic'" class="graphic" v-show="graphic" v-bind:style="{ width: graphicWidth() + 'px' }"></div>
+            <custom-graphic v-bind:code="code" v-bind:data="items" v-bind:graphicWidth="graphicWidth" v-bind:graphic="graphic"></custom-graphic>
         </div>
     </div>
 </template>

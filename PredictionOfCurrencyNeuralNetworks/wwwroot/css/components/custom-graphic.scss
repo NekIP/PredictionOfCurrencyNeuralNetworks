@@ -1,0 +1,24 @@
+﻿@import "../consts.scss";
+
+.custom-graphic {
+    .graphic {
+        margin: 10px;
+        flex-grow: 3;
+        background: #F9F9F9;
+        height: 500px;
+        box-shadow: $shadowMaterialDesignInsets;
+        color: $orangeTextColor;
+
+        svg {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+
+            path {
+                stroke: $lazureTextColor;
+                fill: none;
+                stroke-width: 2;
+            }
+        }
+    }
+}

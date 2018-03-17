@@ -7,6 +7,7 @@
   <ItemGroup>
     <Content Remove="wwwroot\components\configurator.cs" />
     <Content Remove="wwwroot\api\request.js" />
+    <Content Remove="wwwroot\components\graphic.vue" />
     <Content Remove="wwwroot\js\data-manager\dataManager.js" />
   </ItemGroup>
 
