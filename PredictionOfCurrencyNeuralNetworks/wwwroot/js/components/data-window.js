@@ -17,7 +17,6 @@ export default {
     },
     methods: {
         showHideGraphic: function () {
-            this.itemsTest.push("test");
             d3.select("#" + this.code + '-graphic').selectAll("svg").remove();
             let minMax = {
                 minDate: undefined,
