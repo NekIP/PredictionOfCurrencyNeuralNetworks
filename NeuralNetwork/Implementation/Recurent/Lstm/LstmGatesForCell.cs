@@ -1,4 +1,5 @@
 ﻿using DataAssistants.Structs;
+using Newtonsoft.Json;
 using System;
 
 namespace NeuralNetwork.Details {
@@ -6,34 +7,60 @@ namespace NeuralNetwork.Details {
 	/// This class stores the gate weights for each cell in all layers (deployed in time)
 	/// </summary>
 	public class LstmGatesForCell {
-		public Matrix ForgetLayer { get; set; }	
-		public Matrix InputLayer { get; set; }
-		public Matrix TanhLayer { get; set; }
-		public Matrix OutputLayer { get; set; }
-		public Vector BiasForgetLayer { get; set; }
-		public Vector BiasInputLayer { get; set; }
-		public Vector BiasTanhLayer { get; set; }
-		public Vector BiasOutputLayer { get; set; }
+        [JsonProperty]
+        public Matrix ForgetLayer { get; set; }
+        [JsonProperty]
+        public Matrix InputLayer { get; set; }
+        [JsonProperty]
+        public Matrix TanhLayer { get; set; }
+        [JsonProperty]
+        public Matrix OutputLayer { get; set; }
+        [JsonProperty]
+        public Vector BiasForgetLayer { get; set; }
+        [JsonProperty]
+        public Vector BiasInputLayer { get; set; }
+        [JsonProperty]
+        public Vector BiasTanhLayer { get; set; }
+        [JsonProperty]
+        public Vector BiasOutputLayer { get; set; }
 
-		public Matrix ForgetLayerDiff { get; set; }
-		public Matrix InputLayerDiff { get; set; }
-		public Matrix TanhLayerDiff { get; set; }
-		public Matrix OutputLayerDiff { get; set; }
-		public Vector BiasForgetLayerDiff { get; set; }
-		public Vector BiasInputLayerDiff { get; set; }
-		public Vector BiasTanhLayerDiff { get; set; }
-		public Vector BiasOutputLayerDiff { get; set; }
+        [JsonProperty]
+        public Matrix ForgetLayerDiff { get; set; }
+        [JsonProperty]
+        public Matrix InputLayerDiff { get; set; }
+        [JsonProperty]
+        public Matrix TanhLayerDiff { get; set; }
+        [JsonProperty]
+        public Matrix OutputLayerDiff { get; set; }
+        [JsonProperty]
+        public Vector BiasForgetLayerDiff { get; set; }
+        [JsonProperty]
+        public Vector BiasInputLayerDiff { get; set; }
+        [JsonProperty]
+        public Vector BiasTanhLayerDiff { get; set; }
+        [JsonProperty]
+        public Vector BiasOutputLayerDiff { get; set; }
 
-		public Matrix ForgetLayerDiffPrevious { get; set; }
-		public Matrix InputLayerDiffPrevious { get; set; }
-		public Matrix TanhLayerDiffPrevious { get; set; }
-		public Matrix OutputLayerDiffPrevious { get; set; }
-		public Vector BiasForgetLayerDiffPrevious { get; set; }
-		public Vector BiasInputLayerDiffPrevious { get; set; }
-		public Vector BiasTanhLayerDiffPrevious { get; set; }
-		public Vector BiasOutputLayerDiffPrevious { get; set; }
+        [JsonProperty]
+        public Matrix ForgetLayerDiffPrevious { get; set; }
+        [JsonProperty]
+        public Matrix InputLayerDiffPrevious { get; set; }
+        [JsonProperty]
+        public Matrix TanhLayerDiffPrevious { get; set; }
+        [JsonProperty]
+        public Matrix OutputLayerDiffPrevious { get; set; }
+        [JsonProperty]
+        public Vector BiasForgetLayerDiffPrevious { get; set; }
+        [JsonProperty]
+        public Vector BiasInputLayerDiffPrevious { get; set; }
+        [JsonProperty]
+        public Vector BiasTanhLayerDiffPrevious { get; set; }
+        [JsonProperty]
+        public Vector BiasOutputLayerDiffPrevious { get; set; }
 
-		public LstmGatesForCell(int lengthOfInput, int lengthOfOutput) {
+        public LstmGatesForCell() { }
+
+        public LstmGatesForCell(int lengthOfInput, int lengthOfOutput) {
 			var commonLength = lengthOfInput + lengthOfOutput;
 			var rnd = new Random();
 			Func<double> initializer = () => rnd.NextDouble();

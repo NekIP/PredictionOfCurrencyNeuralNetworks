@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace NeuralNetwork.Details {
 	public class LstmGatesForLayer {
-		public List<LstmGatesForCell> Gates { get; set; }
+        [JsonProperty]
+        public List<LstmGatesForCell> Gates { get; set; }
 
-		public LstmGatesForLayer(RecurentCellParameters[] cellsParameters) {
+        public LstmGatesForLayer() { }
+
+        public LstmGatesForLayer(RecurentCellParameters[] cellsParameters) {
 			Gates = new List<LstmGatesForCell>();
 			for (var i = 0; i < cellsParameters.Length; i++) {
 				Gates.Add(new LstmGatesForCell(cellsParameters[i].LengthOfInput,

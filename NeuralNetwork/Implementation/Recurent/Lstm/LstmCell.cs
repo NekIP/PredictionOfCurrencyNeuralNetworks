@@ -1,26 +1,40 @@
 ﻿using DataAssistants.Structs;
+using Newtonsoft.Json;
 
 namespace NeuralNetwork.Details {
 	public class LstmCell {
-		public Vector Forget { get; set; }
-		public Vector Input { get; set; }
-		/// <summary>
-		/// This is the combined vector of the input and the previous output(Left - Input, Right - OutputFromPreviousLayer)
-		/// </summary>
-		public Vector InputConcatenated { get; set; }
-		public Vector Output { get; set; }
-		public Vector OutputFromPreviousLayer { get; set; }
-		public Vector ForgetFromPreviousLayer { get; set; }
-		public Vector ForgetGateResultF { get; set; }
-		public Vector InputLayerGateResultI { get; set; }
-		public Vector TanhLayerGateResultG { get; set; }
-		public Vector OutputLayerGateResultO { get; set; }
+        [JsonProperty]
+        public Vector Forget { get; set; }
+        [JsonProperty]
+        public Vector Input { get; set; }
+        [JsonProperty]
+        /// <summary>
+        /// This is the combined vector of the input and the previous output(Left - Input, Right - OutputFromPreviousLayer)
+        /// </summary>
+        public Vector InputConcatenated { get; set; }
+        [JsonProperty]
+        public Vector Output { get; set; }
+        [JsonProperty]
+        public Vector OutputFromPreviousLayer { get; set; }
+        [JsonProperty]
+        public Vector ForgetFromPreviousLayer { get; set; }
+        [JsonProperty]
+        public Vector ForgetGateResultF { get; set; }
+        [JsonProperty]
+        public Vector InputLayerGateResultI { get; set; }
+        [JsonProperty]
+        public Vector TanhLayerGateResultG { get; set; }
+        [JsonProperty]
+        public Vector OutputLayerGateResultO { get; set; }
+        [JsonProperty]
+        public SigmoidActivation Sigmoid { get; private set; }
+        [JsonProperty]
+        public HyperbolicActivation Tanh { get; private set; }
 
-		private SigmoidActivation Sigmoid;
-		private HyperbolicActivation Tanh;
+        public LstmCell() { }
 
-		// нужно передать значение активации
-		public LstmCell(int lengthOfInput, int lengthOfOutput, SigmoidActivation sigmoid, HyperbolicActivation tanh) {
+        // нужно передать значение активации
+        public LstmCell(int lengthOfInput, int lengthOfOutput, SigmoidActivation sigmoid, HyperbolicActivation tanh) {
 			InitializeData(lengthOfInput, lengthOfOutput);
 			Sigmoid = sigmoid;
 			Tanh = tanh;

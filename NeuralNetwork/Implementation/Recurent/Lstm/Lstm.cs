@@ -1,25 +1,39 @@
-﻿using DataAssistants.Structs;
+﻿using DataAssistants;
+using DataAssistants.Structs;
 using NeuralNetwork.Details;
+using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace NeuralNetwork {
 	public class Lstm : Recurent {
-		public List<LstmLayer> SequenceOfLayers { get; private set; }
-		public LstmGatesForLayer GatesForLayer { get; private set; }
-		public LstmLayer BaseLayerLstm { get; private set; }
+        [JsonProperty]
+        public List<LstmLayer> SequenceOfLayers { get; private set; }
+        [JsonProperty]
+        public LstmGatesForLayer GatesForLayer { get; private set; }
+        [JsonProperty]
+        public LstmLayer BaseLayerLstm { get; private set; }
+        [JsonProperty]
+        public RecurentParameters Parameters { get; set; }
+        [JsonProperty]
+        public int LengthOfInput { get; private set; }
+        [JsonProperty]
+        public int LengthOfOutput { get; private set; }
+        [JsonProperty]
+        public int LayerCount { get; private set; }
+        [JsonProperty]
+        public int LengthOfOutputSequence { get; private set; }
+        [JsonProperty]
+        public RecurentCellParameters[] CellsParameters { get; private set; }
+        [JsonProperty]
+        public bool ReturnFullSequences { get; private set; }
+        [JsonProperty]
+        public bool LayerCountEqualsLengthOfInputSequence { get; private set; }
 
-		public RecurentParameters Parameters { get; set; }
-		public int LengthOfInput { get; private set; }
-		public int LengthOfOutput { get; private set; }
-		public int LayerCount { get; private set; }
-		public int LengthOfOutputSequence { get; private set; }
-		public RecurentCellParameters[] CellsParameters { get; private set; }
+        public Lstm() {}
 
-		public bool ReturnFullSequences { get; private set; }
-		public bool LayerCountEqualsLengthOfInputSequence { get; private set; }
-
-		public Lstm(RecurentParameters parameters) {
+        public Lstm(RecurentParameters parameters) {
 
 		}
 
@@ -198,11 +212,26 @@ namespace NeuralNetwork {
 		}
 
         public override void Load(string nameOfNeuralNetwork) {
-            throw new System.NotImplementedException();
+            var serializer = new Serializer();
+            if (serializer.Exists(Path.Combine(DefaultPath, "Lstm/", nameOfNeuralNetwork + ".json"))) {
+                var lstm = serializer.Deserialize<Lstm>(Path.Combine(DefaultPath, "Lstm/", nameOfNeuralNetwork + ".json"));
+                SequenceOfLayers = lstm.SequenceOfLayers;
+                GatesForLayer = lstm.GatesForLayer;
+                BaseLayerLstm = lstm.BaseLayerLstm;
+                Parameters = lstm.Parameters;
+                LengthOfInput = lstm.LengthOfInput;
+                LengthOfOutput = lstm.LengthOfOutput;
+                LayerCount = lstm.LayerCount;
+                LengthOfOutputSequence = lstm.LengthOfOutputSequence;
+                CellsParameters = lstm.CellsParameters;
+                ReturnFullSequences = lstm.ReturnFullSequences;
+                LayerCountEqualsLengthOfInputSequence = lstm.LayerCountEqualsLengthOfInputSequence;
+            }
         }
 
         public override void Save(string nameOfNeuralNetwork) {
-            throw new System.NotImplementedException();
+            var serializer = new Serializer();
+            serializer.Serialize(this, Path.Combine(DefaultPath, "Lstm/", nameOfNeuralNetwork + ".json"));
         }
     }
 }

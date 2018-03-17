@@ -1,4 +1,5 @@
 ﻿using DataAssistants.Structs;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,12 @@ namespace NeuralNetwork.Details {
 	// Пока я реализую lstm лишь для случая когда слой состоит из одной клетки, в дальнейшем же 
 	// данный класс будет содержать список клеток и в каждой клетки будет содержимое данного класса
 	public class LstmLayer {
-		public List<LstmCell> Cells { get; set; }
-		public Vector Input { get; set; }
-		public Vector Output { get; set; }
+        [JsonProperty]
+        public List<LstmCell> Cells { get; set; }
+        [JsonProperty]
+        public Vector Input { get; set; }
+        [JsonProperty]
+        public Vector Output { get; set; }
 
 		private SigmoidActivation Sigmoid;
 
@@ -20,7 +24,7 @@ namespace NeuralNetwork.Details {
 			Sigmoid = sigmoid;
 		}
 
-		protected LstmLayer() { }
+        public LstmLayer() { }
 
 		public Vector Run(Vector input, LstmGatesForLayer gatesLayer) {
 			Input = input;
