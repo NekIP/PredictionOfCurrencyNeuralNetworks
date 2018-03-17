@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="information" v-show="show">
-            <div class="spinner" v-show="!wasInit"><i class="fa fa-refresh fa-spin"></i></div>
+            <spinner v-bind:show="!wasInit"></spinner>
             <div class="meta" v-show="wasInit">
                 <div class="additional">
                     <input class="additional-item" type="date" v-model="entry.date"/>
@@ -24,8 +24,7 @@
                 </div>
                 <custom-table v-bind:data="items" code="code" v-bind:fieldsNames="['Дата', 'Значение']" v-bind:removeEntry="removeEntry"></custom-table>
             </div>
-            <div v-bind:id="code + '-graphic'" class="graphic" v-show="graphic" v-bind:style="{ width: graphicWidth() + 'px' }">
-            </div>
+            <div v-bind:id="code + '-graphic'" class="graphic" v-show="graphic" v-bind:style="{ width: graphicWidth() + 'px' }"></div>
         </div>
     </div>
 </template>
