@@ -11,9 +11,9 @@ namespace NeuralNetwork.Details {
 		public Vector Input { get; set; }
 		public Vector Output { get; set; }
 
-		private Activation Sigmoid;
+		private SigmoidActivation Sigmoid;
 
-		public LstmLayer(RecurentCellParameters[] cellsParameters, Activation sigmoid, Activation tanh) {
+		public LstmLayer(RecurentCellParameters[] cellsParameters, SigmoidActivation sigmoid, HyperbolicActivation tanh) {
 			InitializeCells(cellsParameters, sigmoid, tanh);
 			Input = new Vector(cellsParameters.First().LengthOfInput);
 			Output = new Vector(cellsParameters.Last().LengthOfOutput);
@@ -69,7 +69,7 @@ namespace NeuralNetwork.Details {
 			return result;
 		}
 
-		private void InitializeCells(RecurentCellParameters[] cellsParameters, Activation sigmoid, Activation tanh) {
+		private void InitializeCells(RecurentCellParameters[] cellsParameters, SigmoidActivation sigmoid, HyperbolicActivation tanh) {
 			Cells = new List<LstmCell>();
 			for (var i = 0; i < cellsParameters.Length; i++) {
 				Cells.Add(new LstmCell(cellsParameters[i].LengthOfInput, cellsParameters[i].LengthOfOutput, 

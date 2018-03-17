@@ -16,11 +16,11 @@ namespace NeuralNetwork.Details {
 		public Vector TanhLayerGateResultG { get; set; }
 		public Vector OutputLayerGateResultO { get; set; }
 
-		private Activation Sigmoid;
-		private Activation Tanh;
+		private SigmoidActivation Sigmoid;
+		private HyperbolicActivation Tanh;
 
 		// нужно передать значение активации
-		public LstmCell(int lengthOfInput, int lengthOfOutput, Activation sigmoid, Activation tanh) {
+		public LstmCell(int lengthOfInput, int lengthOfOutput, SigmoidActivation sigmoid, HyperbolicActivation tanh) {
 			InitializeData(lengthOfInput, lengthOfOutput);
 			Sigmoid = sigmoid;
 			Tanh = tanh;
