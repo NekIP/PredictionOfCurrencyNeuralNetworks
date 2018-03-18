@@ -8,7 +8,7 @@
     methods: {
         showHide: function () {
             this.show = !this.show;
-            if (this.show) {
+            if (this.show && this.callback) {
                 this.callback();
             }
         }

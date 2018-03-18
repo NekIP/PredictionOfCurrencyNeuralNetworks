@@ -37,7 +37,7 @@ export default {
             }
         },
         prepareData: function () {
-            if (confirm("Данная операция загружает со строннего источника все недостающие данные. Для некоторых таблиц она занимаеть долгое время. Вы хотите продолжить?")) {
+            if (confirm("Данная операция загружает со строннего источника все недостающие данные. Для некоторых таблиц она занимает долгое время. Вы хотите продолжить?")) {
                 let prepareData = new RequestApi("DataManager/PrepareData", 'POST');
                 this.wasInit = false;
                 prepareData.execute({
