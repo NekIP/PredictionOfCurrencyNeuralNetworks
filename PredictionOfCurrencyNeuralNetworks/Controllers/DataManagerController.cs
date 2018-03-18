@@ -86,12 +86,15 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
         }
 
         [HttpGet]
-        public async Task<List<EntityApiModel>> Load(string code) {
+        public async Task<DataCollectorResultApiModel> Load(string code) {
             if (!Collectors.ContainsKey(code)) {
                 throw new Exception("Code is not exist");
             }
-            var result = await Collectors[code].List();
-            return result.Select(EntityApiModel.Map).ToList();
+            var collector = Collectors[code];
+            var result = await collector.List();
+            var expectedValue = collector.GetExpectedValue();
+            var dispersion = collector.GetDispersion(expectedValue);
+            return DataCollectorResultApiModel.Map(result, expectedValue, dispersion);
         }
 
         [HttpPost]

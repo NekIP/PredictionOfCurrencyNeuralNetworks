@@ -12,6 +12,13 @@ export default {
                 date: "2018-01-01",
                 time: "00:00",
                 value: 0.0
+            },
+            info: {
+                from: undefined,
+                to: undefined,
+                count: 0,
+                expectedValue: 0,
+                dispersion: 0
             }
         };
     },
@@ -94,10 +101,23 @@ export default {
             this.wasInit = true;
         },
         addData: function (data) {
-            if (data && data.length > 0) {
+            if (data && data.values.length > 0) {
                 this.items = [];
-                for (let i = 0; i < data.length; i++) {
-                    this.items.push({ id: data[i].id, values: [data[i].date, data[i].value] });
+                this.info.from = undefined;
+                this.info.to = undefined;
+                this.info.count = data.values.length;
+                this.info.expectedValue = data.expectedValue;
+                this.info.dispersion = data.dispersion;
+                for (let i = 0; i < data.values.length; i++) {
+                    this.items.push({ id: data.values[i].id, values: [data.values[i].date, data.values[i].value] });
+                    if (!this.info.from
+                        || new Date(this.info.from).getTime() > new Date(data.values[i].date).getTime()) {
+                        this.info.from = data.values[i].date;
+                    }
+                    if (!this.info.to
+                        || new Date(this.info.to).getTime() < new Date(data.values[i].date).getTime()) {
+                        this.info.to = data.values[i].date;
+                    }
                 }
                 this.wasInit = true;
             }

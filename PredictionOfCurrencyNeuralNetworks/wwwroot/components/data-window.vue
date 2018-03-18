@@ -10,6 +10,10 @@
         <div class="information" v-show="show">
             <spinner v-bind:show="!wasInit"></spinner>
             <div class="meta" v-show="wasInit">
+                <div>Кол-во: <div class="value">{{ info.count }}</div></div>
+                <div>Мат. Ожидание: <div class="value">{{ info.expectedValue }}</div></div> 
+                <div>Дисперсия: <div class="value">{{ info.dispersion }}</div></div> 
+                <div>Данные с {{ info.from }} по {{ info.to }}</div><br/>
                 <div class="additional">
                     <input class="additional-item" type="date" v-model="entry.date"/>
                     <input class="additional-item" type="time" v-model="entry.time"/>
