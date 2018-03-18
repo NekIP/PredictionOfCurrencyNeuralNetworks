@@ -1,6 +1,9 @@
 ﻿@import "../consts.scss";
 
 .custom-graphic {
+    .range {
+        width: 50%;
+    }
     .graphic {
         margin: 10px 60px 10px 10px;
         flex-grow: 3;
@@ -18,6 +21,16 @@
                 stroke: $lazureTextColor;
                 fill: none;
                 stroke-width: 2;
+            }
+
+            .grid-line {
+                stroke: $lazureTextColor;
+                stroke-opacity: 0.2;
+            }
+
+            path, line {
+                fill: none;
+                stroke: $lazureTextColor;
             }
         }
     }

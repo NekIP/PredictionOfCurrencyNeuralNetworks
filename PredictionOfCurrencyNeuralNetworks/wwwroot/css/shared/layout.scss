@@ -86,6 +86,23 @@ button {
     border-radius: 2px;
 }
 
+.range {
+    -webkit-appearance: none;
+    width: 1000px;
+    border: 0px solid $orangeTextColor;
+    background: -webkit-linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 44%, $orangeTextColor 44%, $orangeTextColor 56%, #FFFFFF 56%, #FFFFFF 100%);
+}
+
+.range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    background: $lazureTextColor;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: .1s;
+}
+
 ::-webkit-scrollbar-button {
     background-image: url('');
     background-repeat: no-repeat;
