@@ -21,8 +21,100 @@
         <data-window name="Итоговые данные для нейронной сети" code="DataForNeuralNetwork"></data-window>
     </div>
     <div class="data-for-neural-network">
-        <container name="Итоговые данные для нейронной сети">
+        <container name="Итоговые данные для нейронной сети" v-bind:callback="downloadInfo">
+            <spinner v-bind:show="!wasInit"></spinner>
+            <div class="content" v-show="wasInit">
+                <div>Данные с {{ info.from }} по {{ info.to }}</div>
+                <div>Кол-во: <div class="value">{{ info.count }}</div></div>
+                <br />
+                <div>Мат. ожидание:</div>
+                <div class="table">
+                    <table>
+                        <tr>
+                            <template v-for="fieldName in info.fieldsNames">
+                                <th>{{ fieldName }}</th>
+                            </template>
+                        </tr>
+                        <tr>
+                            <template v-for="value in info.expectedValues">
+                                <td>{{ value.toFixed(8) }}</td>
+                            </template>
+                        </tr>
+                    </table>
+                </div>
+                <br />
+                <div>Дисперсия:</div>
+                <div class="table">
+                    <table>
+                        <tr>
+                            <template v-for="fieldName in info.fieldsNames">
+                                <th>{{ fieldName }}</th>
+                            </template>
+                        </tr>
+                        <tr>
+                            <template v-for="value in info.dispersions">
+                                <td>{{ value.toFixed(8) }}</td>
+                            </template>
+                        </tr>
+                    </table>
+                </div>
+                <br />
+                <div>Максимум:</div>
+                <div class="table">
+                    <table>
+                        <tr>
+                            <template v-for="fieldName in info.fieldsNames">
+                                <th>{{ fieldName }}</th>
+                            </template>
+                        </tr>
+                        <tr>
+                            <template v-for="value in info.maxs">
+                                <td>{{ value.toFixed(8) }}</td>
+                            </template>
+                        </tr>
+                    </table>
+                </div>
+                <br />
+                <div>Минимум:</div>
+                <div class="table">
+                    <table>
+                        <tr>
+                            <template v-for="fieldName in info.fieldsNames">
+                                <th>{{ fieldName }}</th>
+                            </template>
+                        </tr>
+                        <tr>
+                            <template v-for="value in info.mins">
+                                <td>{{ value.toFixed(8) }}</td>
+                            </template>
+                        </tr>
+                    </table>
+                </div>
+                
+                <button v-on:click="downloadRawData">Получить сырые данные</button>
+                <button v-on:click="showHideGraphicRawData">График сырых данных</button>
+                <custom-table v-bind:data="rawData" code="RawData" 
+                    v-bind:fieldsNames="info.fieldsNames" v-show="wasInitRawData"></custom-table>
+                <custom-graphic code="RawDataG" v-bind:data="rawData" v-bind:graphicWidth="gWidth" 
+                    v-bind:graphic="graphicRawData"></custom-graphic>
 
+                <br/>
+                <button v-on:click="downloadNormalizedData">Получить нормализованые данные</button>
+                <button v-on:click="showHideGraphicNormalizedData">График нормализованых данных</button>
+                <custom-table v-bind:data="normalizedData" code="NormalizedData"
+                    v-bind:fieldsNames="info.fieldsNames" v-show="wasInitNormalizedData"></custom-table>
+                <custom-graphic code="NormalizedDataG" v-bind:data="normalizedData" v-bind:graphicWidth="gWidth" 
+                    v-bind:graphic="graphicNormalizedData"></custom-graphic>
+
+                <br />
+                <button v-on:click="downloadScaledData">Получить отмасштабированые данные</button>
+                <button v-on:click="showHideGraphicScaledData">График отмасштабированых данных</button>
+                <custom-table v-bind:data="scaledData" code="ScaledData"
+                    v-bind:fieldsNames="info.fieldsNames" v-show="wasInitScaledData"></custom-table>
+                <custom-graphic code="ScaledDataG" v-bind:data="scaledData" v-bind:graphicWidth="gWidth" 
+                    v-bind:graphic="graphicScaledData"></custom-graphic>
+
+            </div>
         </container>
     </div>
 </div>

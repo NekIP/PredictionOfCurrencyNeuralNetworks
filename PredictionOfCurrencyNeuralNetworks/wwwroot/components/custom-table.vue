@@ -7,8 +7,8 @@
                     <template v-for="fieldName in fieldsNames">
                         <th>{{ fieldName }}</th>
                     </template>
-                    <th></th>
-                    <th></th>
+                    <th v-show="updateEntry"></th>
+                    <th v-show="removeEntry"></th>
                 </tr>
                 <tr v-for="item in itemsOnCurrentPage">
                     <td>{{ item.id }}</td>
@@ -17,13 +17,13 @@
                         <input v-show="item.update" v-model="value" />-->
                         <p>{{ value }}</p>
                     </td>
-                    <td>
+                    <td v-show="updateEntry">
                         <i class="fa fa-pencil" aria-hidden="true"
                            role="button" v-on:click="updateEntry(item)" v-show="!item.update"></i>
                         <i class="fa fa-pencil updated" aria-hidden="true"
                            role="button" v-on:click="updateEntry(item)" v-show="item.update"></i>
                     </td>
-                    <td><i class="fa fa-trash" v-on:click="removeEntry(item.id)" role="button"></i></td>
+                    <td v-show="removeEntry"><i class="fa fa-trash" v-on:click="removeEntry(item.id)" role="button"></i></td>
                 </tr>
             </table>
         </div>

@@ -11,6 +11,35 @@
         flex-wrap: wrap;
         width: 100%;
     }
+
+    .data-for-neural-network {
+        .content {
+            width: 100%;
+
+            .value {
+                float: right;
+            }
+
+            .table {
+                max-height: 1000px;
+                text-align: center;
+                overflow: auto;
+
+                table {
+                    margin: 0 auto;
+
+                    th {
+                        color: $orangeTextColor;
+                    }
+
+                    tr {
+                        margin-left: 5px;
+                        margin-right: 5px;
+                    }
+                }
+            }
+        }
+    }
 }
 
 @media (max-width: 1200px) {

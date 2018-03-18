@@ -83,10 +83,10 @@
                     }
                     for (let j = 0; j < item.values.length; j++) {
                         if (!this.minMax.minValue || this.minMax.minValue > item.values[j]) {
-                            this.minMax.minValue = item.values[j];
+                            this.minMax.minValue = +item.values[j];
                         }
                         if (!this.minMax.maxValue || this.minMax.maxValue < item.values[j]) {
-                            this.minMax.maxValue = item.values[j];
+                            this.minMax.maxValue = +item.values[j];
                         }
                     }
                     for (let j = 0; j < item.values.length; j++) {
@@ -96,8 +96,10 @@
                         converted[j].push({ x: new Date(item.date).getTime(), y: item.values[j] });
                     }
                 }
+                console.log(converted);
                 let y2 = this.minMax.minValue;
                 let y1 = this.minMax.maxValue;
+                console.log(y2 + "_" + y1);
                 let a = new Date(this.minMax.minDate).getTime();
                 let b = new Date(this.minMax.maxDate).getTime();
                 let i1 = 50;
@@ -114,7 +116,7 @@
                     .domain([new Date(this.minMax.minDate), new Date(this.minMax.maxDate)])
                     .range([i1, i2]);
                 let scaleVertical = d3.scaleLinear()
-                    .domain([this.minMax.minValue, this.minMax.maxValue])
+                    .domain([y2, y1])
                     .range([j2, j1]);
                 let axisHorizontal = d3.axisBottom()
                     .scale(scaleHorizontal)

@@ -40,7 +40,7 @@ namespace DataManager {
             IRTSCollector rts,
             ISAndP500Collector sAndP,
             ITradeBalanceCollector tradeBalance,
-            IUsdToRubCurrencyCollector usdToRub) : base(repository) {
+            IUsdToRubCurrencyCollector usdToRub) : base(repository, true) {
             Contexts = new List<DataForNeuralNetworkContext> {
                 new DataForNeuralNetworkContext(cac40, IfDataNotExist.Aproximated, "cac40Extrapolator"),
                 new DataForNeuralNetworkContext(dowJones, IfDataNotExist.Aproximated, "dowJonesExtrapolator"),
@@ -123,12 +123,12 @@ namespace DataManager {
             var result = new Vector(Contexts.Count);
             if (source == null) {
                 for (var i = 0; i < result.Length; i++) {
-                    result[i] = Max(x => DataForNeuralNetworkSelector(x, i));
+                    result[i] = Min(x => DataForNeuralNetworkSelector(x, i));
                 }
             }
             else {
                 for (var i = 0; i < result.Length; i++) {
-                    result[i] = source.Max(x => DataForNeuralNetworkSelector(x, i));
+                    result[i] = source.Min(x => DataForNeuralNetworkSelector(x, i));
                 }
             }
             return result;
