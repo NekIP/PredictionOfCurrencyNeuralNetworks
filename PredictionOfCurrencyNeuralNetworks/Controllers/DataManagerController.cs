@@ -101,6 +101,10 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
             var dispersion = collector.GetDispersion(expectedValue);
             return DataCollectorResultApiModel.Map(result, expectedValue, dispersion);
         }
+        [HttpGet]
+        public async Task<List<DataForNeuralNetworkApiModel>> GetDataForNeuralNetworkInformation() {
+
+        }
 
         [HttpGet]
         public async Task<List<DataForNeuralNetworkApiModel>> GetDataForNeuralNetwork() =>
