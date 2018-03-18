@@ -11,6 +11,18 @@ namespace DataManager {
     public interface IDataForNeuralNetworkCollector : IDataCollector<DataForNeuralNetwork> {
         Task<DataForNeuralNetwork> GetData(DateTime date, TimeSpan step, bool caching = true);
         Task LearnExtrapolators(double acceptableError = 0.000001, int maxIteration = 1000);
+        Vector ExpectedValues();
+        Vector Dispersions(Vector expectedValues = null);
+        Vector Maxs(IList<DataForNeuralNetwork> source = null);
+        Vector Mins(IList<DataForNeuralNetwork> source = null);
+        Vector Normalize(Vector x, Vector expectedValue, Vector dispersion);
+        Vector Denormalize(Vector y, Vector expectedValue, Vector dispersion);
+        Vector Scaling(Vector x, Vector min, Vector max);
+        Vector Descaling(Vector y, Vector min, Vector max);
+        Task<IList<DataForNeuralNetwork>> ListRaw();
+        Task<IList<DataForNeuralNetwork>> ListNormalized();
+        Task<IList<DataForNeuralNetwork>> ListScaled();
+        string[] GetNames();
     }
     public class DataForNeuralNetworkCollector : DataCollector<DataForNeuralNetwork>, IDataForNeuralNetworkCollector {
         protected List<DataForNeuralNetworkContext> Contexts { get; set; }
@@ -65,6 +77,63 @@ namespace DataManager {
             return result;
         }
 
+        public string[] GetNames() {
+            var result = new string[Contexts.Count];
+            for (var i = 0; i < result.Length; i++) {
+                result[i] = Contexts[i].Collector.GetType().Name.Replace("Collector", "");
+            }
+            return result;
+        }
+
+        public Vector ExpectedValues() {
+            var result = new Vector(Contexts.Count);
+            for (var i = 0; i < result.Length; i++) {
+                result[i] = ExpectedValue(x => DataForNeuralNetworkSelector(x, i));
+            }
+            return result;
+        }
+
+        public Vector Dispersions(Vector expectedValues = null) {
+            if (expectedValues == null) {
+                expectedValues = ExpectedValues();
+            }
+            var result = new Vector(Contexts.Count);
+            for (var i = 0; i < result.Length; i++) {
+                result[i] = Dispersion(expectedValues[i], x => DataForNeuralNetworkSelector(x, i));
+            }
+            return result;
+        }
+
+        public Vector Maxs(IList<DataForNeuralNetwork> source = null) {
+            var result = new Vector(Contexts.Count);
+            if (source == null) {
+                for (var i = 0; i < result.Length; i++) {
+                    result[i] = Max(x => DataForNeuralNetworkSelector(x, i));
+                }
+            }
+            else {
+                for (var i = 0; i < result.Length; i++) {
+                    result[i] = source.Max(x => DataForNeuralNetworkSelector(x, i));
+                }
+            }
+            return result;
+        }
+
+        public Vector Mins(IList<DataForNeuralNetwork> source = null) {
+            var result = new Vector(Contexts.Count);
+            if (source == null) {
+                for (var i = 0; i < result.Length; i++) {
+                    result[i] = Max(x => DataForNeuralNetworkSelector(x, i));
+                }
+            }
+            else {
+                for (var i = 0; i < result.Length; i++) {
+                    result[i] = source.Max(x => DataForNeuralNetworkSelector(x, i));
+                }
+            }
+            return result;
+        }
+
         public override async Task DownloadMissingData(DateTime before, TimeSpan step) {
             foreach (var context in Contexts) {
                 await context.Collector.DownloadMissingData(before, step);
@@ -76,6 +145,43 @@ namespace DataManager {
                 await context.LearnExtrapolator(acceptableError, maxIteration);
             }
         }
+
+        public async Task<IList<DataForNeuralNetwork>> ListRaw() =>
+            (await List()).Select(x => x as DataForNeuralNetwork).ToList();
+
+        public async Task<IList<DataForNeuralNetwork>> ListNormalized() {
+            var expectedValues = ExpectedValues();
+            var dispersions = Dispersions(expectedValues);
+            return (await List()).Select(x => new DataForNeuralNetwork {
+                    Date = (x as DataForNeuralNetwork).Date,
+                    Data = Normalize((x as DataForNeuralNetwork).Data, expectedValues, dispersions)
+                }).ToList();
+        }
+
+        public async Task<IList<DataForNeuralNetwork>> ListScaled() {
+            var normalized = await ListNormalized();
+            var mins = Mins(normalized);
+            var maxs = Maxs(normalized);
+            return normalized.Select(x => new DataForNeuralNetwork {
+                    Date = (x as DataForNeuralNetwork).Date,
+                    Data = Scaling((x as DataForNeuralNetwork).Data, mins, maxs)
+                }).ToList();
+        }
+
+        public Vector Normalize(Vector x, Vector expectedValue, Vector dispersion) =>
+            (x - expectedValue) / Vector.Convert(dispersion, Math.Sqrt);
+
+        public Vector Denormalize(Vector y, Vector expectedValue, Vector dispersion) =>
+            y * Vector.Convert(dispersion, Math.Sqrt) + expectedValue;
+
+        public Vector Scaling(Vector x, Vector min, Vector max) =>
+            (x - min) * (1 - (-1)) / (max - min) + (-1);
+
+        public Vector Descaling(Vector y, Vector min, Vector max) =>
+            ((max - min) * (y - (-1))) / (1 - (-1)) + min;
+
+        public double DataForNeuralNetworkSelector(DataForNeuralNetwork x, int i) =>
+            (double)x.GetType().GetProperty($"D{ i + 1 }").GetValue(x);
 
         protected class DataForNeuralNetworkContext {
             public IfDataNotExist IfDataNotExist { get; private set; }

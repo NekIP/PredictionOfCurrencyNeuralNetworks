@@ -61,35 +61,35 @@ namespace Experiment {
             */
 
             Vector expectedValues = new double[] {
-                dataPreparer.GetExpectedValue(x => x.D1),
-                dataPreparer.GetExpectedValue(x => x.D2),
-                dataPreparer.GetExpectedValue(x => x.D3),
-                dataPreparer.GetExpectedValue(x => x.D4),
-                dataPreparer.GetExpectedValue(x => x.D5),
-                dataPreparer.GetExpectedValue(x => x.D6),
-                dataPreparer.GetExpectedValue(x => x.D7),
-                dataPreparer.GetExpectedValue(x => x.D8),
-                dataPreparer.GetExpectedValue(x => x.D9),
-                dataPreparer.GetExpectedValue(x => x.D10),
-                dataPreparer.GetExpectedValue(x => x.D11),
-                dataPreparer.GetExpectedValue(x => x.D12),
-                dataPreparer.GetExpectedValue(x => x.D13)
+                dataPreparer.ExpectedValue(x => x.D1),
+                dataPreparer.ExpectedValue(x => x.D2),
+                dataPreparer.ExpectedValue(x => x.D3),
+                dataPreparer.ExpectedValue(x => x.D4),
+                dataPreparer.ExpectedValue(x => x.D5),
+                dataPreparer.ExpectedValue(x => x.D6),
+                dataPreparer.ExpectedValue(x => x.D7),
+                dataPreparer.ExpectedValue(x => x.D8),
+                dataPreparer.ExpectedValue(x => x.D9),
+                dataPreparer.ExpectedValue(x => x.D10),
+                dataPreparer.ExpectedValue(x => x.D11),
+                dataPreparer.ExpectedValue(x => x.D12),
+                dataPreparer.ExpectedValue(x => x.D13)
             };
 
             Vector dispersions = new double[]  {
-                dataPreparer.GetDispersion(expectedValues[0], x => x.D1),
-                dataPreparer.GetDispersion(expectedValues[1], x => x.D2),
-                dataPreparer.GetDispersion(expectedValues[2], x => x.D3),
-                dataPreparer.GetDispersion(expectedValues[3], x => x.D4),
-                dataPreparer.GetDispersion(expectedValues[4], x => x.D5),
-                dataPreparer.GetDispersion(expectedValues[5], x => x.D6),
-                dataPreparer.GetDispersion(expectedValues[6], x => x.D7),
-                dataPreparer.GetDispersion(expectedValues[7], x => x.D8),
-                dataPreparer.GetDispersion(expectedValues[8], x => x.D9),
-                dataPreparer.GetDispersion(expectedValues[9], x => x.D10),
-                dataPreparer.GetDispersion(expectedValues[10], x => x.D11),
-                dataPreparer.GetDispersion(expectedValues[11], x => x.D12),
-                dataPreparer.GetDispersion(expectedValues[12], x => x.D13)
+                dataPreparer.Dispersion(expectedValues[0], x => x.D1),
+                dataPreparer.Dispersion(expectedValues[1], x => x.D2),
+                dataPreparer.Dispersion(expectedValues[2], x => x.D3),
+                dataPreparer.Dispersion(expectedValues[3], x => x.D4),
+                dataPreparer.Dispersion(expectedValues[4], x => x.D5),
+                dataPreparer.Dispersion(expectedValues[5], x => x.D6),
+                dataPreparer.Dispersion(expectedValues[6], x => x.D7),
+                dataPreparer.Dispersion(expectedValues[7], x => x.D8),
+                dataPreparer.Dispersion(expectedValues[8], x => x.D9),
+                dataPreparer.Dispersion(expectedValues[9], x => x.D10),
+                dataPreparer.Dispersion(expectedValues[10], x => x.D11),
+                dataPreparer.Dispersion(expectedValues[11], x => x.D12),
+                dataPreparer.Dispersion(expectedValues[12], x => x.D13)
             };
 
             Vector normalize(Vector x, Vector expectedValue, Vector dispersion) => (x - expectedValue) / Vector.Convert(dispersion, Math.Sqrt);

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataManager {
     public interface IDataCollector {
+        int Count { get; }
         DateTime GlobalFrom { get; set; }
         string Source { get; }
         Task<List<Entity>> List();
@@ -18,28 +19,37 @@ namespace DataManager {
         bool TryGet(DateTime date, TimeSpan step, out Entity result);
         Task DownloadMissingData(DateTime before, TimeSpan step);
         Entity GetNearLeft(DateTime date);
-        double GetExpectedValue();
-        double GetDispersion();
-        double GetDispersion(double expectedValue);
+        double ExpectedValue();
+        double Dispersion();
+        double Dispersion(double expectedValue);
         double Min();
         double Max();
     }
 
     public interface IDataCollector<T> : IDataCollector where T : Entity, new() {
         IRepository<T> Repository { get; }
-        double GetExpectedValue(Func<T, double> selector);
-        double GetDispersion(Func<T, double> selector);
-        double GetDispersion(double expectedValue, Func<T, double> selector);
+        double ExpectedValue(Func<T, double> selector);
+        double Dispersion(Func<T, double> selector);
+        double Dispersion(double expectedValue, Func<T, double> selector);
         double Min(Func<T, double> selector);
         double Max(Func<T, double> selector);
     }
 
-	public abstract class DataCollector<T> : IDataCollector<T> where T : Entity, new() {
+    public abstract class DataCollector<T> : IDataCollector<T> where T : Entity, new() {
         public DateTime GlobalFrom { get; set; } = new DateTime(2007, 10, 8);
-		public string Source { get; protected set; }
-		public IRepository<T> Repository { get; protected set; }
+        public string Source { get; protected set; }
+        public IRepository<T> Repository { get; protected set; }
 
         protected Cache Cacher { get; set; }
+        public int Count {
+            get {
+                if (Cacher.Need) {
+                    Cacher.Initialize();
+                    return Cacher.Entries.Count;
+                }
+                return Repository.Table().Count();
+            }
+        }
 
         public DataCollector(IRepository<T> repository, bool isCache = false) {
             Repository = repository;
@@ -140,7 +150,7 @@ namespace DataManager {
             return Repository.SaveChangesAsync();
         }
 
-        public double GetExpectedValue(Func<T, double> selector) {
+        public double ExpectedValue(Func<T, double> selector) {
             if (Cacher.Need) {
                 Cacher.Initialize();
                 return Cacher.Entries.Average(selector);
@@ -148,7 +158,7 @@ namespace DataManager {
             return Repository.Table().Average(selector);
         }
 
-        public double GetDispersion(double expectedValue, Func<T, double> selector) {
+        public double Dispersion(double expectedValue, Func<T, double> selector) {
             if (Cacher.Need) {
                 Cacher.Initialize();
                 var summ1 = Cacher.Entries.Aggregate(0.0, (x, y) => x + Math.Pow(selector(y) - expectedValue, 2));
@@ -158,13 +168,13 @@ namespace DataManager {
             return summ2 / (Repository.Table().Count() - 1);
         }
 
-        public double GetExpectedValue() => GetExpectedValue(x => x.Selector());
+        public double ExpectedValue() => ExpectedValue(x => x.Selector());
 
-        public double GetDispersion(Func<T, double> selector) => GetDispersion(GetExpectedValue(selector), selector);
+        public double Dispersion(Func<T, double> selector) => Dispersion(ExpectedValue(selector), selector);
 
-        public double GetDispersion() => GetDispersion(GetExpectedValue());
+        public double Dispersion() => Dispersion(ExpectedValue());
 
-        public double GetDispersion(double expectedValue) => GetDispersion(expectedValue, x => x.Selector());
+        public double Dispersion(double expectedValue) => Dispersion(expectedValue, x => x.Selector());
 
         public double Min(Func<T, double> selector) {
             if (Cacher.Need) {

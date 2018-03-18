@@ -30,7 +30,6 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
         public IRTSCollector RtsCollector { get; set; }
         public ISAndP500Collector SAndPCollector { get; set; }
         public ITradeBalanceCollector TradeBalanceCollector { get; set; }
-        public IPredictionOfCurrencyUsdToRub PredictionOfCurrencyUsdToRub { get; set; }
 
         public Dictionary<string, IDataCollector> Collectors { get; set; }
 
@@ -48,8 +47,7 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
             IRefinancingRateCollector refinancingRateCollector,
             IRTSCollector rtsCollector,
             ISAndP500Collector sAndPCollector,
-            ITradeBalanceCollector tradeBalanceCollector,
-            IPredictionOfCurrencyUsdToRub predictionOfCurrencyUsdToRub) {
+            ITradeBalanceCollector tradeBalanceCollector) {
             UsdToRubCollector = usdToRubCollector;
             Cac40Collector = cac40Collector;
             Csi200Collector = csi200Collector;
@@ -65,7 +63,6 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
             RtsCollector = rtsCollector;
             SAndPCollector = sAndPCollector;
             TradeBalanceCollector = tradeBalanceCollector;
-            PredictionOfCurrencyUsdToRub = predictionOfCurrencyUsdToRub;
             Collectors = new Dictionary<string, IDataCollector> {
                 { "UsdToRub", UsdToRubCollector },
                 { "Cac40", Cac40Collector },
@@ -97,26 +94,37 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
             }
             var collector = Collectors[code];
             var result = await collector.List();
-            var expectedValue = collector.GetExpectedValue();
-            var dispersion = collector.GetDispersion(expectedValue);
+            var expectedValue = collector.ExpectedValue();
+            var dispersion = collector.Dispersion(expectedValue);
             return DataCollectorResultApiModel.Map(result, expectedValue, dispersion);
         }
         [HttpGet]
-        public async Task<List<DataForNeuralNetworkApiModel>> GetDataForNeuralNetworkInformation() {
-
+        public async Task<DataForNeuralNetworkInformation> GetDataForNeuralNetworkInformation() {
+            var list = await GetDataForNeuralNetwork();
+            var result = new DataForNeuralNetworkInformation {
+                Count = list.Count,
+                From = list.First().Date,
+                To = list.Last().Date,
+                ExpectedValues = DataForNeuralNetworkCollector.ExpectedValues(),
+                FieldsNames = DataForNeuralNetworkCollector.GetNames(),
+                Maxs = DataForNeuralNetworkCollector.Maxs(),
+                Mins = DataForNeuralNetworkCollector.Mins()
+            };
+            result.Dispersions = DataForNeuralNetworkCollector.Dispersions(result.ExpectedValues);
+            return result;
         }
 
         [HttpGet]
         public async Task<List<DataForNeuralNetworkApiModel>> GetDataForNeuralNetwork() =>
-            (await PredictionOfCurrencyUsdToRub.List()).Select(DataForNeuralNetworkApiModel.Map).ToList();
+            (await DataForNeuralNetworkCollector.ListRaw()).Select(DataForNeuralNetworkApiModel.Map).ToList();
 
         [HttpGet]
         public async Task<List<DataForNeuralNetworkApiModel>> GetDataForNeuralNetworkNormalized() =>
-            (await PredictionOfCurrencyUsdToRub.ListNormalized()).Select(DataForNeuralNetworkApiModel.Map).ToList();
+            (await DataForNeuralNetworkCollector.ListNormalized()).Select(DataForNeuralNetworkApiModel.Map).ToList();
 
         [HttpGet]
         public async Task<List<DataForNeuralNetworkApiModel>> GetDataForNeuralNetworkScaled() =>
-            (await PredictionOfCurrencyUsdToRub.ListScaled()).Select(DataForNeuralNetworkApiModel.Map).ToList();
+            (await DataForNeuralNetworkCollector.ListScaled()).Select(DataForNeuralNetworkApiModel.Map).ToList();
 
         [HttpPost]
         public Task Add(string code, string dateStr, double value) {
