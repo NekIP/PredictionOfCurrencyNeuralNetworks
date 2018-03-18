@@ -1,21 +1,23 @@
 ﻿export default {
     props: ["code", "data", "graphicWidth", "graphic"],
-    data: {
-        colors: [
-            "#00a47f",
-            "#fea62b",
-            "#FE602B",
-            "#FE2B48",
-            "#FE2B88",
-            "#C12BFE",
-            "#3A2BFE",
-            "#2B89FE",
-            "#2BFEED",
-            "#CEFE2B",
-            "#2BFE72",
-            "#2BFAFE",
-            "#FE372B"
-        ]
+    data: function () {
+        return {
+            colors: [
+                "#00a47f",
+                "#fea62b",
+                "#FE602B",
+                "#FE2B48",
+                "#FE2B88",
+                "#C12BFE",
+                "#3A2BFE",
+                "#2B89FE",
+                "#2BFEED",
+                "#CEFE2B",
+                "#2BFE72",
+                "#2BFAFE",
+                "#FE372B"
+            ]
+        }
     },
     watch: {
         graphic: function (val) {
@@ -97,7 +99,18 @@
                 for (let i = 0; i < converted.length; i++) {
                     svg.append("path")
                         .attr("d", line(converted[i]))
-                        .style("stroke", this.colors[i % this.color.length]);
+                        .style("stroke", this.colors[i % this.colors.length]);
+                    if (converted[i].length < 2000) {
+                        svg.selectAll(".dot")
+                            .data(converted[i])
+                            .enter().append("circle")
+                            .style("stroke", this.colors[i % this.colors.length])
+                            .style("fill", "white")
+                            .attr("class", "dot")
+                            .attr("r", 3.5)
+                            .attr("cx", function (d) { return scaleHorizontal(d.x); })
+                            .attr("cy", function (d) { return scaleVertical(d.y); });
+                    }
                 }
             }
         }
