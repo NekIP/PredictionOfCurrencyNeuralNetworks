@@ -6,59 +6,45 @@
     min-width: 30%;
     width: auto;
 
-    .name {
-        display: flex;
-        padding: 10px;
-        background: white;
-        width: 100%;
-        box-shadow: $shadowMaterialDesign;
-        font-size: 16px;
-        font-weight: 500;
+    .meta {
+        flex-grow: 1;
+        min-width: 30%;
 
-        .text {
-            width: 95%;
+        .add-button {
+            text-align: center;
+            width: 10%;
+            font-size: 24px;
+            padding: 5px 0px 0px 10px;
+        }
+
+        .additional {
+            display: flex;
+            color: $orangeTextColor;
+            margin-bottom: 10px;
+
+            .additional-item {
+                width: 20%;
+            }
+        }
+
+        .value {
+            float: right;
         }
     }
 
-    .information {
-        display: flex;
-        margin-top: 2px;
-        padding: 10px;
-        background: white;
+    .graphic {
         width: auto;
-        height: auto;
-        box-shadow: $shadowMaterialDesign;
-
-        .meta {
-            flex-grow: 1;
-            min-width: 30%;
-
-            .add-button {
-                text-align: center;
-                width: 10%;
-                font-size: 24px;
-                padding: 5px 0px 0px 10px;
-            }
-
-            .additional {
-                display: flex;
-                color: $orangeTextColor;
-                margin-bottom: 10px;
-
-                .additional-item {
-                    width: 20%;
-                }
-            }
-
-            .value {
-                float: right;
-            }
-        }
     }
 }
 
 @media (max-width: 1300px) {
     .data-window {
         min-width: 50%;
+    }
+}
+
+@media (max-width: 800px) {
+    .data-window {
+        min-width: 100%;
     }
 }

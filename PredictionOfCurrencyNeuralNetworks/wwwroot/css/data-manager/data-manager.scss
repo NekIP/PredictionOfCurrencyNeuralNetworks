@@ -1,6 +1,10 @@
-﻿.data-manager {
+﻿@import "../consts.scss";
+
+.data-manager {
     width: 90%;
     margin: 0 auto;
+    color: $lazureTextColor;
+
 
     .data-windows {
         display: flex;

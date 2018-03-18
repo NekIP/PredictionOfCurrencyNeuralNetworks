@@ -102,7 +102,7 @@
                 let b = new Date(this.minMax.maxDate).getTime();
                 let i1 = 50;
                 let j1 = 25;
-                let i2 = $("#" + this.code + '-graphic').width() - 100;
+                let i2 = $("#" + this.code + '-graphic').width() - 30;
                 let j2 = $("#" + this.code + '-graphic').height() - 50;
                 let xScreen = x => i1 + Math.trunc((x - a) * (i2 - i1) / (b - a));
                 let yScreen = y => j1 + Math.trunc((y - y1) * (j2 - j1) / (y2 - y1));

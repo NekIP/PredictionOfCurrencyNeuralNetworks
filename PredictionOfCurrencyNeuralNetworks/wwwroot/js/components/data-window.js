@@ -4,7 +4,6 @@ export default {
     props: ["name", "code"],
     data: function () {
         return {
-            show: false,
             wasInit: false,
             graphic: false,
             items: [],
@@ -28,13 +27,12 @@ export default {
         },
         graphicWidth: function () {
             let dataManagerCoef = window.innerWidth < 1200 ? 1 : 0.9;
-            let dataManagerCoef1 = window.innerWidth < 1300 ? 0.5 : 0.51;
+            let dataManagerCoef1 = window.innerWidth < 1300 ? 0.52 : 0.51;
             let width1 = window.innerWidth * dataManagerCoef - 30;
             return width1 * dataManagerCoef1 - 40;
         },
-        showHide: function () {
-            this.show = !this.show;
-            if (this.show && !this.wasInit) {
+        callback: function () {
+            if (!this.wasInit) {
                 this.downloadData();
             }
         },

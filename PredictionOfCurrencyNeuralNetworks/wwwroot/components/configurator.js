@@ -3,6 +3,7 @@ import dataWindow from "./data-window.vue"
 import customTable from "./custom-table.vue"
 import spinner from "./spinner.vue"
 import customGraphic from "./custom-graphic.vue"
+import container from "./container.vue"
 
 (function () {
     Vue.component('data-window', dataWindow);
@@ -10,4 +11,5 @@ import customGraphic from "./custom-graphic.vue"
     Vue.component('custom-table', customTable); 
     Vue.component('spinner', spinner); 
     Vue.component('custom-graphic', customGraphic); 
+    Vue.component('container', container); 
 })();

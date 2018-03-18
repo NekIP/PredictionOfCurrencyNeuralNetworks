@@ -1,0 +1,30 @@
+﻿@import '../consts.scss';
+
+.container {
+    width: auto;
+    height: auto;
+
+    .name {
+        display: flex;
+        padding: 10px;
+        background: white;
+        width: 100%;
+        box-shadow: $shadowMaterialDesign;
+        font-size: 16px;
+        font-weight: 500;
+
+        .text {
+            width: 95%;
+        }
+    }
+
+    .information {
+        display: flex;
+        margin-top: 2px;
+        padding: 10px;
+        background: white;
+        width: auto;
+        height: auto;
+        box-shadow: $shadowMaterialDesign;
+    }
+}
