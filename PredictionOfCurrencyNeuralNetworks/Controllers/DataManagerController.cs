@@ -8,6 +8,8 @@ using DataManager;
 using PredictionOfCurrencyNeuralNetworks.Models.DataManager;
 using System.Globalization;
 using DataBase.Entities;
+using PredictionOfCurrencyNeuralNetworks.Models;
+using Business;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -28,6 +30,7 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
         public IRTSCollector RtsCollector { get; set; }
         public ISAndP500Collector SAndPCollector { get; set; }
         public ITradeBalanceCollector TradeBalanceCollector { get; set; }
+        public IPredictionOfCurrencyUsdToRub PredictionOfCurrencyUsdToRub { get; set; }
 
         public Dictionary<string, IDataCollector> Collectors { get; set; }
 
@@ -45,7 +48,8 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
             IRefinancingRateCollector refinancingRateCollector,
             IRTSCollector rtsCollector,
             ISAndP500Collector sAndPCollector,
-            ITradeBalanceCollector tradeBalanceCollector) {
+            ITradeBalanceCollector tradeBalanceCollector,
+            IPredictionOfCurrencyUsdToRub predictionOfCurrencyUsdToRub) {
             UsdToRubCollector = usdToRubCollector;
             Cac40Collector = cac40Collector;
             Csi200Collector = csi200Collector;
@@ -61,6 +65,7 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
             RtsCollector = rtsCollector;
             SAndPCollector = sAndPCollector;
             TradeBalanceCollector = tradeBalanceCollector;
+            PredictionOfCurrencyUsdToRub = predictionOfCurrencyUsdToRub;
             Collectors = new Dictionary<string, IDataCollector> {
                 { "UsdToRub", UsdToRubCollector },
                 { "Cac40", Cac40Collector },
@@ -96,6 +101,18 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
             var dispersion = collector.GetDispersion(expectedValue);
             return DataCollectorResultApiModel.Map(result, expectedValue, dispersion);
         }
+
+        [HttpGet]
+        public async Task<List<DataForNeuralNetworkApiModel>> GetDataForNeuralNetwork() =>
+            (await PredictionOfCurrencyUsdToRub.List()).Select(DataForNeuralNetworkApiModel.Map).ToList();
+
+        [HttpGet]
+        public async Task<List<DataForNeuralNetworkApiModel>> GetDataForNeuralNetworkNormalized() =>
+            (await PredictionOfCurrencyUsdToRub.ListNormalized()).Select(DataForNeuralNetworkApiModel.Map).ToList();
+
+        [HttpGet]
+        public async Task<List<DataForNeuralNetworkApiModel>> GetDataForNeuralNetworkScaled() =>
+            (await PredictionOfCurrencyUsdToRub.ListScaled()).Select(DataForNeuralNetworkApiModel.Map).ToList();
 
         [HttpPost]
         public Task Add(string code, string dateStr, double value) {

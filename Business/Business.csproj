@@ -9,7 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataAssistants\DataAssistants.csproj" />
     <ProjectReference Include="..\DataManager\DataManager.csproj" />
+    <ProjectReference Include="..\NeuralNetwork\NeuralNetwork.csproj" />
   </ItemGroup>
 
 </Project>

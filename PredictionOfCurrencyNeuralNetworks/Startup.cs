@@ -1,4 +1,5 @@
-﻿using DataBase.Repositories;
+﻿using Business;
+using DataBase.Repositories;
 using DataManager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,6 +19,7 @@ namespace PredictionOfCurrencyNeuralNetworks {
             services.AddMvc();
             InitCollectors(services);
             InitRepositories(services);
+            InitBuisness(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,6 +39,10 @@ namespace PredictionOfCurrencyNeuralNetworks {
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        protected void InitBuisness(IServiceCollection services) {
+            services.AddTransient<IPredictionOfCurrencyUsdToRub, PredictionOfCurrencyUsdToRub>();
         }
 
         protected void InitCollectors(IServiceCollection services) {
