@@ -1,4 +1,5 @@
-﻿using DataAssistants.Structs;
+﻿using Business;
+using DataAssistants.Structs;
 using DataBase;
 using DataBase.Entities;
 using DataBase.Repositories;
@@ -17,7 +18,6 @@ namespace Experiment {
         public override async void Run() {
             var config = GetConfiguration();
             var dataPreparer = new DataForNeuralNetworkCollector(
-                new DataForNeuralNetworkRepository(config),
                 new CAC40Collector(new CAC40Repository(config)),
                 new DowJonesCollector(new DowJonesRepository(config)),
                 new GdpPerCapitaPppCollector(new GdpPerCapitaPppRepository(config)),
@@ -31,6 +31,26 @@ namespace Experiment {
                 new SAndP500Collector(new SAndPRepository(config)),
                 new TradeBalanceCollector(new TradeBalanceRepository(config)),
                 new UsdToRubCurrencyCollector(new UsdToRubCurrencyRepository(config)));
+            //var prOfCur = new PredictionOfCurrencyUsdToRub(dataPreparer);
+            var prOfCur = new PredictionOfCurrencyUsdToRub(dataPreparer);
+            //await dataPreparer.DownloadMissingData(DateTime.Now, TimeSpan.FromHours(1));
+            var check = dataPreparer.List(new DateTime(2018, 2, 1), DateTime.Now, TimeSpan.FromDays(1));
+            var t33 = prOfCur.Predict(new DateTime(2018, 3, 20));
+            var t43 = prOfCur.Predict(new DateTime(2018, 3, 21));
+            var t1 = prOfCur.Predict(new DateTime(2018, 3, 22));
+            var t2 = prOfCur.Predict(new DateTime(2018, 3, 23));
+            var t3 = prOfCur.Predict(new DateTime(2018, 3, 24));
+            var t4 = prOfCur.Predict(new DateTime(2018, 3, 25));
+            /*var lastAverage = 0.0;
+            for (var i = 0; i < 1000000000; i++) {
+                var result = prOfCur.Fit();
+                var currAverage = result.Average(x => x.Error[0]);
+                Console.WriteLine(currAverage + "\t" + (currAverage - lastAverage));
+                lastAverage = currAverage;
+            }*/
+
+
+
 
             //await dataPreparer.DownloadMissingData(DateTime.Now, TimeSpan.FromHours(1));
 
@@ -59,7 +79,7 @@ namespace Experiment {
             }
 
             */
-
+            /*
             Vector expectedValues = new double[] {
                 dataPreparer.ExpectedValue(x => x.D1),
                 dataPreparer.ExpectedValue(x => x.D2),
@@ -173,7 +193,7 @@ namespace Experiment {
                 }
             }
 
-
+            */
 
             //var item = await dataPreparer.GetData(new DateTime(2007, 10, 13, 16, 0, 0), TimeSpan.FromHours(1), true);
             /*var result = new List<double[]>();
@@ -184,23 +204,23 @@ namespace Experiment {
                 await Task.WhenAll(item1Task, item2Task, item3Task);
             }*/
 
-                /*var result = new List<double[]>();
-                // new DateTime(2007, 10, 14)
-                // 25.02.2012 01:00:00
-                for (var i = new DateTime(2017, 6, 30); i < DateTime.Now; i = i.AddHours(1)) {
-                    var item = await dataPreparer.GetData(i, TimeSpan.FromHours(1), true);
-                    Console.WriteLine(i.ToString("dd.MM.yyyy HH:mm:ss") + "\t"
-                        + string.Join("\t", item.Select(x => x == 0 ? " 0.00000000 " : " " + string.Format("{0:0.########}", x) + " ")));
-                    result.Add(item);
-                }*/
+            /*var result = new List<double[]>();
+            // new DateTime(2007, 10, 14)
+            // 25.02.2012 01:00:00
+            for (var i = new DateTime(2018, 2, 9); i < new DateTime(2018, 3, 14); i = i.AddHours(1)) {
+                var item = await dataPreparer.GetData(i, TimeSpan.FromHours(1), true);
+                Console.WriteLine(i.ToString("dd.MM.yyyy HH:mm:ss") + "\t"
+                    + string.Join("\t", item.Data.Select(x => x == 0 ? " 0.00000000 " : " " + string.Format("{0:0.########}", x) + " ")));
+                result.Add(item.Data);
+            }*/
 
-                /*var result = new List<double[]>();
-                for (var i = new DateTime(2007, 10, 14); i < DateTime.Now; i = i.AddHours(3)) {
-                    var item1Task = Method(dataPreparer, i, result);
-                    var item2Task = Method(dataPreparer, i.AddHours(1), result);
-                    var item3Task = Method(dataPreparer, i.AddHours(2), result);
-                    await Task.WhenAll(item1Task, item2Task, item3Task);
-                }*/
+            /*var result = new List<double[]>();
+            for (var i = new DateTime(2007, 10, 14); i < DateTime.Now; i = i.AddHours(3)) {
+                var item1Task = Method(dataPreparer, i, result);
+                var item2Task = Method(dataPreparer, i.AddHours(1), result);
+                var item3Task = Method(dataPreparer, i.AddHours(2), result);
+                await Task.WhenAll(item1Task, item2Task, item3Task);
+            }*/
         }
 
         private async Task Method(DataForNeuralNetworkCollector dataPreparer, DateTime i, List<double[]> outer) {

@@ -151,6 +151,7 @@
 
                 for (let i = 0; i < converted.length; i++) {
                     svg.append("path")
+                        .attr("class", "p" + i)
                         .attr("d", line(converted[i]))
                         .style("stroke", this.colors[i % this.colors.length]);
                     if (converted[i].length < 2000) {

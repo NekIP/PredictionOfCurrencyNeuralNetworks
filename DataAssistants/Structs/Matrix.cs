@@ -11,7 +11,11 @@ namespace DataAssistants.Structs {
         [JsonIgnore]
         public int ColumnCount => Vectors.First().Length;
 
-		public Matrix(double[][] values) {
+        public Matrix(Vector[] values) {
+            Vectors = values;
+        }
+
+        public Matrix(double[][] values) {
 			var сountElementsInFirstVectors = values.First().Length;
 			Vectors = new Vector[values.GetLength(0)];
 			for (var i = 0; i < Vectors.Length; i++) {
@@ -167,5 +171,7 @@ namespace DataAssistants.Structs {
 		public static implicit operator Matrix(double[][] matrix) => new Matrix(matrix);
 
 		public static implicit operator Vector[](Matrix matrix) => matrix.Vectors;
-	}
+
+        public static implicit operator Matrix (Vector[] vectors) => new Matrix(vectors);
+    }
 }

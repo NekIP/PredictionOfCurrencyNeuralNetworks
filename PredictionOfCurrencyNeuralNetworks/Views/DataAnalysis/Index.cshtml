@@ -1,5 +1,15 @@
 ﻿@{ 
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<div class="data-analysis">
+    <button v-on:click="fit">Обучить</button>
+    <custom-table v-bind:data="data" code="neuralNetData" v-show="wasInitFit"></custom-table>
+    <custom-graphic code="neuralNetDataG" v-bind:data="data" v-bind:graphicWidth="gWidth"
+        v-bind:graphic="wasInitGraphic"></custom-graphic>
+    <custom-graphic code="neuralNetDataGWithoutInput" v-bind:data="dataWithoutInput" v-bind:graphicWidth="gWidth"
+        v-bind:graphic="wasInitGraphic"></custom-graphic>
+    <custom-graphic code="neuralNetDataErrors" v-bind:data="errors" v-bind:graphicWidth="gWidth"
+        v-bind:graphic="wasInitGraphic"></custom-graphic>
+</div>
 
 

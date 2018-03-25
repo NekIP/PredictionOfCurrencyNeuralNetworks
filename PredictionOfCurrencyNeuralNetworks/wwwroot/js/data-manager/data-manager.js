@@ -8,13 +8,10 @@ new Vue({
             wasInit: false,
             wasInitRawData: false,
             wasInitNormalizedData: false,
-            wasInitScaledData: false,
             graphicRawData: false,
             graphicNormalizedData: false,
-            graphicScaledData: false,
             rawData: [],
             normalizedData: [],
-            scaledData: [],
             info: {
                 from: undefined,
                 to: undefined,
@@ -33,9 +30,6 @@ new Vue({
         },
         showHideGraphicNormalizedData: function () {
             this.graphicNormalizedData = !this.graphicNormalizedData;
-        },
-        showHideGraphicScaledData: function () {
-            this.graphicScaledData = !this.graphicScaledData;
         },
         gWidth: function () {
             let dataManagerCoef = window.innerWidth < 1200 ? 0.97 : 0.89;
@@ -57,12 +51,6 @@ new Vue({
             if (!this.wasInitNormalizedData) {
                 let downloadNormalizedData = new RequestApi("/DataManager/GetDataForNeuralNetworkNormalized", "GET");
                 downloadNormalizedData.execute({ }, this.downloadNormalizedDataSuccess);
-            }
-        },
-        downloadScaledData: function () {
-            if (!this.wasInitScaledData) {
-                let downloadScaledData = new RequestApi("/DataManager/GetDataForNeuralNetworkScaled", "GET");
-                downloadScaledData.execute({ }, this.downloadScaledDataSuccess);
             }
         },
         downloadInfoSuccess: function (data) {
@@ -94,18 +82,6 @@ new Vue({
                 }
             }
             this.wasInitNormalizedData = true;
-        },
-        downloadScaledDataSuccess: function (data) {
-            if (data && data.length > 0) {
-                this.scaledData = [];
-                for (let i = 0; i < data.length; i++) {
-                    this.scaledData.push({
-                        id: data[i].id,
-                        values: [data[i].date].concat(data[i].data.map((x, y, z) => x.toFixed(8)))
-                    });
-                }
-            }
-            this.wasInitScaledData = true;
         }
     }
 })

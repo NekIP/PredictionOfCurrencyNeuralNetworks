@@ -10,8 +10,8 @@ namespace DataManager {
         int Count { get; }
         DateTime GlobalFrom { get; set; }
         string Source { get; }
-        Task<List<Entity>> List();
-        Task<List<Entity>> List(DateTime from, DateTime to, TimeSpan step);
+        List<Entity> List();
+        List<Entity> List(DateTime from, DateTime to, TimeSpan step);
         Task Add(Entity entity);
         Task Add(DateTime date, double value);
         Task Remove(long id);
@@ -24,6 +24,11 @@ namespace DataManager {
         double Dispersion(double expectedValue);
         double Min();
         double Max();
+        double ExpectedValue(DateTime from, DateTime to, TimeSpan step);
+        double Dispersion(DateTime from, DateTime to, TimeSpan step);
+        double Dispersion(DateTime from, DateTime to, TimeSpan step, double expectedValue);
+        double Min(DateTime from, DateTime to, TimeSpan step);
+        double Max(DateTime from, DateTime to, TimeSpan step);
     }
 
     public interface IDataCollector<T> : IDataCollector where T : Entity, new() {
@@ -71,15 +76,15 @@ namespace DataManager {
 
         public abstract Task DownloadMissingData(DateTime before, TimeSpan step);
 
-        public virtual async Task<List<Entity>> List() {
+        public virtual List<Entity> List() {
             if (Cacher.Need) {
                 Cacher.Initialize();
                 return Cacher.Entries.Select(x => (Entity)x).ToList();
             }
-            return await Repository.Table().Select(x => (Entity)x).ToListAsync();
+            return Repository.Table().Select(x => (Entity)x).ToList();
         }
 
-        public virtual Task<List<Entity>> List(DateTime from, DateTime to, TimeSpan step) {
+        public virtual List<Entity> List(DateTime from, DateTime to, TimeSpan step) {
             var list = new List<Entity>();
             if (Cacher.Need) {
                 Cacher.Initialize();
@@ -97,7 +102,7 @@ namespace DataManager {
                     .ToList();
             }
             var result = TakeLastProductForEachStep(list, step);
-            return Task.FromResult(result);
+            return result;
         }
 
         public virtual bool TryGet(DateTime date, TimeSpan step, out Entity result) {
@@ -195,6 +200,22 @@ namespace DataManager {
         public double Min() => Min(x => x.Selector());
 
         public double Max() => Max(x => x.Selector());
+
+        public double ExpectedValue(DateTime from, DateTime to, TimeSpan step) =>
+            List(from, to, step).Average(x => x.Selector());
+
+        public double Dispersion(DateTime from, DateTime to, TimeSpan step) =>
+            List(from, to, step).Aggregate(0.0, (x, y) => x + Math.Pow(y.Selector() - ExpectedValue(from, to, step), 2));
+
+        public double Dispersion(DateTime from, DateTime to, TimeSpan step, double expectedValue) =>
+            List(from, to, step).Aggregate(0.0, (x, y) => x + Math.Pow(y.Selector() - expectedValue, 2));
+
+        public double Min(DateTime from, DateTime to, TimeSpan step) =>
+            List(from, to, step).Min(x => x.Selector());
+
+        public double Max(DateTime from, DateTime to, TimeSpan step) =>
+            List(from, to, step).Max(x => x.Selector());
+
 
         protected T EntityById(long id) {
             var entity = Repository.Table().Where(x => x.Id == id).FirstOrDefault();
