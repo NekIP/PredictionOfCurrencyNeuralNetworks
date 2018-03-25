@@ -1,0 +1,254 @@
+        public async Task Learn(int learnCount = 1000000000, int maxChunckCount = 4) {
+            var name = "t7_2"; // t5_1 норм (0.9, 0.5, 0.1)
+            // new DateTime(2007, 10, 14)
+            var numberN = "numbers3.json";
+            var serializer = new Serializer();
+            List<DataForNeuralNetwork> raw;
+            if (!serializer.Exists(numberN)) {
+                raw = DataForNeuralNetworkCollector.GetSet(new DateTime(2016, 6, 1), new DateTime(2018, 3, 23), TimeSpan.FromDays(1));
+                serializer.Serialize(raw, numberN);
+            }
+            else {
+                raw = serializer.Deserialize<List<DataForNeuralNetwork>>(numberN);
+            }
+            var expectedValues = new Vector(new double[] {
+                    raw.Average(x => x.D1),
+                    raw.Average(x => x.D2),
+                    raw.Average(x => x.D3),
+                    raw.Average(x => x.D4),
+                    raw.Average(x => x.D5),
+                    raw.Average(x => x.D6),
+                });
+            var dispersion = new Vector(new double[] {
+                    raw.Aggregate(0.0, (x, y) => x + Math.Pow(y.D1 - expectedValues[0], 2)),
+                    raw.Aggregate(0.0, (x, y) => x + Math.Pow(y.D2 - expectedValues[1], 2)),
+                    raw.Aggregate(0.0, (x, y) => x + Math.Pow(y.D3 - expectedValues[2], 2)),
+                    raw.Aggregate(0.0, (x, y) => x + Math.Pow(y.D4 - expectedValues[3], 2)),
+                    raw.Aggregate(0.0, (x, y) => x + Math.Pow(y.D5 - expectedValues[4], 2)),
+                    raw.Aggregate(0.0, (x, y) => x + Math.Pow(y.D6 - expectedValues[5], 2)),
+                });
+
+            var scaled = raw.Select(x => new DataForNeuralNetwork(x.Count) {
+                Date = x.Date,
+                Data = Normalize(x.Data, expectedValues, dispersion)
+            }).ToList();
+
+            var maxs = new Vector(new double[] {
+                scaled.Max(x => x.D1),
+                scaled.Max(x => x.D2),
+                scaled.Max(x => x.D3),
+                scaled.Max(x => x.D4),
+                scaled.Max(x => x.D5),
+                scaled.Max(x => x.D6),
+            });
+            var mins = new Vector(new double[] {
+                scaled.Min(x => x.D1),
+                scaled.Min(x => x.D2),
+                scaled.Min(x => x.D3),
+                scaled.Min(x => x.D4),
+                scaled.Min(x => x.D5),
+                scaled.Min(x => x.D6),
+            });
+
+
+            
+            var lstm1 = new Lstm();
+            lstm1.Load(name);
+            var stats = new List<(double realDeff, double outputDeff)>();
+            var countEquals = 0;
+            var countEqualsRnd = 0;
+            var rnd = new Random();
+            Func<double, int> znak = x => x > 0 ? 1 : -1;
+            for (var i = 0; i < scaled.Count - 1; i++) {
+                var runs = lstm1.Run(new Vector[] { scaled[i].Data }).ToArray();
+
+                var current = Denormalize(new Vector(new double[] { scaled[i].Data.Last() }),
+                        new Vector(new double[] { ((double[])expectedValues).Last() }),
+                        new Vector(new double[] { ((double[])dispersion).Last() }));
+                var next = Denormalize(new Vector(new double[] { scaled[i + 1].Data.Last() }),
+                        new Vector(new double[] { ((double[])expectedValues).Last() }),
+                        new Vector(new double[] { ((double[])dispersion).Last() }));
+                var output = Denormalize(runs[0],
+                        new Vector(new double[] { ((double[])expectedValues).Last() }),
+                        new Vector(new double[] { ((double[])dispersion).Last() }));
+
+                var (realDeff, outputDeff) = (next[0] - current[0], output[0] - current[0]);
+
+                countEquals += znak(realDeff) == znak(outputDeff) ? 1 : 0;
+                countEqualsRnd += znak(realDeff) == znak(rnd.NextDouble() - 0.5d) ? 1 : 0;
+                stats.Add((realDeff, outputDeff));
+                Console.WriteLine(scaled[i].Date + "\t"
+                    + current + "\t"
+                    + next + "\t" 
+                    + output);
+            }
+            Console.WriteLine(((double)countEquals / (double)scaled.Count) * 100 + "\t"
+                    + ((double)countEqualsRnd / (double)scaled.Count) * 100);
+            Console.WriteLine(stats.Count(x => znak(x.realDeff) == znak(x.outputDeff)));
+            
+
+
+
+            /*
+             * t3
+             * 
+             * var scaled = await ListScaled(new DateTime(2016, 1, 1), new DateTime(2018, 3, 23), TimeSpan.FromDays(1));
+            scaled = scaled.Select(x => new DataForNeuralNetwork() {
+                Data = new double[] {
+                    x.D2,
+                    x.D4,
+                    x.D5,
+                    x.D6,
+                    x.D7,
+                    x.D8,
+                    x.D13
+                }
+            }).ToList();*/
+
+
+            //var (trainingSet, testSet) = GetTrainingAndTestSets(scaled, 7, 4);
+            /*var lstm = new Lstm(trainingSet.First().Count, 1, new RecurentParameters(0.5, 0.1, 0.3),
+                new RecurentCellParameters(trainingSet.First().Count, trainingSet.First().Count),
+                new RecurentCellParameters(trainingSet.First().Count, 1));*/
+
+
+
+            var lstm = new Lstm(scaled.First().Count, 1, new RecurentParameters(1.2, 0.5, 0.1),
+                //new RecurentCellParameters(scaled.First().Count, scaled.First().Count),
+                new RecurentCellParameters(scaled.First().Count, scaled.First().Count),
+                new RecurentCellParameters(scaled.First().Count, 1));
+            /*
+            lstm.Load(name);
+
+            lstm.Parameters.LearnSpeed = 1;
+            lstm.Parameters.Moment = 0.1;*/
+            
+
+            /*var nt = new MultilayerPerceptron(new PerceptronParameters { LearningSpeed = 0.00001, Moment = 0.3 }, new SigmoidActivation(1),
+                trainingSet.First().Count, trainingSet.First().Count, 1);*/
+            //var learnResults = new List<PredictionOfCurrencyLearnResult>();
+            var deff = new List<double>();
+            var lastError = 0.0;
+            for (var i = 0; i < learnCount; i++) {
+                var learnResultsLocal = new List<PredictionOfCurrencyLearnResult>();
+                //var chunk = new List<DataForNeuralNetwork>();
+                /*var (output, errors) = lstm.Learn(scaled.Take(scaled.Count - 1).Select(x => new Vector(x.Data)).ToArray(),
+                    scaled.Skip(1).Select(x => new Vector(new double[] { x.Data.Last() })).ToArray());*/
+
+
+
+
+                
+                for (var j = 0; j < scaled.Count - 1; j++) {
+                    var result = new List<PredictionOfCurrencyLearnResult>();
+                    var (output, errors) = lstm.Learn(new Vector[] { scaled[j].Data },
+                        new Vector[] { new double[] { scaled[j + 1].Data.Last() } });
+                    result.Add(new PredictionOfCurrencyLearnResult {
+                        Date = scaled[j].Date,
+                        Input = scaled[j].Data,
+                        Error = errors[0],
+                        Output = output[0],
+                        Ideal = new double[] { scaled[j + 1].Data.Last() }
+                    });
+                    learnResultsLocal.AddRange(result);
+                }
+                /*
+                var cc = 2;
+                for (var j = 0; j < scaled.Count - cc - 1; j += cc) {
+                    var result = new List<PredictionOfCurrencyLearnResult>();
+                    var (output, errors) = lstm.Learn(scaled.Skip(j).Take(cc).Select(x => (Vector)x.Data).ToArray(),
+                        scaled.Skip(j + 1).Take(cc).Select(x => (Vector)new double[] { x.Data.Last() }).ToArray());
+                    var res = scaled.Skip(j).Take(cc + 1).ToArray();
+                    for (var p = 0; p < res.Length - 1; p++) {
+                        result.Add(new PredictionOfCurrencyLearnResult {
+                            Date = res[p].Date,
+                            Input = res[p].Data,
+                            Error = errors[p],
+                            Output = output[p],
+                            Ideal = new double[] { res[p + 1].Data.Last() }
+                        });
+                    }
+                    learnResultsLocal.AddRange(result);
+                }*/
+
+
+                /*for (var j = 0; j < trainingSet.Count - 1; j++) {
+                    if (trainingSet[j + 1].Date - trainingSet[j].Date == TimeSpan.FromDays(1)) {
+                        var result = new List<PredictionOfCurrencyLearnResult>();
+                        var (output, errors) = lstm.Learn(chunk.Take(chunk.Count - 1).Select(x => new Vector(x.Data)).ToArray(),
+                             chunk.Skip(1).Select(x => new Vector(new double[] { x.Data.Last() })).ToArray());
+                        var (output, errors) = nt.Learn(trainingSet[j].Data, new double[] { trainingSet[j + 1].Data[12] });
+                        for (var k = 0; k < chunk.Count - 1; k++) {
+                            result.Add(new PredictionOfCurrencyLearnResult {
+                                Date = chunk[k].Date,
+                                Input = chunk[k].Data,
+                                Error = errors[k],
+                                Output = output[k],
+                                Ideal = chunk[k + 1].Data
+                            });
+                        }
+                        result.Add(new PredictionOfCurrencyLearnResult {
+                            Date = trainingSet[j].Date,
+                            Input = trainingSet[j].Data,
+                            Error = errors,
+                            Output = output,
+                            Ideal = new double[] { trainingSet[j + 1].Data[12] }
+                        });
+                        learnResultsLocal.AddRange(result);
+                    }
+                    if (chunk.Count < maxChunckCount) {
+                        var last = chunk.LastOrDefault();
+                        if (last == null || trainingSet[j].Date - last.Date == TimeSpan.FromHours(1)) {
+                            chunk.Add(trainingSet[j]);
+                        }
+                        else {
+                            if (chunk.Count > 1) {
+                                learnResultsLocal.AddRange(LearnChunk(chunk, lstm));
+                                chunk = new List<DataForNeuralNetwork>();
+                            }
+                            chunk = new List<DataForNeuralNetwork>();
+                            continue;
+                        }
+                    }
+                    else {
+                        learnResultsLocal.AddRange(LearnChunk(chunk, lstm));
+                        chunk = new List<DataForNeuralNetwork>();
+                        continue;
+                    }
+                }*/
+                lstm.Save(name);
+                //nt.Save(name);
+
+
+                /*
+                for (var k = 0; k < scaled.Count - 1; k++) {
+                    learnResultsLocal.Add(new PredictionOfCurrencyLearnResult {
+                        Date = scaled[k].Date,
+                        Input = scaled[k].Data,
+                        Error = errors[k],
+                        Output = output[k],
+                        Ideal = scaled[k + 1].Data
+                    });
+                }
+                */
+
+
+                var summ = 0.0;
+                var length = 0;
+                for (var j = 0; j < learnResultsLocal.Count; j++) {
+                    length += learnResultsLocal[j].Error.Length;
+                    summ += ((double[])learnResultsLocal[j].Error).Sum();
+                }
+                var currError = summ / length;
+                if (lastError != 0 && currError < lastError) {
+                    //deff.Add(currError - lastError);
+                    Console.WriteLine(currError + "\t" + (currError - lastError));
+                }
+                else {
+                    Console.WriteLine(currError);
+                }
+                lastError = currError;
+                Console.WriteLine("Step " + i);
+            }
+            Console.WriteLine("End " + name);
+        }
