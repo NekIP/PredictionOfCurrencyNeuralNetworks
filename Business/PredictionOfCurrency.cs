@@ -86,7 +86,7 @@ namespace Business {
                     Console.WriteLine(currAverage + "\t" + (currAverage - lastAverage));
                     lastAverage = currAverage;
                 }
-                result.AddRange(learnResult);
+                //result.AddRange(learnResult);
             }
             return result;
         }

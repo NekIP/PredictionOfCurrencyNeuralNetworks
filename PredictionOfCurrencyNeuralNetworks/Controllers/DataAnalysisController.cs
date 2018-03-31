@@ -17,7 +17,7 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
 
         [HttpGet]
         public List<PredictionOfCurrencyLearnResultApiModel> Fit() {
-            var result = PredictionOfCurrencyManager.PredictionOfCurrency["defaultRelativeForOneDay"].Fit();
+            var result = PredictionOfCurrencyManager.PredictionOfCurrency["default1ForOneMonth"].Fit();
             return result.Select(PredictionOfCurrencyLearnResultApiModel.Map).ToList();
         }
     }
