@@ -52,15 +52,13 @@ namespace Business {
             DataValueType = dataType ?? DataValueType;
             NeuralNetworkName = neuralNetworkName ?? NeuralNetworkName;
             NameOfCollectorForPredict = nameOfCollectorForPredict ?? NameOfCollectorForPredict;
-            if (learnParameters is null) {
+            LearnParameters = learnParameters ?? LearnParameters;
+            if (LearnParameters.RecurentCellParameters is null) {
                 var inputLength = collectors.Count;
                 LearnParameters.RecurentCellParameters = new RecurentCellParameters[] {
                     new RecurentCellParameters(inputLength, inputLength),
                     new RecurentCellParameters(inputLength, 1)
                 };
-            }
-            else {
-                LearnParameters = learnParameters;
             }
             DataManager = new PredictionOfCurrencyDataManager(DataParameters, DataProcessingMethods, DataValueType, NameOfCollectorForPredict, collectors);
         }

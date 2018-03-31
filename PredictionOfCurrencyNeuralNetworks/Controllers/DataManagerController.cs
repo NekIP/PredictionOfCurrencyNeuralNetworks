@@ -30,12 +30,10 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
         public IRTSCollector RtsCollector { get; set; }
         public ISAndP500Collector SAndPCollector { get; set; }
         public ITradeBalanceCollector TradeBalanceCollector { get; set; }
-        public IPredictionOfCurrencyUsdToRub PredictionOfCurrencyUsdToRub { get; set; }
 
         public Dictionary<string, IDataCollector> Collectors { get; set; }
 
-        public DataManagerController(IPredictionOfCurrencyUsdToRub predictionOfCurrencyUsdToRub,
-            IUsdToRubCurrencyCollector usdToRubCollector,
+        public DataManagerController(IUsdToRubCurrencyCollector usdToRubCollector,
             ICAC40Collector cac40Collector,
             ICSI200Collector csi200Collector,
             IDataForNeuralNetworkCollector dataForNeuralNetworkCollector,
@@ -65,7 +63,7 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
             RtsCollector = rtsCollector;
             SAndPCollector = sAndPCollector;
             TradeBalanceCollector = tradeBalanceCollector;
-            PredictionOfCurrencyUsdToRub = predictionOfCurrencyUsdToRub;
+            //PredictionOfCurrencyUsdToRub = predictionOfCurrencyUsdToRub;
             Collectors = new Dictionary<string, IDataCollector> {
                 { "UsdToRub", UsdToRubCollector },
                 { "Cac40", Cac40Collector },
@@ -102,7 +100,7 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
         }
         [HttpGet]
         public DataForNeuralNetworkInformation GetDataForNeuralNetworkInformation() {
-            var result = new DataForNeuralNetworkInformation {
+            /*var result = new DataForNeuralNetworkInformation {
                 Count = PredictionOfCurrencyUsdToRub.Data.Count,
                 From = PredictionOfCurrencyUsdToRub.DataParameters.From,
                 To = PredictionOfCurrencyUsdToRub.DataParameters.To,
@@ -112,20 +110,21 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
                 Mins = PredictionOfCurrencyUsdToRub.Mins()
             };
             result.Dispersions = PredictionOfCurrencyUsdToRub.Dispersions(result.ExpectedValues);
-            return result;
+            return result;*/
+            throw new NotImplementedException();
         }
         
         [HttpGet]
-        public List<DataForNeuralNetworkApiModel> GetDataForNeuralNetwork() =>
+        public List<DataForNeuralNetworkApiModel> GetDataForNeuralNetwork() => throw new NotImplementedException();/*
             DataForNeuralNetworkCollector.GetSet(PredictionOfCurrencyUsdToRub.DataParameters.From, 
                 PredictionOfCurrencyUsdToRub.DataParameters.To, 
-                PredictionOfCurrencyUsdToRub.DataParameters.Step).Select(DataForNeuralNetworkApiModel.Map).ToList();
+                PredictionOfCurrencyUsdToRub.DataParameters.Step).Select(DataForNeuralNetworkApiModel.Map).ToList();*/
 
         [HttpGet]
-        public List<DataForNeuralNetworkApiModel> GetDataForNeuralNetworkNormalized() =>
+        public List<DataForNeuralNetworkApiModel> GetDataForNeuralNetworkNormalized() => throw new NotImplementedException();/*
             DataForNeuralNetworkCollector.NormalizeSet(DataForNeuralNetworkCollector.GetSet(PredictionOfCurrencyUsdToRub.DataParameters.From,
                 PredictionOfCurrencyUsdToRub.DataParameters.To,
-                PredictionOfCurrencyUsdToRub.DataParameters.Step)).result.Select(DataForNeuralNetworkApiModel.Map).ToList();
+                PredictionOfCurrencyUsdToRub.DataParameters.Step)).result.Select(DataForNeuralNetworkApiModel.Map).ToList();*/
 
         [HttpPost]
         public Task Add(string code, string dateStr, double value) {

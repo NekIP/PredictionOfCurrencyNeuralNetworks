@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace PredictionOfCurrencyNeuralNetworks.Controllers {
     public class DataAnalysisController : Controller {
-        public IPredictionOfCurrencyUsdToRub PredictionOfCurrencyUsdToRub { get; set; }
-        public DataAnalysisController(IPredictionOfCurrencyUsdToRub predictionOfCurrencyUsdToRub) {
-            PredictionOfCurrencyUsdToRub = predictionOfCurrencyUsdToRub;
+        public IPredictionOfCurrencyManager PredictionOfCurrencyManager { get; set; }
+        public DataAnalysisController(IPredictionOfCurrencyManager predictionOfCurrencyUsdToRub) {
+            PredictionOfCurrencyManager = predictionOfCurrencyUsdToRub;
         }
 
         public IActionResult Index() {
@@ -17,7 +17,7 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
 
         [HttpGet]
         public List<PredictionOfCurrencyLearnResultApiModel> Fit() {
-            var result = PredictionOfCurrencyUsdToRub.Fit();
+            var result = PredictionOfCurrencyManager.PredictionOfCurrency["defaultRelativeForOneDay"].Fit();
             return result.Select(PredictionOfCurrencyLearnResultApiModel.Map).ToList();
         }
     }

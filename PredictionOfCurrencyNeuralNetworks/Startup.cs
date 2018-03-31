@@ -42,7 +42,7 @@ namespace PredictionOfCurrencyNeuralNetworks {
         }
 
         protected void InitBuisness(IServiceCollection services) {
-            services.AddTransient<IPredictionOfCurrencyUsdToRub, PredictionOfCurrency>();
+            services.AddTransient<IPredictionOfCurrencyManager, PredictionOfCurrencyManager>();
         }
 
         protected void InitCollectors(IServiceCollection services) {
