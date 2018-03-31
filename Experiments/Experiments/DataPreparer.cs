@@ -54,7 +54,7 @@ namespace Experiment {
                 Console.WriteLine((proceses.Count - 1) + "\t" + procese);
             }
             Console.WriteLine("Enter a num of proc:");
-            var numProcess = 0;// int.Parse(Console.ReadLine());
+            var numProcess = int.Parse(Console.ReadLine());
             manager.PredictionOfCurrency[proceses[numProcess]].Learn(100000, true);
 
 

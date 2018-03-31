@@ -30,8 +30,35 @@ namespace Business {
                             oliBrent,
                             oliLight,
                             usdToRub
-                        }//,
-                        //neuralNetworkName: "defaultNetworkTestOneDay"
+                        }
+                    )
+                },
+                { "defaultRelative",
+                    new PredictionOfCurrency(
+                        collectors: new List<IDataCollector>{
+                            dowJones,
+                            gold,
+                            mmvb,
+                            oliBrent,
+                            oliLight,
+                            usdToRub
+                        },
+                        neuralNetworkName: "relativeForOneDay",
+                        dataType: DataValueType.Relative
+                    )
+                },
+                { "defaultRelativePercentage",
+                    new PredictionOfCurrency(
+                        collectors: new List<IDataCollector>{
+                            dowJones,
+                            gold,
+                            mmvb,
+                            oliBrent,
+                            oliLight,
+                            usdToRub
+                        },
+                        neuralNetworkName: "relativePercentageForOneDay",
+                        dataType: DataValueType.RelativePercentage
                     )
                 }
             };
