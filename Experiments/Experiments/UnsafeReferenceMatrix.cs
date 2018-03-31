@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Experiment {
-	public unsafe class UnsafeReferenceMatrix : Experiment {
+	public class UnsafeReferenceMatrix : Experiment {
 		public class Ref<T> {
 			public T V;
 
@@ -18,7 +18,7 @@ namespace Experiment {
 			}
 		}
 
-		public unsafe override void Run() {
+		public override void Run() {
 
 		}
 	}

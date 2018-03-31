@@ -104,8 +104,8 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
         public DataForNeuralNetworkInformation GetDataForNeuralNetworkInformation() {
             var result = new DataForNeuralNetworkInformation {
                 Count = PredictionOfCurrencyUsdToRub.Data.Count,
-                From = PredictionOfCurrencyUsdToRub.LearnParameters.From,
-                To = PredictionOfCurrencyUsdToRub.LearnParameters.To,
+                From = PredictionOfCurrencyUsdToRub.DataParameters.From,
+                To = PredictionOfCurrencyUsdToRub.DataParameters.To,
                 ExpectedValues = PredictionOfCurrencyUsdToRub.ExpectedValues(),
                 FieldsNames = DataForNeuralNetworkCollector.GetNames(),
                 Maxs = PredictionOfCurrencyUsdToRub.Maxs(),
@@ -117,15 +117,15 @@ namespace PredictionOfCurrencyNeuralNetworks.Controllers {
         
         [HttpGet]
         public List<DataForNeuralNetworkApiModel> GetDataForNeuralNetwork() =>
-            DataForNeuralNetworkCollector.GetSet(PredictionOfCurrencyUsdToRub.LearnParameters.From, 
-                PredictionOfCurrencyUsdToRub.LearnParameters.To, 
-                PredictionOfCurrencyUsdToRub.LearnParameters.Step).Select(DataForNeuralNetworkApiModel.Map).ToList();
+            DataForNeuralNetworkCollector.GetSet(PredictionOfCurrencyUsdToRub.DataParameters.From, 
+                PredictionOfCurrencyUsdToRub.DataParameters.To, 
+                PredictionOfCurrencyUsdToRub.DataParameters.Step).Select(DataForNeuralNetworkApiModel.Map).ToList();
 
         [HttpGet]
         public List<DataForNeuralNetworkApiModel> GetDataForNeuralNetworkNormalized() =>
-            DataForNeuralNetworkCollector.NormalizeSet(DataForNeuralNetworkCollector.GetSet(PredictionOfCurrencyUsdToRub.LearnParameters.From,
-                PredictionOfCurrencyUsdToRub.LearnParameters.To,
-                PredictionOfCurrencyUsdToRub.LearnParameters.Step)).result.Select(DataForNeuralNetworkApiModel.Map).ToList();
+            DataForNeuralNetworkCollector.NormalizeSet(DataForNeuralNetworkCollector.GetSet(PredictionOfCurrencyUsdToRub.DataParameters.From,
+                PredictionOfCurrencyUsdToRub.DataParameters.To,
+                PredictionOfCurrencyUsdToRub.DataParameters.Step)).result.Select(DataForNeuralNetworkApiModel.Map).ToList();
 
         [HttpPost]
         public Task Add(string code, string dateStr, double value) {

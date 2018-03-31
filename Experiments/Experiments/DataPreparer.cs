@@ -31,16 +31,43 @@ namespace Experiment {
                 new SAndP500Collector(new SAndPRepository(config)),
                 new TradeBalanceCollector(new TradeBalanceRepository(config)),
                 new UsdToRubCurrencyCollector(new UsdToRubCurrencyRepository(config)));
+
+            var manager = new PredictionOfCurrencyManager(
+                new CAC40Collector(new CAC40Repository(config)),
+                new DowJonesCollector(new DowJonesRepository(config)),
+                new GdpPerCapitaPppCollector(new GdpPerCapitaPppRepository(config)),
+                new GoldCollector(new GoldRepository(config)),
+                new InflationCollector(new InflationRepository(config)),
+                new MMVBCollector(new MMVBRepository(config)),
+                new OliBrentCollector(new OliBrentRepository(config)),
+                new OliLightCollector(new OliLightRepository(config)),
+                new RefinancingRateCollector(new RefinancingRateRepository(config)),
+                new RTSCollector(new RTSRepository(config)),
+                new SAndP500Collector(new SAndPRepository(config)),
+                new TradeBalanceCollector(new TradeBalanceRepository(config)),
+                new UsdToRubCurrencyCollector(new UsdToRubCurrencyRepository(config)));
+
+            Console.WriteLine("Select a process:");
+            var proceses = new List<string>();
+            foreach (var procese in manager.PredictionOfCurrency.Keys) {
+                proceses.Add(procese);
+                Console.WriteLine((proceses.Count - 1) + "\t" + procese);
+            }
+            Console.WriteLine("Enter a num of proc:");
+            var numProcess = 0;// int.Parse(Console.ReadLine());
+            manager.PredictionOfCurrency[proceses[numProcess]].Learn(100000, true);
+
+
             //var prOfCur = new PredictionOfCurrencyUsdToRub(dataPreparer);
-            var prOfCur = new PredictionOfCurrencyUsdToRub(dataPreparer);
+            //var prOfCur = new PredictionOfCurrency(dataPreparer);
             //await dataPreparer.DownloadMissingData(DateTime.Now, TimeSpan.FromHours(1));
-            var check = dataPreparer.List(new DateTime(2018, 2, 1), DateTime.Now, TimeSpan.FromDays(1));
+            /*var check = dataPreparer.List(new DateTime(2018, 2, 1), DateTime.Now, TimeSpan.FromDays(1));
             var t33 = prOfCur.Predict(new DateTime(2018, 3, 20));
             var t43 = prOfCur.Predict(new DateTime(2018, 3, 21));
             var t1 = prOfCur.Predict(new DateTime(2018, 3, 22));
             var t2 = prOfCur.Predict(new DateTime(2018, 3, 23));
             var t3 = prOfCur.Predict(new DateTime(2018, 3, 24));
-            var t4 = prOfCur.Predict(new DateTime(2018, 3, 25));
+            var t4 = prOfCur.Predict(new DateTime(2018, 3, 25));*/
             /*var lastAverage = 0.0;
             for (var i = 0; i < 1000000000; i++) {
                 var result = prOfCur.Fit();
