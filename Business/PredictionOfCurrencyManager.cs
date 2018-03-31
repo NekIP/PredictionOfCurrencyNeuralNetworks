@@ -159,6 +159,26 @@ namespace Business {
                         dataProcessingMethods: DataProcessingMethods.Normalize,
                         dataParameters: new DataParameter(new DateTime(2008, 1, 1), new DateTime(2018, 2, 1), TimeSpan.FromDays(10))
                     )
+                },
+                {
+                    "defaultAbsolute7ForTenDay",
+                    new PredictionOfCurrency(
+                        collectors: new List<IDataCollector>{
+                            cac40,
+                            dowJones,
+                            gold,
+                            mmvb,
+                            oliBrent,
+                            oliLight,
+                            rts,
+                            sAndP,
+                            usdToRub
+                        },
+                        neuralNetworkName: "defaultAbsolute7ForTenDay",
+                        dataType: DataValueType.Absolute,
+                        dataProcessingMethods: DataProcessingMethods.Normalize,
+                        dataParameters: new DataParameter(new DateTime(2007, 12, 1), new DateTime(2018, 2, 1), TimeSpan.FromDays(10))
+                    )
                 }
             };
         }
