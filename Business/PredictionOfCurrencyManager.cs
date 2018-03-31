@@ -136,7 +136,8 @@ namespace Business {
                         },
                         neuralNetworkName: "defaultRelative6ForOneDay",
                         dataType: DataValueType.Relative,
-                        dataProcessingMethods: DataProcessingMethods.Normalize
+                        dataProcessingMethods: DataProcessingMethods.Normalize,
+                        dataParameters: new DataParameter(new DateTime(2008, 1, 1), new DateTime(2018, 2, 1), TimeSpan.FromDays(1))
                     )
                 }
             };
