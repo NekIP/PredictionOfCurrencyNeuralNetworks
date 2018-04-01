@@ -1,0 +1,13 @@
+﻿@import "../consts.scss";
+
+.data-analysis-component {
+    margin: 20px;
+
+    .name {
+        color: $lazureTextColor;
+    }
+
+    .value {
+        float: right;
+    }
+}

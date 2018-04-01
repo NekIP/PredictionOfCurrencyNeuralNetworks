@@ -65,7 +65,7 @@ namespace Business {
                         neuralNetworkName: "absoluteFor6OneDay",
                         dataType: DataValueType.Relative,
                         dataProcessingMethods: DataProcessingMethods.Normalize,
-                        learnParameters: new LearnParameters { RecurentParameters = new NeuralNetwork.RecurentParameters(2, 2, 0.3) }
+                        learnParameters: new LearnParameters { Parameters = new NeuralNetwork.RecurentParameters(2, 2, 0.3) }
                     )
                 },
                 {
@@ -197,8 +197,8 @@ namespace Business {
                         dataProcessingMethods: DataProcessingMethods.Normalize,
                         dataParameters: new DataParameter(new DateTime(2007, 12, 3), new DateTime(2018, 2, 1), TimeSpan.FromDays(1)),
                         learnParameters: new LearnParameters {
-                            RecurentParameters = new RecurentParameters(1.2, 0.5, 0.1),
-                            RecurentCellParameters = new NeuralNetwork.RecurentCellParameters[] {
+                            Parameters = new RecurentParameters(1.2, 0.5, 0.1),
+                            CellParameters = new NeuralNetwork.RecurentCellParameters[] {
                                 new NeuralNetwork.RecurentCellParameters(6, 1)
                             }
                         }
@@ -223,8 +223,8 @@ namespace Business {
                         dataProcessingMethods: DataProcessingMethods.Normalize,
                         dataParameters: new DataParameter(new DateTime(2007, 12, 4), new DateTime(2018, 2, 1), TimeSpan.FromDays(1)),
                         learnParameters: new LearnParameters {
-                            RecurentParameters = new RecurentParameters(1.2, 0.5, 0.1),
-                            RecurentCellParameters = new RecurentCellParameters[] {
+                            Parameters = new RecurentParameters(1.2, 0.5, 0.1),
+                            CellParameters = new RecurentCellParameters[] {
                                 new RecurentCellParameters(9, 1)
                             }
                         }
@@ -249,8 +249,8 @@ namespace Business {
                         dataProcessingMethods: DataProcessingMethods.Normalize,
                         dataParameters: new DataParameter(new DateTime(2017, 2, 1), new DateTime(2018, 2, 1), TimeSpan.FromDays(1)),
                         learnParameters: new LearnParameters {
-                            RecurentParameters = new RecurentParameters(1.2, 0.5, 0.1),
-                            RecurentCellParameters = new RecurentCellParameters[] {
+                            Parameters = new RecurentParameters(1.2, 0.5, 0.1),
+                            CellParameters = new RecurentCellParameters[] {
                                 new RecurentCellParameters(9, 1)
                             }
                         }
@@ -362,6 +362,181 @@ namespace Business {
                         },
                         neuralNetworkName: "test1Day",
                         dataParameters: new DataParameter(new DateTime(2007, 12, 2), new DateTime(2018, 1, 3), TimeSpan.FromDays(1))
+                    )
+                },
+                {
+                    "test4Day",
+                    new PredictionOfCurrency(
+                        collectors: new List<IDataCollector>{
+                            //cac40,
+                            dowJones,
+                            gdpPerCapitaPpp,
+                            gold,
+                            inflation,
+                            mmvb,
+                            oliBrent,
+                            //oliLight,
+                            refinancingRate,
+                            rts,
+                            //sAndP,
+                            tradeBalance,
+                            usdToRub
+                        },
+                        neuralNetworkName: "test4Day",
+                        dataParameters: new DataParameter(new DateTime(2007, 12, 8), new DateTime(2018, 1, 4), TimeSpan.FromDays(1)),
+                        learnParameters: new LearnParameters {
+                            Parameters = new RecurentParameters(1.2, 0.5, 0.1),
+                            CellParameters = new RecurentCellParameters[] {
+                                new RecurentCellParameters(10, 1)
+                            }
+                        }
+                    )
+                },
+                {
+                    "test6Day",
+                    new PredictionOfCurrency(
+                        collectors: new List<IDataCollector>{
+                            //cac40,
+                            //dowJones,
+                            //gdpPerCapitaPpp,
+                            //gold,
+                            inflation,
+                            //mmvb,
+                            oliBrent,
+                            //oliLight,
+                            //refinancingRate,
+                            //rts,
+                            //sAndP,
+                            tradeBalance,
+                            usdToRub
+                        },
+                        neuralNetworkName: "test6Day",
+                        dataParameters: new DataParameter(new DateTime(2007, 12, 12), new DateTime(2014, 1, 3), TimeSpan.FromDays(1))
+                        /*learnParameters: new LearnParameters {
+                            RecurentParameters = new RecurentParameters(1.2, 0.5, 0.1),
+                            RecurentCellParameters = new RecurentCellParameters[] {
+                                new RecurentCellParameters(3, 1)
+                            }
+                        },*/
+                    )
+                },
+                {
+                    "testSimpleNeuralNetwork",
+                    new PredictionOfCurrency(
+                        collectors: new List<IDataCollector>{
+                            cac40,
+                            dowJones,
+                            gdpPerCapitaPpp,
+                            gold,
+                            inflation,
+                            mmvb,
+                            oliBrent,
+                            oliLight,
+                            refinancingRate,
+                            rts,
+                            sAndP,
+                            tradeBalance,
+                            usdToRub
+                        },
+                        neuralNetworkName: "testSimpleNeuralNetwork",
+                        dataParameters: new DataParameter(new DateTime(2007, 12, 13), new DateTime(2014, 1, 3), TimeSpan.FromDays(1)),
+                        learnParameters: new LearnParameters {
+                            Parameters = new RecurentParameters(1, 0.5, 0.1),
+                            CellParameters = new RecurentCellParameters[] {
+                                new RecurentCellParameters(13, 13),
+                                new RecurentCellParameters(13, 1),
+                            }
+                        },
+                        usingNeuralNetwork: UsingNeuralNetwork.SimpleNeuralNetwork
+                    )
+                },
+                {
+                    "lstmNetworkChunk2OneDay",
+                    new PredictionOfCurrency(
+                        collectors: new List<IDataCollector>{
+                            //cac40,
+                            //dowJones,
+                            //gdpPerCapitaPpp,
+                            //gold,
+                            inflation,
+                            //mmvb,
+                            oliBrent,
+                            //oliLight,
+                            //refinancingRate,
+                            //rts,
+                            //sAndP,
+                            //tradeBalance,
+                            usdToRub
+                        },
+                        neuralNetworkName: "lstmNetworkChunk2OneDay",
+                        dataParameters: new DataParameter(new DateTime(2007, 12, 14), new DateTime(2014, 1, 3), TimeSpan.FromDays(1)),
+                        learnParameters: new LearnParameters {
+                            Parameters = new RecurentParameters(1, 0.5, 0.1),
+                            CellParameters = new RecurentCellParameters[] {
+                                new RecurentCellParameters(3, 1)
+                            }
+                        },
+                        chunk: 2
+                    )
+                },
+                {
+                    "lstmNetworkChunk10000OneDay",
+                    new PredictionOfCurrency(
+                        collectors: new List<IDataCollector>{
+                            //cac40,
+                            //dowJones,
+                            gdpPerCapitaPpp,
+                            gold,
+                            inflation,
+                            //mmvb,
+                            oliBrent,
+                            //oliLight,
+                            refinancingRate,
+                            //rts,
+                            //sAndP,
+                            tradeBalance,
+                            usdToRub
+                        },
+                        neuralNetworkName: "lstmNetworkChunk10000OneDay",
+                        dataParameters: new DataParameter(new DateTime(2007, 12, 15), new DateTime(2014, 1, 3), TimeSpan.FromDays(1)),
+                        learnParameters: new LearnParameters {
+                            Parameters = new RecurentParameters(0.3, 0.005, 0.1),
+                            CellParameters = new RecurentCellParameters[] {
+                                new RecurentCellParameters(7, 1)
+                            }
+                        },
+                        chunk: 1000000
+                    )
+                },
+                {
+                    "testSimpleNeuralNetwork40",
+                    new PredictionOfCurrency(
+                        collectors: new List<IDataCollector>{
+                            cac40,
+                            dowJones,
+                            gdpPerCapitaPpp,
+                            gold,
+                            inflation,
+                            mmvb,
+                            oliBrent,
+                            oliLight,
+                            refinancingRate,
+                            rts,
+                            sAndP,
+                            tradeBalance,
+                            usdToRub
+                        },
+                        neuralNetworkName: "testSimpleNeuralNetwork40",
+                        dataParameters: new DataParameter(new DateTime(2007, 12, 13), new DateTime(2014, 1, 3), TimeSpan.FromDays(1)),
+                        learnParameters: new LearnParameters {
+                            Parameters = new RecurentParameters(60, 0.01, 0.7),
+                            CellParameters = new RecurentCellParameters[] {
+                                new RecurentCellParameters(13, 13),
+                                new RecurentCellParameters(13, 1)
+                            }
+                        },
+                        usingNeuralNetwork: UsingNeuralNetwork.SimpleNeuralNetwork,
+                        loadNetwork: false
                     )
                 }
             };

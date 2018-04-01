@@ -23,7 +23,7 @@ new Vue({
                 for (let i = 0; i < data.length; i++) {
                     this.data.push({
                         id: i,
-                        values: [data[i].date, data[i].input[11], data[i].output[0], data[i].ideal[0]]
+                        values: [data[i].date, data[i].input[7], data[i].output[0], data[i].ideal[0]]
                     });
                     this.dataWithoutInput.push({
                         id: i,

@@ -4,6 +4,7 @@ import customTable from "./custom-table.vue"
 import spinner from "./spinner.vue"
 import customGraphic from "./custom-graphic.vue"
 import container from "./container.vue"
+import dataAnylysisComponent from "./data-analysis-component.vue"
 
 (function () {
     Vue.component('data-window', dataWindow);
@@ -12,4 +13,5 @@ import container from "./container.vue"
     Vue.component('spinner', spinner); 
     Vue.component('custom-graphic', customGraphic); 
     Vue.component('container', container); 
+    Vue.component('data-analysis-component', dataAnylysisComponent); 
 })();

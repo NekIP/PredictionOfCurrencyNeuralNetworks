@@ -23,9 +23,14 @@ namespace Business {
     }
     public class PredictionOfCurrency : IPredictionOfCurrencyUsdToRub {
         public Lstm Lstm { get; private set; }
+        public MultilayerPerceptron SimpleNeuralNetwork { get; private set; }
         public PredictionOfCurrencyDataManager DataManager { get; private set; }
         public List<IDataCollector> Collectors { get; set; }
 
+        public int Chunk { get; set; } =
+            1;
+        public UsingNeuralNetwork UsingNeuralNetwork { get; set; } =
+            UsingNeuralNetwork.Lstm;
         public DataParameter DataParameters { get; private set; } =
             new DataParameter(new DateTime(2007, 10, 14), new DateTime(2018, 3, 23), TimeSpan.FromDays(1));
         public DataValueType DataValueType { get; private set; } =
@@ -35,7 +40,7 @@ namespace Business {
         public string NeuralNetworkName { get; private set; } =
             "DefaultLstmNetworkForDay";
         public LearnParameters LearnParameters { get; set; } =
-            new LearnParameters { RecurentParameters = new RecurentParameters(1.2, 0.5, 0.1) };
+            new LearnParameters { Parameters = new RecurentParameters(1.2, 0.5, 0.1) };
         public string NameOfCollectorForPredict { get; set; } = 
             "UsdToRubCurrencyCollector";
         public bool LoadNetwork { get; set; } = 
@@ -48,7 +53,9 @@ namespace Business {
             DataProcessingMethods? dataProcessingMethods = null,
             DataValueType? dataType = null,
             LearnParameters learnParameters = null,
-            bool? loadNetwork = null) {
+            bool? loadNetwork = null,
+            UsingNeuralNetwork? usingNeuralNetwork = null,
+            int? chunk = null) {
             Collectors = collectors;
             DataParameters = dataParameters ?? DataParameters;
             DataProcessingMethods = dataProcessingMethods ?? DataProcessingMethods;
@@ -57,9 +64,11 @@ namespace Business {
             NameOfCollectorForPredict = nameOfCollectorForPredict ?? NameOfCollectorForPredict;
             LearnParameters = learnParameters ?? LearnParameters;
             LoadNetwork = loadNetwork ?? LoadNetwork;
-            if (LearnParameters.RecurentCellParameters is null) {
+            UsingNeuralNetwork = usingNeuralNetwork ?? UsingNeuralNetwork;
+            Chunk = chunk ?? Chunk;
+            if (LearnParameters.CellParameters is null) {
                 var inputLength = collectors.Count;
-                LearnParameters.RecurentCellParameters = new RecurentCellParameters[] {
+                LearnParameters.CellParameters = new RecurentCellParameters[] {
                     new RecurentCellParameters(inputLength, inputLength),
                     new RecurentCellParameters(inputLength, 1)
                 };
@@ -95,24 +104,66 @@ namespace Business {
             return result;
         }
 
-
         public List<PredictionOfCurrencyLearnResult> Fit(bool saveLearnResult = false) {
+            if (UsingNeuralNetwork == UsingNeuralNetwork.Lstm) {
+                return FitLstm(saveLearnResult);
+            }
+            else {
+                return FitSimpleNeuralNetwork(saveLearnResult);
+            }
+        }
+
+        protected List<PredictionOfCurrencyLearnResult> FitLstm(bool saveLearnResult = false) {
             InitData();
-            InitNeuralNetwork();
+            InitLstm();
             var result = new List<PredictionOfCurrencyLearnResult>();
-            for (var i = 0; i < DataManager.DataTable.Data.Count - 1; i++) {
-                var input = new Vector[] { DataManager.DataTable[i].Vector };
-                var ideal = new Vector[] { new double[] { DataManager.DataTable[i + 1].Vector.Values.Last() } };
+            for (var i = 0; i < DataManager.DataTable.Data.Count - 1; i += Chunk) {
+                var chunk = Chunk;
+                if (i + Chunk > DataManager.DataTable.Data.Count - 1) {
+                    chunk = DataManager.DataTable.Data.Count - 1 - i;
+                }
+                var input = new Vector[chunk];
+                var ideal = new Vector[chunk];
+                for (var j = i; j < i + chunk && j < DataManager.DataTable.Data.Count - 1; j++) {
+                    input[j - i] = DataManager.DataTable[j].Vector;
+                    ideal[j - i] = new double[] { DataManager.DataTable[j + 1].Vector.Values.Last() };
+                }
                 var (output, error) = Lstm.Learn(input, ideal);
-                result.Add(new PredictionOfCurrencyLearnResult {
-                    Date = DataManager.DataTable.Data[i].Date,
-                    Error = error.Last(),
-                    Output = DataManager.ConvertOutput(output.Last()),
-                    Ideal = DataManager.ConvertOutput(ideal.Last()),
-                    Input = DataManager.ConvertInput(input.Last()),
-                });
+                for (var j = 0; j < chunk; j++) {
+                    result.Add(new PredictionOfCurrencyLearnResult {
+                        Date = DataManager.DataTable.Data[i].Date,
+                        Error = error[j],
+                        Output = DataManager.ConvertOutput(output[j]),
+                        Ideal = DataManager.ConvertOutput(ideal[j]),
+                        Input = DataManager.ConvertInput(input[j]),
+                    });
+                }
             }
             Lstm.Save(NeuralNetworkName);
+            if (saveLearnResult) {
+                SaveLearnProgress(result);
+            }
+            return result;
+        }
+
+        protected List<PredictionOfCurrencyLearnResult> FitSimpleNeuralNetwork(bool saveLearnResult = false) {
+            InitData();
+            InitSimpleNeuralNetwork();
+            var result = new List<PredictionOfCurrencyLearnResult>();
+            for (var i = 0; i < DataManager.DataTable.Data.Count - 1; i++) {
+                var input = DataManager.DataTable[i].Vector;
+                var ideal = (Vector)new double[] { DataManager.DataTable[i + 1].Vector.Values.Last() };
+                var ideal1 = (Vector)new double[] { DataManager.DataTable[i + 1].Vector.Values.Last() };
+                var (output, error) = SimpleNeuralNetwork.Learn(input, ideal);
+                result.Add(new PredictionOfCurrencyLearnResult {
+                    Date = DataManager.DataTable.Data[i].Date,
+                    Error = error,
+                    Output = DataManager.ConvertOutput(SimpleNeuralNetwork.ConvertOutput(output)),
+                    Ideal = DataManager.ConvertOutput(ideal1),
+                    Input = DataManager.ConvertInput(input),
+                });
+            }
+            SimpleNeuralNetwork.Save(NeuralNetworkName);
             if (saveLearnResult) {
                 SaveLearnProgress(result);
             }
@@ -125,11 +176,26 @@ namespace Business {
             }
         }
 
-        protected void InitNeuralNetwork() {
+        protected void InitLstm() {
             if (Lstm == null) {
-                Lstm = new Lstm(Collectors.Count, 1, LearnParameters.RecurentParameters, LearnParameters.RecurentCellParameters);
+                Lstm = new Lstm(Collectors.Count, 1, LearnParameters.Parameters, LearnParameters.CellParameters);
                 if (LoadNetwork) {
                     Lstm.Load(NeuralNetworkName);
+                }
+            }
+        }
+
+        protected void InitSimpleNeuralNetwork() {
+            if (SimpleNeuralNetwork == null) {
+                SimpleNeuralNetwork = new MultilayerPerceptron(new PerceptronParameters {
+                        LearningSpeed = LearnParameters.Parameters.LearnSpeed,
+                        Moment = LearnParameters.Parameters.Moment
+                    },
+                    new SigmoidActivation(LearnParameters.Parameters.ActivationCoefficient),
+                    LearnParameters.CellParameters.Select(x => x.LengthOfInput).Append(1).ToArray()
+                );
+                if (LoadNetwork) {
+                    SimpleNeuralNetwork.Load(NeuralNetworkName);
                 }
             }
         }
@@ -171,8 +237,8 @@ namespace Business {
     }
 
     public class LearnParameters {
-        public RecurentParameters RecurentParameters { get; set; }
-        public RecurentCellParameters[] RecurentCellParameters { get; set; }
+        public RecurentParameters Parameters { get; set; }
+        public RecurentCellParameters[] CellParameters { get; set; }
     }
 
     public enum DataValueType {
@@ -186,5 +252,10 @@ namespace Business {
         Normalize,
         Scale,
         NormalizeAndScale
+    }
+
+    public enum UsingNeuralNetwork {
+        Lstm,
+        SimpleNeuralNetwork
     }
 }

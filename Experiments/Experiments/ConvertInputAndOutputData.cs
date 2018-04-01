@@ -5,7 +5,7 @@ namespace Experiment {
 		public override void Run() {
 			//TestSigmoid(0.005); // оптимальный коэффициент для типа double при функции активации simoid охват [-10000, 7025]
 			//TestHyperbolicTangens(0.005);
-			TestSigmoid(0.005);
+			TestSigmoid(60);
 		}
 
 		private void TestSigmoid(double k) {
