@@ -38,6 +38,8 @@ namespace Business {
             new LearnParameters { RecurentParameters = new RecurentParameters(1.2, 0.5, 0.1) };
         public string NameOfCollectorForPredict { get; set; } = 
             "UsdToRubCurrencyCollector";
+        public bool LoadNetwork { get; set; } = 
+            true;
 
         public PredictionOfCurrency(List<IDataCollector> collectors, 
             string nameOfCollectorForPredict = null,
@@ -45,7 +47,8 @@ namespace Business {
             DataParameter dataParameters = null, 
             DataProcessingMethods? dataProcessingMethods = null,
             DataValueType? dataType = null,
-            LearnParameters learnParameters = null) {
+            LearnParameters learnParameters = null,
+            bool? loadNetwork = null) {
             Collectors = collectors;
             DataParameters = dataParameters ?? DataParameters;
             DataProcessingMethods = dataProcessingMethods ?? DataProcessingMethods;
@@ -53,6 +56,7 @@ namespace Business {
             NeuralNetworkName = neuralNetworkName ?? NeuralNetworkName;
             NameOfCollectorForPredict = nameOfCollectorForPredict ?? NameOfCollectorForPredict;
             LearnParameters = learnParameters ?? LearnParameters;
+            LoadNetwork = loadNetwork ?? LoadNetwork;
             if (LearnParameters.RecurentCellParameters is null) {
                 var inputLength = collectors.Count;
                 LearnParameters.RecurentCellParameters = new RecurentCellParameters[] {
@@ -124,7 +128,9 @@ namespace Business {
         protected void InitNeuralNetwork() {
             if (Lstm == null) {
                 Lstm = new Lstm(Collectors.Count, 1, LearnParameters.RecurentParameters, LearnParameters.RecurentCellParameters);
-                Lstm.Load(NeuralNetworkName);
+                if (LoadNetwork) {
+                    Lstm.Load(NeuralNetworkName);
+                }
             }
         }
 
