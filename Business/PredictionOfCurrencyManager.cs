@@ -319,6 +319,50 @@ namespace Business {
                         neuralNetworkName: "allCollectors10Days",
                         dataParameters: new DataParameter(new DateTime(2008, 2, 1), new DateTime(2018, 2, 1), TimeSpan.FromDays(10))
                     )
+                },
+                {
+                    "allCollectors1Day",
+                    new PredictionOfCurrency(
+                        collectors: new List<IDataCollector>{
+                            cac40,
+                            dowJones,
+                            gdpPerCapitaPpp,
+                            gold,
+                            inflation,
+                            mmvb,
+                            oliBrent,
+                            oliLight,
+                            refinancingRate,
+                            rts,
+                            sAndP,
+                            tradeBalance,
+                            usdToRub
+                        },
+                        neuralNetworkName: "allCollectors1Day",
+                        dataParameters: new DataParameter(new DateTime(2007, 12, 3), new DateTime(2018, 1, 3), TimeSpan.FromDays(1))
+                    )
+                },
+                {
+                    "test1Day",
+                    new PredictionOfCurrency(
+                        collectors: new List<IDataCollector>{
+                            //cac40,
+                            //dowJones,
+                            gdpPerCapitaPpp,
+                            gold,
+                            inflation,
+                            mmvb,
+                            oliBrent,
+                            //oliLight,
+                            refinancingRate,
+                            //rts,
+                            //sAndP,
+                            tradeBalance,
+                            usdToRub
+                        },
+                        neuralNetworkName: "test1Day",
+                        dataParameters: new DataParameter(new DateTime(2007, 12, 2), new DateTime(2018, 1, 3), TimeSpan.FromDays(1))
+                    )
                 }
             };
         }
