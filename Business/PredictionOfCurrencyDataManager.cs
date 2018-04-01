@@ -19,6 +19,8 @@ namespace Business {
         public PredictionOfCurrencyDataTable Maxs { get; protected set; }
         public PredictionOfCurrencyDataTable Mins { get; protected set; }
         public string NameOfCollectorForPredict { get; set; }
+        public string[] NameOfCollectorForTakeLast { get; set; } =
+            { "GdpPerCapitaPppCollector",  "InflationCollector", "RefinancingRateCollector", "TradeBalanceCollector" };
 
         protected string[] Names { get; set; }
 
@@ -123,6 +125,13 @@ namespace Business {
                     result.Add(data.Selector());
                 }
                 else {
+                    if (NameOfCollectorForTakeLast.Contains(collector.GetType().Name)) {
+                        var last = collector.List(date - TimeSpan.FromDays(365) * 3, date, step).LastOrDefault();
+                        if (last != null) {
+                            result.Add(last.Selector());
+                            continue;
+                        }
+                    }
                     break;
                 }
             }
