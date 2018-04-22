@@ -1,26 +1,25 @@
-﻿using DataAssistants;
-using DataAssistants.Structs;
-using DataBase.Entities;
-using DataManager;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using DataAssistants;
+using DataAssistants.Structs;
+using DataManager;
 
 namespace Business {
-    public class PredictionOfCurrencyDataManager {
+	public class PredictionOfCurrencyDataManager {
         public List<IDataCollector> Collectors { get; private set; }
         public DataParameter DataParameter { get; private set; }
         public DataProcessingMethods DataProcessingMethods { get; private set; }
         public DataValueType DataType { get; private set; }
-        public PredictionOfCurrencyDataTable DataTable { get; set; }
-        public PredictionOfCurrencyDataTable ExpectedValues { get; protected set; }
+        public PredictionOfCurrencyDataTable LearnData { get; set; }
+		public PredictionOfCurrencyDataTable TestData { get; set; }
+		public PredictionOfCurrencyDataTable ExpectedValues { get; protected set; }
         public PredictionOfCurrencyDataTable Dispersions { get; protected set; }
         public PredictionOfCurrencyDataTable Maxs { get; protected set; }
         public PredictionOfCurrencyDataTable Mins { get; protected set; }
         public string NameOfCollectorForPredict { get; set; }
-        public string[] NameOfCollectorForTakeLast { get; set; } =
-            { "GdpPerCapitaPppCollector",  "InflationCollector", "RefinancingRateCollector", "TradeBalanceCollector" };
+        public Type[] NameOfCollectorForTakeLast { get; set; } = 
+            { typeof(GdpPerCapitaPppCollector),  typeof(InflationCollector), typeof(RefinancingRateCollector), typeof(TradeBalanceCollector) };
 
         protected string[] Names { get; set; }
 
@@ -53,10 +52,10 @@ namespace Business {
 
         public Vector ConvertInput(Vector input) {
             if (ExpectedValues == null) {
-                InitExpectedValuesAndDispersions(DataTable);
+                InitExpectedValuesAndDispersions(LearnData);
             }
             if (Maxs == null) {
-                InitMaxsAndMins(DataTable);
+                InitMaxsAndMins(LearnData);
             }
             switch (DataProcessingMethods) {
                 case DataProcessingMethods.None:
@@ -74,10 +73,10 @@ namespace Business {
 
         public Vector ConvertOutput(Vector output) {
             if (ExpectedValues == null) {
-                InitExpectedValuesAndDispersions(DataTable);
+                InitExpectedValuesAndDispersions(LearnData);
             }
             if (Maxs == null) {
-                InitMaxsAndMins(DataTable);
+                InitMaxsAndMins(LearnData);
             }
             switch (DataProcessingMethods) {
                 case DataProcessingMethods.None:
@@ -94,38 +93,48 @@ namespace Business {
         }
 
         public void InitializeData() {
-            DataTable = List();
+            LearnData = GetLearnData();
+			TestData = GetTestData();
         }
 
-        protected PredictionOfCurrencyDataTable List() {
-            var result = new PredictionOfCurrencyDataTable(Names);
-            var serializer = new Serializer();
-            var backupFileName = $"DataForNeuralNetworkBackup{ GetBackupName() }.json";
-            if (!serializer.Exists(backupFileName)) {
-                for (var i = DataParameter.From; i < DataParameter.To; i = i.Add(DataParameter.Step)) {
-                    var vector = GetRawData(i, DataParameter.Step);
-                    if (vector.Length == Collectors.Count) {
-                        result.Add(new PredictionOfCurrencyData { Date = i, Vector = vector });
-                    }
-                }
-                result = DataValueTypeConverter[DataType](result);
-                result = DataProcessingMethodsConverter[DataProcessingMethods](result);
-                serializer.Serialize(result, backupFileName);
-            }
-            else {
-                result = serializer.Deserialize<PredictionOfCurrencyDataTable>(backupFileName);
-            }
-            return result;
-        }
+        protected PredictionOfCurrencyDataTable GetLearnData() =>
+			GetData($"DataForNeuralNetworkBackup{ GetBackupName() }.json",
+				DataParameter.From,
+				DataParameter.To);
 
-        protected Vector GetRawData(DateTime date, TimeSpan step) {
+		protected PredictionOfCurrencyDataTable GetTestData() =>
+			GetData($"TestDataForNeuralNetworkBackup{ GetBackupName() }.json", 
+				DataParameter.To + DataParameter.Step, 
+				DateTime.Now);
+
+		protected PredictionOfCurrencyDataTable GetData(string backupFileName, DateTime from, DateTime to) {
+			var result = new PredictionOfCurrencyDataTable(Names);
+			var serializer = new Serializer();
+			if (!serializer.Exists(backupFileName)) {
+				for (var i = from; i < to; i = i.Add(DataParameter.Step)) {
+					var vector = GetRawData(i, DataParameter.Step);
+					if (vector.Length == Collectors.Count) {
+						result.Add(new PredictionOfCurrencyData { Date = i, Vector = vector });
+					}
+				}
+				result = DataValueTypeConverter[DataType](result);
+				result = DataProcessingMethodsConverter[DataProcessingMethods](result);
+				serializer.Serialize(result, backupFileName);
+			}
+			else {
+				result = serializer.Deserialize<PredictionOfCurrencyDataTable>(backupFileName);
+			}
+			return result;
+		}
+
+		protected Vector GetRawData(DateTime date, TimeSpan step) {
             var result = new List<double>();
             foreach (var collector in Collectors) {
                 if (collector.TryGet(date, step, out var data)) {
                     result.Add(data.Selector());
                 }
                 else {
-                    if (NameOfCollectorForTakeLast.Contains(collector.GetType().Name)) {
+                    if (NameOfCollectorForTakeLast.Contains(collector.GetType())) {
                         var last = collector.List(date - TimeSpan.FromDays(365) * 3, date, step).LastOrDefault();
                         if (last != null) {
                             result.Add(last.Selector());

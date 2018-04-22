@@ -10,14 +10,16 @@ export default {
                 meanErrorForLearnSet: 0,
                 meanErrorForTestSet: 0,
                 efficiencyForLearnSet: 0,
-                efficiencyTailForLearnSet: 0,
+				efficiencyTailForLearnSet: 0,
+				efficiencyTailForTestSet: 0,
                 efficiencyForTestSet: 0,
                 inputData: [],
                 descriptionSystem: [],
                 learnResult: [],
                 learnResultWithoutInput: [],
                 learnResultErrors: [],
-                testResult: [],
+				testResult: [],
+				testResultWithoutInput: []
             }
         }
     },
@@ -37,7 +39,8 @@ export default {
                 this.data.efficiencyForLearnSet = data.efficiencyForLearnSet;
                 this.data.efficiencyForTestSet = data.efficiencyForTestSet;
                 this.data.descriptionSystem = data.descriptionSystem;
-                this.data.efficiencyTailForLearnSet = data.efficiencyTailForLearnSet;
+				this.data.efficiencyTailForLearnSet = data.efficiencyTailForLearnSet;
+				this.data.efficiencyTailForTestSet = data.efficiencyTailForTestSet;
                 for (let i = 0; i < data.learnResult.length; i++) {
                     let item = data.learnResult[i];
                     this.data.learnResult.push({
@@ -52,7 +55,18 @@ export default {
                         id: i,
                         values: [item.date, item.error[0]]
                     });
-                }
+				}
+				for (let i = 1; i < data.testResult.length; i++) {
+					let item = data.testResult[i];
+					this.data.testResult.push({
+						id: i,
+						values: [item.date, item.input[item.input.length - 1], item.output[0], item.ideal[0]]
+					});
+					this.data.testResultWithoutInput.push({
+						id: i,
+						values: [item.date, data.testResult[i - 1].output[0], item.ideal[0]]
+					});
+				}
                 for (let i = 0; i < data.inputData.length; i++) {
                     let item = data.inputData[i];
                     this.data.inputData.push({

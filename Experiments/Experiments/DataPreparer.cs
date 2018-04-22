@@ -55,8 +55,14 @@ namespace Experiment {
             }
             Console.WriteLine("Enter a num of proc:");
             var numProcess = int.Parse(Console.ReadLine());
-            manager.PredictionOfCurrency[proceses[numProcess]].Learn(100000, true);
-
+			Console.WriteLine("T (test) or L (learn):");
+			var tOrL = Console.ReadLine();
+			if (tOrL.ToUpper() == "T") {
+				var result = manager.PredictionOfCurrency[proceses[numProcess]].Test();
+			}
+			else {
+				manager.PredictionOfCurrency[proceses[numProcess]].Learn(100000, true);
+			}
 
             //var prOfCur = new PredictionOfCurrencyUsdToRub(dataPreparer);
             //var prOfCur = new PredictionOfCurrency(dataPreparer);

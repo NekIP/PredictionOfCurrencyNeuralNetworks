@@ -89,7 +89,37 @@ namespace Business {
                 .Values.First();
         }*/
 
-        public List<PredictionOfCurrencyLearnResult> Learn(int countIteration, bool outputInConsole = false, bool saveLearnResult = false) {
+		public List<PredictionOfCurrencyLearnResult> Test() {
+			InitData();
+			InitLstm();
+			var result = new List<PredictionOfCurrencyLearnResult>();
+			for (var i = 0; i < DataManager.TestData.Data.Count - 1; i += Chunk) {
+				var chunk = Chunk;
+				if (i + Chunk > DataManager.TestData.Data.Count - 1) {
+					chunk = DataManager.TestData.Data.Count - 1 - i;
+				}
+				var input = new Vector[chunk];
+				var ideal = new Vector[chunk];
+				for (var j = i; j < i + chunk && j < DataManager.TestData.Data.Count - 1; j++) {
+					input[j - i] = DataManager.TestData[j].Vector;
+					ideal[j - i] = new double[] { DataManager.TestData[j + 1].Vector.Values.Last() };
+				}
+				var output = Lstm.Run(input);
+				for (var j = 0; j < chunk; j++) {
+					var error = ((output[j] - ideal[j]) ^ 2) * 0.5;
+					result.Add(new PredictionOfCurrencyLearnResult {
+						Date = DataManager.LearnData.Data[i + j].Date,
+						Error = error,
+						Output = DataManager.ConvertOutput(output[j]),
+						Ideal = DataManager.ConvertOutput(ideal[j]),
+						Input = DataManager.ConvertInput(input[j]),
+					});
+				}
+			}
+			return result;
+		}
+
+		public List<PredictionOfCurrencyLearnResult> Learn(int countIteration, bool outputInConsole = false, bool saveLearnResult = false) {
             var result = new List<PredictionOfCurrencyLearnResult>();
             var lastAverage = 0.0;
             for (var i = 0; i < countIteration; i++) {
@@ -117,21 +147,21 @@ namespace Business {
             InitData();
             InitLstm();
             var result = new List<PredictionOfCurrencyLearnResult>();
-            for (var i = 0; i < DataManager.DataTable.Data.Count - 1; i += Chunk) {
+            for (var i = 0; i < DataManager.LearnData.Data.Count - 1; i += Chunk) {
                 var chunk = Chunk;
-                if (i + Chunk > DataManager.DataTable.Data.Count - 1) {
-                    chunk = DataManager.DataTable.Data.Count - 1 - i;
+                if (i + Chunk > DataManager.LearnData.Data.Count - 1) {
+                    chunk = DataManager.LearnData.Data.Count - 1 - i;
                 }
                 var input = new Vector[chunk];
                 var ideal = new Vector[chunk];
-                for (var j = i; j < i + chunk && j < DataManager.DataTable.Data.Count - 1; j++) {
-                    input[j - i] = DataManager.DataTable[j].Vector;
-                    ideal[j - i] = new double[] { DataManager.DataTable[j + 1].Vector.Values.Last() };
+                for (var j = i; j < i + chunk && j < DataManager.LearnData.Data.Count - 1; j++) {
+                    input[j - i] = DataManager.LearnData[j].Vector;
+                    ideal[j - i] = new double[] { DataManager.LearnData[j + 1].Vector.Values.Last() };
                 }
                 var (output, error) = Lstm.Learn(input, ideal);
                 for (var j = 0; j < chunk; j++) {
                     result.Add(new PredictionOfCurrencyLearnResult {
-                        Date = DataManager.DataTable.Data[i].Date,
+                        Date = DataManager.LearnData.Data[i + j].Date,
                         Error = error[j],
                         Output = DataManager.ConvertOutput(output[j]),
                         Ideal = DataManager.ConvertOutput(ideal[j]),
@@ -150,13 +180,13 @@ namespace Business {
             InitData();
             InitSimpleNeuralNetwork();
             var result = new List<PredictionOfCurrencyLearnResult>();
-            for (var i = 0; i < DataManager.DataTable.Data.Count - 1; i++) {
-                var input = DataManager.DataTable[i].Vector;
-                var ideal = (Vector)new double[] { DataManager.DataTable[i + 1].Vector.Values.Last() };
-                var ideal1 = (Vector)new double[] { DataManager.DataTable[i + 1].Vector.Values.Last() };
+            for (var i = 0; i < DataManager.LearnData.Data.Count - 1; i++) {
+                var input = DataManager.LearnData[i].Vector;
+                var ideal = (Vector)new double[] { DataManager.LearnData[i + 1].Vector.Values.Last() };
+                var ideal1 = (Vector)new double[] { DataManager.LearnData[i + 1].Vector.Values.Last() };
                 var (output, error) = SimpleNeuralNetwork.Learn(input, ideal);
                 result.Add(new PredictionOfCurrencyLearnResult {
-                    Date = DataManager.DataTable.Data[i].Date,
+                    Date = DataManager.LearnData.Data[i].Date,
                     Error = error,
                     Output = DataManager.ConvertOutput(SimpleNeuralNetwork.ConvertOutput(output)),
                     Ideal = DataManager.ConvertOutput(ideal1),
@@ -171,7 +201,7 @@ namespace Business {
         }
 
         protected void InitData() {
-            if (DataManager.DataTable == null) {
+            if (DataManager.LearnData == null) {
                 DataManager.InitializeData();
             }
         }

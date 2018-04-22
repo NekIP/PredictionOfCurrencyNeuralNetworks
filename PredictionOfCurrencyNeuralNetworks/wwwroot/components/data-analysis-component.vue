@@ -8,6 +8,7 @@
                 <div>Эффективность для обучающей выборки: <div class="value">{{ data.efficiencyForLearnSet }}</div></div>
                 <div>Эффективность (Тейл) для обучающей выборки: <div class="value">{{ data.efficiencyTailForLearnSet }}</div></div>
                 <div>Эффективность для тестовой выборки: <div class="value">{{ data.efficiencyForTestSet }}</div></div>
+				<div>Эффективность (Тейл) для тестовой выборки: <div class="value">{{ data.efficiencyTailForTestSet }}</div></div>
                 <template v-for="description in data.descriptionSystem">
                     <div>{{ description.split('`')[0] }}<div class="value">{{ description.split('`')[1] }}</div></div>
                 </template>
@@ -18,6 +19,11 @@
                     v-bind:graphic="wasInitGraphic"></custom-graphic>
                 <custom-graphic v-bind:code="systemName + '-learnResultErrors'" v-bind:data="data.learnResultErrors" v-bind:graphicWidth="gWidth"
                     v-bind:graphic="wasInitGraphic"></custom-graphic>
+				<custom-table v-bind:data="data.testResult" code="neuralNetTestData" v-show="wasInit"></custom-table>
+				<custom-graphic v-bind:code="systemName + '-testResult'" v-bind:data="data.testResult" v-bind:graphicWidth="gWidth"
+								v-bind:graphic="wasInitGraphic"></custom-graphic>
+				<custom-graphic v-bind:code="systemName + '-testResultWithoutInput'" v-bind:data="data.testResultWithoutInput" v-bind:graphicWidth="gWidth"
+								v-bind:graphic="wasInitGraphic"></custom-graphic>
                 <custom-graphic v-bind:code="systemName + '-inputData'" v-bind:data="data.inputData" v-bind:graphicWidth="gWidth"
                     v-bind:graphic="wasInitGraphic"></custom-graphic>
             </div>
